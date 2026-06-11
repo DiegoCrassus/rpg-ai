@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from studio_service.time_utils import UTC, datetime
 from typing import Any
 
 import httpx
@@ -16,8 +16,8 @@ from studio_service.services.integrations.env import (
 )
 
 
-def _require_github() -> tuple[str, str]:
-    token = github_token()
+def _require_github(repo_root) -> tuple[str, str]:
+    token = github_token(repo_root)
     if not token:
         raise StudioApiError(
             503,
@@ -27,7 +27,7 @@ def _require_github() -> tuple[str, str]:
                 "env": "GITHUB_PERSONAL_ACCESS_TOKEN_CLASSIC or GITHUB_PERSONAL_ACCESS_TOKEN"
             },
         )
-    return token, github_repository()
+    return token, github_repository(repo_root)
 
 
 def _gh_headers(token: str) -> dict[str, str]:
@@ -44,7 +44,17 @@ class GitHubIntegrationClient:
 
     def _bootstrap(self) -> tuple[str, str]:
         load_dotenv(self._repo_root)
-        return _require_github()
+        token = github_token(self._repo_root)
+        if not token:
+            raise StudioApiError(
+                503,
+                "GITHUB_NOT_CONFIGURED",
+                "GitHub integration not configured",
+                details={
+                    "env": "GITHUB_PERSONAL_ACCESS_TOKEN_CLASSIC or GITHUB_PERSONAL_ACCESS_TOKEN"
+                },
+            )
+        return token, github_repository(self._repo_root)
 
     def list_open_pulls(self, *, base: str = "develop", state: str = "open") -> dict[str, Any]:
         token, repo = self._bootstrap()
