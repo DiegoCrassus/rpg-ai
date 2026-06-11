@@ -55,28 +55,33 @@ cp app/frontend/.env.example app/frontend/.env
 
 Preencha `.env` com os valores do Supabase (passo 2) e, se for usar import de fichas, `OPENAI_API_KEY`.
 
-### 2. Supabase local
-
-```bash
-make -C app supabase-start
-```
-
-Copie do output do CLI para `.env`: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `DATABASE_URL`.
-
-Copie `SUPABASE_ANON_KEY` para `app/frontend/.env` como `VITE_SUPABASE_ANON_KEY`.
-
-### 3. Dependências e desenvolvimento
+### 2. Instalar dependências
 
 ```bash
 make -C app install
-make -C app dev
+make -C app migrate  # aplica migrations + usuário admin local
 ```
+
+**Admin local:** `admin@rpg.local` / `RpgAdmin!local`
+
+### 3. Subir / parar o stack
+
+```bash
+make -C app start    # infra (Supabase) + API + frontend
+make -C app stop     # para tudo e libera portas
+```
+
+Na primeira execução, `start` instala o Supabase CLI se necessário e sobe o Docker stack. Copie do output do CLI para `.env`: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_JWT_SECRET`, `DATABASE_URL`.
+
+Copie `SUPABASE_ANON_KEY` para `app/frontend/.env` como `VITE_SUPABASE_ANON_KEY`.
 
 | Serviço | URL |
 |---------|-----|
 | Frontend | http://127.0.0.1:5173 |
 | API + OpenAPI | http://127.0.0.1:8000/docs |
 | Supabase Studio | http://127.0.0.1:54323 |
+
+Só infra (sem app): `make -C app infra`
 
 ### 4. Testes
 
@@ -86,7 +91,7 @@ make -C app contracts         # valida JSON schemas e seeds
 make -C app e2e               # smoke Playwright (rotas auth)
 ```
 
-Comandos úteis: `make -C app help`.
+Comandos: `make -C app help`
 
 ## Jornadas MVP
 
