@@ -4,18 +4,36 @@ PostgreSQL control plane + Auth + Storage for the RPG platform MVP.
 
 ## Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) running
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) running (WSL2 integration enabled)
 - [Supabase CLI](https://supabase.com/docs/guides/cli) installed (`>= 1.200`)
+
+### Install CLI (WSL / Linux)
+
+If `supabase: not found`:
+
+```bash
+make -C app install-supabase-cli
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+supabase --version
+```
 
 ## Quick start
 
 From the repository root:
 
 ```bash
-make supabase-start
+make -C app migrate  # apply migrations + seed admin (db reset, local)
+make -C app infra    # Supabase only
+make -C app start    # Supabase + API + frontend
+make -C app stop     # stop everything
 ```
 
-This runs `supabase start` with config and migrations in this directory.
+`migrate` runs `supabase db reset` (wipes local DB, reapplies `migrations/*.sql`).
+
+**Dev admin** (from `00002_seed_admin_user.sql`): `admin@rpg.local` / `RpgAdmin!local`
+
+`infra` installs the Supabase CLI to `~/.local/bin` if missing and requires Docker Desktop.
 
 After start, copy connection values into `.env` (see `.env.example`):
 

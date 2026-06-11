@@ -48,7 +48,7 @@ help:
 	@echo "  supabase-stop     Stop local Supabase stack"
 	@echo "  contracts-validate  Validate JSON seeds and contract schemas"
 	@echo ""
-	@echo "  RPG Platform (app/): make -C app help"
+	@echo "  RPG Platform (app/): make -C app help  (install | infra | start | stop)"
 	@echo ""
 	@echo "Workflow: .sdlc/process/change-lifecycle.md"
 
@@ -199,12 +199,10 @@ studio-dev:
 	  wait
 
 supabase-start:
-	@echo "Starting Supabase (config: $(SUPABASE_DIR))..."
-	@cd $(SUPABASE_DIR) && supabase start
+	@$(MAKE) -C app infra
 
 supabase-stop:
-	@echo "Stopping Supabase..."
-	@cd $(SUPABASE_DIR) && supabase stop
+	@$(MAKE) -C app stop
 
 contracts-validate:
 	@echo "Validating shared JSON contracts..."

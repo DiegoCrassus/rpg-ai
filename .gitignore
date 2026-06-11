@@ -19,6 +19,9 @@ eggs/
 lib/
 lib64/
 !app/frontend/src/lib/
+app/.run/
+app/infra/supabase/.temp/
+app/infra/supabase/.branches/
 parts/
 sdist/
 var/
