@@ -1,4 +1,4 @@
-.PHONY: sdlc-doctor sdlc-validate sdlc-stages sdlc-sync-model docs-check obs-init obs-server obs-seed sdlc-audit board-in-progress plane-in-progress auto-merge-pr issue-triage board-reformat plane-reformat board-evidence plane-evidence workflow-status workflow-start workflow-discover sdlc-compact-memory sdlc-session-status sdlc-meta-start sdlc-meta-commit sdlc-meta-qa token-budget-status token-budget-reset studio-dev studio-api studio-smoke studio-e2e supabase-start supabase-stop contracts-validate help
+.PHONY: sdlc-doctor sdlc-validate sdlc-stages sdlc-sync-model docs-check obs-init obs-server obs-seed sdlc-audit board-in-progress plane-in-progress auto-merge-pr issue-triage board-reformat plane-reformat board-evidence plane-evidence workflow-status workflow-start workflow-discover sdlc-compact-memory sdlc-session-status sdlc-meta-start sdlc-meta-commit sdlc-meta-qa token-budget-status token-budget-reset execution-manifest-status execution-manifest-show studio-install studio-dev studio-api studio-smoke studio-e2e supabase-start supabase-stop contracts-validate help
 
 SUPABASE_DIR := app/infra/supabase
 
@@ -35,7 +35,11 @@ help:
 	@echo "  token-budget-status  Show token ledger (session/turn limits)"
 	@echo "  token-budget-reset   Reset token session counters"
 	@echo ""
-	@echo "  studio-dev        Studio API :8100 + UI :5174 (install npm in studio/frontend first)"
+	@echo "  execution-manifest-status  Show specs/current.json summary"
+	@echo "  execution-manifest-show    Print full execution manifest JSON"
+	@echo ""
+	@echo "  studio-install    Install Studio Python + frontend deps (run once from WSL)"
+	@echo "  studio-dev        Studio API :8100 + UI :5174 (requires make studio-install)"
 	@echo "  studio-api        Studio API only on :8100"
 	@echo "  studio-smoke      HTTP smoke (API must be running; honors STUDIO_AUTH_TOKEN)"
 	@echo "  studio-e2e        Playwright E2E — smoke routes + workflow builder"
@@ -44,9 +48,13 @@ help:
 	@echo "  supabase-stop     Stop local Supabase stack"
 	@echo "  contracts-validate  Validate JSON seeds and contract schemas"
 	@echo ""
+	@echo "  RPG Platform (app/): make -C app help"
+	@echo ""
 	@echo "Workflow: .sdlc/process/change-lifecycle.md"
 
-PYTHON ?= $(shell command -v python3 2>/dev/null || command -v python 2>/dev/null)
+PYTHON ?= $(shell if [ -x .venv/bin/python ]; then echo .venv/bin/python; elif command -v python3 >/dev/null 2>&1; then echo python3; else echo python; fi)
+STUDIO_FRONTEND := studio/frontend
+STUDIO_BACKEND_SRC := studio/backend/src
 
 sdlc-doctor:
 	@echo "Running SDLC Doctor..."
@@ -154,27 +162,40 @@ token-budget-status:
 token-budget-reset:
 	@$(PYTHON) .sdlc/scripts/token_budget_status.py reset
 
+execution-manifest-status:
+	@$(PYTHON) .sdlc/scripts/execution_manifest.py status
+
+execution-manifest-show:
+	@$(PYTHON) .sdlc/scripts/execution_manifest.py show
+
 export-pdf:
 	@echo "Generating simulation PDF..."
 	@$(PYTHON) app/infra/sdlc_obs/export_simulation_pdf.py
 	@echo "PDF: simulacao-end-to-end-sdlc.pdf"
 
+studio-install:
+	@test -x .venv/bin/python || python3 -m venv .venv
+	@.venv/bin/pip install -e ".[dev]"
+	@cd $(STUDIO_FRONTEND) && rm -rf node_modules && npm install
+	@$(MAKE) obs-init
+
 studio-api:
 	@echo "Studio API http://127.0.0.1:8100 (Ctrl+C stops)"
-	@STUDIO_REPO_ROOT=$$(pwd) PYTHONPATH=studio/backend/src:$$PWD $(PYTHON) -m uvicorn studio_service.main:app --reload --host 127.0.0.1 --port 8100
+	@STUDIO_REPO_ROOT=$$(pwd) PYTHONPATH=$(STUDIO_BACKEND_SRC):$$PWD $(PYTHON) -m uvicorn studio_service.main:app --reload --host 127.0.0.1 --port 8100
 
 studio-smoke:
-	@cd studio/frontend && npm run smoke
+	@cd $(STUDIO_FRONTEND) && npm run smoke
 
 studio-e2e:
 	@bash tests/e2e/run-studio-e2e.sh
 
 studio-dev:
-	@test -d studio/frontend/node_modules || (echo "Run: cd studio/frontend && npm install" && exit 1)
+	@test -f $(STUDIO_FRONTEND)/node_modules/vite/bin/vite.js || (echo "Run: make studio-install" && exit 1)
+	@$(PYTHON) -c "import uvicorn" 2>/dev/null || (echo "Run: make studio-install (missing uvicorn in $(PYTHON))" && exit 1)
 	@echo "Starting Studio API http://127.0.0.1:8100 and UI http://127.0.0.1:5174 (Ctrl+C stops both)"
 	@trap 'kill 0' INT TERM EXIT; \
-	  STUDIO_REPO_ROOT=$$(pwd) PYTHONPATH=studio/backend/src:$$PWD $(PYTHON) -m uvicorn studio_service.main:app --reload --host 127.0.0.1 --port 8100 & \
-	  cd studio/frontend && npm run dev & \
+	  STUDIO_REPO_ROOT=$$(pwd) PYTHONPATH=$(STUDIO_BACKEND_SRC):$$PWD $(PYTHON) -m uvicorn studio_service.main:app --reload --host 127.0.0.1 --port 8100 & \
+	  cd $(STUDIO_FRONTEND) && npm run dev & \
 	  wait
 
 supabase-start:
