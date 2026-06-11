@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import type { MesaContext } from "../../components/layout/MesaLayout";
 import { SheetForm } from "../../components/sheet/SheetForm";
@@ -9,6 +9,7 @@ import {
   useCharacterData,
   useSaveCharacterData,
   useTemplateSchema,
+  useUploadCharacterMedia,
 } from "../../lib/queries";
 import { LoadingSpinner } from "../../components/common/LoadingSpinner";
 import { ErrorAlert } from "../../components/common/ErrorAlert";
@@ -25,10 +26,25 @@ export function CharacterEditorPage() {
     character?.template_id ?? "",
   );
   const saveData = useSaveCharacterData(mesa.id, characterId);
+  const uploadMedia = useUploadCharacterMedia(mesa.id, characterId);
 
   const [values, setValues] = useState<Record<string, unknown>>({});
+  const [mediaPreviewUrls, setMediaPreviewUrls] = useState<Record<string, string>>({});
   const [dirty, setDirty] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  const handleMediaUpload = useCallback(
+    async (fieldKey: string, file: File) => {
+      const result = await uploadMedia.mutateAsync({ fieldKey, file });
+      setDirty(true);
+      return result;
+    },
+    [uploadMedia],
+  );
+
+  const handlePreviewUrl = useCallback((path: string, url: string) => {
+    setMediaPreviewUrls((prev) => ({ ...prev, [path]: url }));
+  }, []);
 
   useEffect(() => {
     if (sheetData?.payload?.values) {
@@ -71,6 +87,9 @@ export function CharacterEditorPage() {
             setDirty(true);
           }}
           readOnly={!canEdit && !isMaster}
+          onMediaUpload={canEdit || isMaster ? handleMediaUpload : undefined}
+          mediaPreviewUrls={mediaPreviewUrls}
+          onPreviewUrl={handlePreviewUrl}
         />
       ) : (
         <ErrorAlert message="Schema do template indisponível." />

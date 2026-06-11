@@ -60,10 +60,16 @@ export async function apiUpload<T>(
   path: string,
   file: File,
   fieldName = "file",
+  extraFields?: Record<string, string>,
 ): Promise<T> {
   const token = await getAccessToken();
   const form = new FormData();
   form.append(fieldName, file);
+  if (extraFields) {
+    for (const [key, value] of Object.entries(extraFields)) {
+      form.append(key, value);
+    }
+  }
 
   const headers = new Headers();
   if (token) {

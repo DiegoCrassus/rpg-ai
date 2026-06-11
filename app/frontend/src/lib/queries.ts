@@ -339,6 +339,42 @@ export function useUpdateProfile() {
         method: "PATCH",
         body: JSON.stringify({ display_name }),
       }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["profile"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["profile"] });
+    },
+  });
+}
+
+export function useProfile() {
+  return useQuery({
+    queryKey: ["profile"],
+    queryFn: () => apiFetch<User>("/api/v1/users/me"),
+  });
+}
+
+export function useUploadAvatar() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => apiUpload<{ signed_url: string }>("/api/v1/users/me/avatar", file),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["profile"] });
+    },
+  });
+}
+
+export interface MediaUploadResult {
+  storage_path: string;
+  signed_url: string;
+}
+
+export function useUploadCharacterMedia(mesaId: string, characterId: string) {
+  return useMutation({
+    mutationFn: ({ fieldKey, file }: { fieldKey: string; file: File }) =>
+      apiUpload<MediaUploadResult>(
+        `/api/v1/mesas/${mesaId}/characters/${characterId}/media`,
+        file,
+        "file",
+        { field_key: fieldKey },
+      ),
   });
 }

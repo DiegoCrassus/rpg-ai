@@ -37,6 +37,9 @@ export interface User {
   display_name: string;
   is_admin: boolean;
   status: string;
+  avatar_storage_path?: string | null;
+  avatar_url?: string | null;
+  master_mesa_count?: number;
 }
 
 export interface Mesa {

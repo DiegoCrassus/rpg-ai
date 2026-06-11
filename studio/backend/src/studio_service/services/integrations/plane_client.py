@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from studio_service.time_utils import UTC, datetime
 from typing import Any
 
 import httpx
 
 from studio_service.api.errors import StudioApiError
 from studio_service.services.integrations.env import (
+    format_card,
     load_dotenv,
     parse_card,
     plane_api_key,
@@ -16,18 +17,6 @@ from studio_service.services.integrations.env import (
     plane_project_id,
     plane_workspace,
 )
-
-
-def _require_plane() -> tuple[str, str, str, str]:
-    api_key = plane_api_key()
-    if not api_key:
-        raise StudioApiError(
-            503,
-            "PLANE_NOT_CONFIGURED",
-            "Plane integration not configured",
-            details={"env": "PLANE_API_KEY"},
-        )
-    return api_key, plane_workspace(), plane_project_id(), plane_base_url()
 
 
 def _plane_headers(api_key: str) -> dict[str, str]:
@@ -44,7 +33,24 @@ class PlaneIntegrationClient:
 
     def _bootstrap(self) -> tuple[str, str, str, str]:
         load_dotenv(self._repo_root)
-        return _require_plane()
+        api_key = plane_api_key(self._repo_root)
+        if not api_key:
+            raise StudioApiError(
+                503,
+                "PLANE_NOT_CONFIGURED",
+                "Plane integration not configured",
+                details={"env": "PLANE_API_KEY or BOARD_API_KEY"},
+            )
+        workspace = plane_workspace(self._repo_root)
+        project_id = plane_project_id(self._repo_root)
+        if not project_id:
+            raise StudioApiError(
+                503,
+                "PLANE_NOT_CONFIGURED",
+                "Plane project id not configured",
+                details={"env": "PLANE_PROJECT_ID or BOARD_PROJECT_ID"},
+            )
+        return api_key, workspace, project_id, plane_base_url(self._repo_root)
 
     def find_issue_uuid(
         self,
@@ -61,6 +67,13 @@ class PlaneIntegrationClient:
         http = client or httpx.Client(timeout=30.0)
         try:
             resp = http.get(url, headers=_plane_headers(api_key), params={"per_page": 100})
+            if resp.status_code == 403:
+                raise StudioApiError(
+                    502,
+                    "PLANE_AUTH_ERROR",
+                    "Plane API rejected credentials or project access",
+                    details={"status": resp.status_code, "workspace": workspace},
+                )
             if resp.status_code >= 500:
                 raise StudioApiError(
                     502,
@@ -75,11 +88,18 @@ class PlaneIntegrationClient:
         finally:
             if owns_client:
                 http.close()
-        raise StudioApiError(404, "PLANE_CARD_NOT_FOUND", f"Card INVES-{sequence_id} not found")
+        from studio_service.services.integrations.env import card_prefix
+
+        prefix = card_prefix(self._repo_root)
+        raise StudioApiError(
+            404,
+            "PLANE_CARD_NOT_FOUND",
+            f"Card {prefix}-{sequence_id} not found",
+        )
 
     def get_card_detail(self, card: str) -> dict[str, Any]:
         try:
-            label, seq = parse_card(card)
+            label, seq = parse_card(card, self._repo_root)
         except ValueError as exc:
             raise StudioApiError(422, "INVALID_CARD", str(exc)) from exc
 
@@ -147,11 +167,11 @@ class PlaneIntegrationClient:
             if resp.status_code != 200:
                 return None
             seq = resp.json().get("sequence_id")
-            return f"INVES-{seq}" if seq is not None else None
+            return format_card(seq, self._repo_root) if seq is not None else None
 
     def list_epic_children(self, card: str) -> dict[str, Any]:
         try:
-            label, seq = parse_card(card)
+            label, seq = parse_card(card, self._repo_root)
         except ValueError as exc:
             raise StudioApiError(422, "INVALID_CARD", str(exc)) from exc
 
@@ -179,8 +199,9 @@ class PlaneIntegrationClient:
                 if child_seq is None:
                     continue
                 state_name = (item.get("state_detail") or {}).get("name") or "unknown"
+                child_label = format_card(child_seq, self._repo_root)
                 entry = {
-                    "card": f"INVES-{child_seq}",
+                    "card": child_label,
                     "sequence_id": child_seq,
                     "issue_id": item.get("id"),
                     "name": item.get("name"),
@@ -211,6 +232,13 @@ class PlaneIntegrationClient:
         url = f"{base_url}/api/v1/workspaces/{workspace}/projects/{project_id}/issues/"
         with httpx.Client(timeout=30.0) as http:
             resp = http.get(url, headers=_plane_headers(api_key), params={"per_page": 100})
+            if resp.status_code == 403:
+                raise StudioApiError(
+                    502,
+                    "PLANE_AUTH_ERROR",
+                    "Plane API rejected credentials or project access",
+                    details={"status": resp.status_code, "workspace": workspace},
+                )
             if resp.status_code >= 500:
                 raise StudioApiError(
                     502,
@@ -227,7 +255,7 @@ class PlaneIntegrationClient:
             if seq is None:
                 continue
             state_detail = issue.get("state_detail") or {}
-            label = f"INVES-{seq}"
+            label = format_card(seq, self._repo_root)
             items.append(
                 {
                     "card": label,
@@ -252,5 +280,7 @@ class PlaneIntegrationClient:
         return {
             "items": items,
             "count": len(items),
+            "workspace": workspace,
+            "project_id": project_id,
             "fetched_at": datetime.now(UTC).isoformat(),
         }

@@ -1,4 +1,6 @@
+import { useState } from "react";
 import type { SheetField } from "../../types/api";
+import type { MediaUploadResult } from "../../lib/queries";
 import { defaultRepeaterItem, getNestedValue, setNestedValue, sortFields } from "./sheetUtils";
 
 interface FieldRendererProps {
@@ -7,10 +9,125 @@ interface FieldRendererProps {
   values: Record<string, unknown>;
   onChange: (values: Record<string, unknown>) => void;
   readOnly?: boolean;
+  onMediaUpload?: (fieldKey: string, file: File) => Promise<MediaUploadResult>;
+  mediaPreviewUrls?: Record<string, string>;
+  onPreviewUrl?: (path: string, url: string) => void;
 }
 
 function fieldPath(prefix: string, key: string): string {
   return prefix ? `${prefix}.${key}` : key;
+}
+
+function acceptForField(field: SheetField): string {
+  const exts = field.constraints?.allowed_extensions;
+  if (field.type === "image") {
+    return exts?.length ? exts.map((e) => `.${e}`).join(",") : "image/png,image/jpeg,image/webp";
+  }
+  return exts?.length ? exts.map((e) => `.${e}`).join(",") : "*/*";
+}
+
+function fileAllowed(file: File, field: SheetField): boolean {
+  const exts = field.constraints?.allowed_extensions;
+  if (!exts?.length) return true;
+  const name = file.name.toLowerCase();
+  return exts.some((ext) => name.endsWith(`.${ext.toLowerCase()}`));
+}
+
+function MediaField({
+  field,
+  path,
+  pathValue,
+  previewUrl,
+  readOnly,
+  onMediaUpload,
+  onPreviewUrl,
+  onUpdate,
+}: {
+  field: SheetField;
+  path: string;
+  pathValue: string;
+  previewUrl?: string;
+  readOnly: boolean;
+  onMediaUpload?: (fieldKey: string, file: File) => Promise<MediaUploadResult>;
+  onPreviewUrl?: (path: string, url: string) => void;
+  onUpdate: (next: unknown) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const label = (
+    <label className="block text-sm font-medium text-slate-300 mb-1">
+      {field.label}
+      {field.required && <span className="text-red-400 ml-1">*</span>}
+    </label>
+  );
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file || readOnly) return;
+    if (!fileAllowed(file, field)) {
+      setUploadError("Tipo de arquivo não permitido.");
+      return;
+    }
+    if (!onMediaUpload) {
+      setUploadError("Upload indisponível neste contexto.");
+      return;
+    }
+    setUploadError(null);
+    setUploading(true);
+    try {
+      const result = await onMediaUpload(field.key, file);
+      onUpdate(result.storage_path);
+      onPreviewUrl?.(path, result.signed_url);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : "Falha no upload.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const resolvedPreview =
+    previewUrl && (previewUrl.startsWith("http") || previewUrl.startsWith("memory://"))
+      ? previewUrl
+      : undefined;
+
+  return (
+    <div className="mb-4">
+      {label}
+      {field.type === "image" && resolvedPreview && (
+        <img
+          src={resolvedPreview}
+          alt={field.label}
+          className="mb-2 max-h-32 rounded border border-slate-700 object-contain"
+        />
+      )}
+      {pathValue && <p className="mb-2 truncate text-xs text-slate-400">{pathValue}</p>}
+      {field.type === "file" && pathValue && (
+        <p className="mb-2 text-xs text-slate-500">
+          {resolvedPreview ? (
+            <a href={resolvedPreview} target="_blank" rel="noreferrer" className="text-brand-400 hover:underline">
+              Abrir arquivo
+            </a>
+          ) : (
+            "Arquivo anexado"
+          )}
+        </p>
+      )}
+      {!readOnly && (
+        <>
+          <input
+            type="file"
+            accept={acceptForField(field)}
+            disabled={uploading}
+            className="block w-full text-sm text-slate-300 file:mr-3 file:rounded file:border-0 file:bg-slate-700 file:px-3 file:py-1.5 file:text-sm file:text-slate-200"
+            onChange={(e) => void handleFile(e.target.files?.[0])}
+          />
+          {uploading && <p className="mt-1 text-xs text-slate-500">Enviando…</p>}
+          {uploadError && <p className="mt-1 text-xs text-red-400">{uploadError}</p>}
+        </>
+      )}
+      {readOnly && !pathValue && <p className="text-xs text-slate-500">Nenhum arquivo</p>}
+    </div>
+  );
 }
 
 export function FieldRenderer({
@@ -19,6 +136,9 @@ export function FieldRenderer({
   values,
   onChange,
   readOnly = false,
+  onMediaUpload,
+  mediaPreviewUrls,
+  onPreviewUrl,
 }: FieldRendererProps) {
   const path = fieldPath(pathPrefix, field.key);
   const value = getNestedValue(values, path);
@@ -159,6 +279,9 @@ export function FieldRenderer({
               values={values}
               onChange={onChange}
               readOnly={readOnly}
+              onMediaUpload={onMediaUpload}
+              mediaPreviewUrls={mediaPreviewUrls}
+              onPreviewUrl={onPreviewUrl}
             />
           ))}
         </fieldset>
@@ -198,6 +321,9 @@ export function FieldRenderer({
                     values={values}
                     onChange={onChange}
                     readOnly={readOnly}
+                    onMediaUpload={onMediaUpload}
+                    mediaPreviewUrls={mediaPreviewUrls}
+                    onPreviewUrl={onPreviewUrl}
                   />
                 ))}
               </div>
@@ -219,15 +345,16 @@ export function FieldRenderer({
     case "image":
     case "file":
       return (
-        <div className="mb-4">
-          {label}
-          <p className="text-xs text-slate-500">
-            Upload de mídia via API — campo {field.key} ({field.type})
-          </p>
-          {typeof value === "string" && value && (
-            <p className="text-xs text-slate-400 mt-1 truncate">{value}</p>
-          )}
-        </div>
+        <MediaField
+          field={field}
+          path={path}
+          pathValue={typeof value === "string" ? value : ""}
+          previewUrl={mediaPreviewUrls?.[path]}
+          readOnly={readOnly}
+          onMediaUpload={onMediaUpload}
+          onPreviewUrl={onPreviewUrl}
+          onUpdate={update}
+        />
       );
 
     default:

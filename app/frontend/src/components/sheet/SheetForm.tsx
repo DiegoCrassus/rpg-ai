@@ -1,4 +1,5 @@
 import type { SheetField } from "../../types/api";
+import type { MediaUploadResult } from "../../lib/queries";
 import { FieldRenderer } from "./FieldRenderer";
 import { sortFields } from "./sheetUtils";
 
@@ -7,9 +8,20 @@ interface SheetFormProps {
   values: Record<string, unknown>;
   onChange: (values: Record<string, unknown>) => void;
   readOnly?: boolean;
+  onMediaUpload?: (fieldKey: string, file: File) => Promise<MediaUploadResult>;
+  mediaPreviewUrls?: Record<string, string>;
+  onPreviewUrl?: (path: string, url: string) => void;
 }
 
-export function SheetForm({ fields, values, onChange, readOnly = false }: SheetFormProps) {
+export function SheetForm({
+  fields,
+  values,
+  onChange,
+  readOnly = false,
+  onMediaUpload,
+  mediaPreviewUrls,
+  onPreviewUrl,
+}: SheetFormProps) {
   return (
     <form
       className="space-y-2"
@@ -23,6 +35,9 @@ export function SheetForm({ fields, values, onChange, readOnly = false }: SheetF
           values={values}
           onChange={onChange}
           readOnly={readOnly}
+          onMediaUpload={onMediaUpload}
+          mediaPreviewUrls={mediaPreviewUrls}
+          onPreviewUrl={onPreviewUrl}
         />
       ))}
     </form>

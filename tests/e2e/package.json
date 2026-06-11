@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "test": "playwright test",
-    "test:headed": "playwright test --headed"
+    "test:headed": "playwright test --headed",
+    "test:studio": "playwright test --config=studio/playwright.config.ts",
+    "test:platform": "playwright test --config=platform/playwright.config.ts"
   },
   "devDependencies": {
     "@playwright/test": "^1.49.0"

@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Form, UploadFile
 from pydantic import BaseModel, Field
 from rpg_platform.api.deps import CurrentUser, DbSession, StorageDep
 from rpg_platform.api.errors import AppError
@@ -169,6 +169,45 @@ async def put_character_data(
         session, storage, sheet=sheet, mesa=mesa, template=template, user=user, values=body.values
     )
     return _char_response(sheet)
+
+
+def _media_ext(content_type: str | None, filename: str | None) -> str:
+    if content_type == "image/jpeg":
+        return "jpg"
+    if content_type == "image/webp":
+        return "webp"
+    if content_type == "image/png":
+        return "png"
+    if filename and "." in filename:
+        return filename.rsplit(".", 1)[-1].lower()
+    return "bin"
+
+
+@router.post("/{character_id}/media")
+async def upload_character_media(
+    mesa_id: uuid.UUID,
+    character_id: uuid.UUID,
+    file: UploadFile,
+    user: CurrentUser,
+    session: DbSession,
+    storage: StorageDep,
+    field_key: str = Form(...),
+) -> dict:
+    mesa, participant, sheet = await _get_sheet_context(session, mesa_id, character_id, user)
+    if not can_edit_sheet(sheet, mesa, user, participant):
+        raise AppError("character_forbidden", "Cannot edit this character sheet", 403)
+    ext = _media_ext(file.content_type, file.filename)
+    storage_path = f"{mesa_id}/characters/{character_id}/media/{field_key}.{ext}"
+    relative_path = f"characters/{character_id}/media/{field_key}.{ext}"
+    data = await file.read()
+    await storage.put_bytes(
+        CAMPAIGNS_BUCKET,
+        storage_path,
+        data,
+        content_type=file.content_type or "application/octet-stream",
+    )
+    signed_url = await storage.create_signed_url(CAMPAIGNS_BUCKET, storage_path)
+    return {"storage_path": relative_path, "signed_url": signed_url}
 
 
 @router.get("/{character_id}/versions")

@@ -21,6 +21,14 @@ export function AppLayout() {
             >
               Mesas
             </NavLink>
+            <NavLink
+              to="/profile"
+              className={({ isActive }) =>
+                isActive ? "text-brand-400" : "text-slate-400 hover:text-slate-200"
+              }
+            >
+              Perfil
+            </NavLink>
             {user?.is_admin && (
               <NavLink
                 to="/admin"

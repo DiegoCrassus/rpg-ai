@@ -22,6 +22,7 @@ import {
 import { DocumentEditorPage } from "./features/documents/DocumentEditorPage";
 import { ParticipantsPage } from "./features/participants/ParticipantsPage";
 import { AcceptInvitePage } from "./features/participants/AcceptInvitePage";
+import { ProfileSettingsPage } from "./features/auth/ProfileSettingsPage";
 import { AdminPage } from "./features/admin/AdminPage";
 
 export function AppRouter() {
@@ -38,6 +39,7 @@ export function AppRouter() {
           <Route index element={<Navigate to="/mesas" replace />} />
           <Route path="mesas" element={<MesaListPage />} />
           <Route path="mesas/new" element={<MesaCreatePage />} />
+          <Route path="profile" element={<ProfileSettingsPage />} />
           <Route path="admin" element={<AdminPage />} />
 
           <Route path="mesas/:mesaId" element={<MesaLayout />}>

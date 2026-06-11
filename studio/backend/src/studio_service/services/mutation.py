@@ -8,7 +8,7 @@ import re
 import sys
 import uuid
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from studio_service.time_utils import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
