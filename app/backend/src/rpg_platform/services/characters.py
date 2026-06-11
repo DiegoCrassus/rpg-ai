@@ -24,6 +24,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 CAMPAIGNS_BUCKET = "campaigns"
 
 
+def version_snapshot_path(mesa_id: uuid.UUID, sheet_id: uuid.UUID, version: int) -> str:
+    return f"{mesa_id}/characters/{sheet_id}/versions/v{version}.json"
+
+
 async def list_characters(session: AsyncSession, mesa_id: uuid.UUID) -> list[CharacterSheet]:
     result = await session.execute(
         select(CharacterSheet)
@@ -78,6 +82,10 @@ async def create_character(
     validate_envelope(meta_envelope)
 
     data_raw = await storage.put_json(CAMPAIGNS_BUCKET, data_path, data_envelope)
+    v1_snapshot_path = version_snapshot_path(mesa.id, sheet_id, 1)
+    await storage.put_bytes(
+        CAMPAIGNS_BUCKET, v1_snapshot_path, data_raw, content_type="application/json"
+    )
     meta_raw = await storage.put_json(CAMPAIGNS_BUCKET, meta_path, meta_envelope)
     now = utcnow()
 
@@ -99,13 +107,14 @@ async def create_character(
             sheet_id=sheet_id,
             mesa_id=mesa.id,
             version=1,
-            storage_path=data_path,
+            storage_path=v1_snapshot_path,
             checksum_sha256=sha256_hex(data_raw),
             created_by=owner.id,
         )
     )
     for path, raw, contract in [
         (data_path, data_raw, "rpg.character-sheet"),
+        (v1_snapshot_path, data_raw, "rpg.character-sheet"),
         (meta_path, meta_raw, "rpg.character-meta"),
     ]:
         session.add(
@@ -147,8 +156,40 @@ async def update_character_data(
     user: User,
     values: dict[str, Any],
 ) -> CharacterSheet:
-    new_version = sheet.version + 1
-    version_path = f"{mesa.id}/characters/{sheet.id}/versions/v{new_version}.json"
+    current_version = sheet.version
+    new_version = current_version + 1
+    current_snapshot_path = version_snapshot_path(mesa.id, sheet.id, current_version)
+    new_snapshot_path = version_snapshot_path(mesa.id, sheet.id, new_version)
+
+    # Immutable snapshot of current data before bump (preserves v1 even after data.json overwrite)
+    current_raw = await storage.get_bytes(CAMPAIGNS_BUCKET, sheet.storage_path)
+    await storage.put_bytes(
+        CAMPAIGNS_BUCKET, current_snapshot_path, current_raw, content_type="application/json"
+    )
+    current_checksum = sha256_hex(current_raw)
+
+    version_row = (
+        await session.execute(
+            select(CharacterSheetVersion).where(
+                CharacterSheetVersion.sheet_id == sheet.id,
+                CharacterSheetVersion.version == current_version,
+            )
+        )
+    ).scalar_one_or_none()
+    if version_row is not None:
+        version_row.storage_path = current_snapshot_path
+        version_row.checksum_sha256 = current_checksum
+    else:
+        session.add(
+            CharacterSheetVersion(
+                sheet_id=sheet.id,
+                mesa_id=mesa.id,
+                version=current_version,
+                storage_path=current_snapshot_path,
+                checksum_sha256=current_checksum,
+                created_by=user.id,
+            )
+        )
 
     envelope = build_envelope(
         contract="rpg.character-sheet",
@@ -164,8 +205,10 @@ async def update_character_data(
     )
     validate_envelope(envelope)
 
-    raw = await storage.put_json(CAMPAIGNS_BUCKET, version_path, envelope)
-    await storage.put_json(CAMPAIGNS_BUCKET, sheet.storage_path, envelope)
+    new_raw = await storage.put_json(CAMPAIGNS_BUCKET, sheet.storage_path, envelope)
+    await storage.put_bytes(
+        CAMPAIGNS_BUCKET, new_snapshot_path, new_raw, content_type="application/json"
+    )
 
     sheet.version = new_version
     session.add(
@@ -173,8 +216,8 @@ async def update_character_data(
             sheet_id=sheet.id,
             mesa_id=mesa.id,
             version=new_version,
-            storage_path=version_path,
-            checksum_sha256=sha256_hex(raw),
+            storage_path=new_snapshot_path,
+            checksum_sha256=sha256_hex(new_raw),
             created_by=user.id,
         )
     )

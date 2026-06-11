@@ -7,7 +7,7 @@ from collections.abc import AsyncGenerator
 
 import pytest
 from httpx import ASGITransport, AsyncClient
-from rpg_platform.api.deps import get_db, get_storage, set_storage_service
+from rpg_platform.api.deps import get_db, get_storage, reset_storage_service, set_storage_service
 from rpg_platform.auth.jwt import create_test_token
 from rpg_platform.config import get_settings
 from rpg_platform.db import session as db_session_module
@@ -26,9 +26,11 @@ def _env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("DATABASE_URL", TEST_DB_URL)
     monkeypatch.setenv("SUPABASE_JWT_SECRET", TEST_JWT_SECRET)
     monkeypatch.setenv("SUPABASE_SERVICE_ROLE_KEY", "test-service-key")
+    monkeypatch.setenv("APP_ENV", "test")
     get_settings.cache_clear()
     db_session_module.reset_engine()
     clear_memory_storage()
+    reset_storage_service()
     set_storage_service(StorageService(use_memory=True))
 
 
