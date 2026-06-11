@@ -22,7 +22,14 @@ export function AcceptInvitePage() {
     return (
       <div className="mx-auto max-w-md pt-16 text-center">
         <p className="mb-4 text-slate-300">Faça login para aceitar o convite.</p>
-        <Button onClick={() => navigate(`/login?redirect=/accept-invite?token=${token}`)}>
+        <Button
+          onClick={() => {
+            const redirectTarget = token
+              ? `/accept-invite?token=${encodeURIComponent(token)}`
+              : "/accept-invite";
+            navigate(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
+          }}
+        >
           Ir para login
         </Button>
       </div>

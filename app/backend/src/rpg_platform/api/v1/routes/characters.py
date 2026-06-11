@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import uuid
 from typing import Any
 
@@ -21,6 +22,17 @@ from rpg_platform.services.characters import (
 from rpg_platform.services.documents import CAMPAIGNS_BUCKET
 
 router = APIRouter(prefix="/mesas/{mesa_id}/characters", tags=["characters"])
+
+_FIELD_KEY_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9_]*$")
+
+
+def _validate_field_key(field_key: str) -> None:
+    if not _FIELD_KEY_PATTERN.fullmatch(field_key):
+        raise AppError(
+            "invalid_field_key",
+            "field_key must match ^[a-zA-Z][a-zA-Z0-9_]*$",
+            422,
+        )
 
 
 class CharacterResponse(BaseModel):
@@ -193,6 +205,7 @@ async def upload_character_media(
     storage: StorageDep,
     field_key: str = Form(...),
 ) -> dict:
+    _validate_field_key(field_key)
     mesa, participant, sheet = await _get_sheet_context(session, mesa_id, character_id, user)
     if not can_edit_sheet(sheet, mesa, user, participant):
         raise AppError("character_forbidden", "Cannot edit this character sheet", 403)

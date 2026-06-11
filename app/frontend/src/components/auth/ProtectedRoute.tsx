@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../lib/auth";
+import { getAuthRedirect } from "../../lib/authRedirect";
 import { LoadingSpinner } from "../common/LoadingSpinner";
 
 export function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -26,7 +27,11 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
 
 export function PublicOnlyRoute({ children }: { children: ReactNode }) {
   const { session, loading } = useAuth();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
   if (loading) return <LoadingSpinner />;
-  if (session) return <Navigate to="/mesas" replace />;
+  if (session) {
+    return <Navigate to={getAuthRedirect(searchParams, location)} replace />;
+  }
   return <>{children}</>;
 }

@@ -1,19 +1,23 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../lib/auth";
+import { getAuthRedirect } from "../../lib/authRedirect";
 import { supabase } from "../../lib/supabase";
 import { Button } from "../../components/common/Button";
 import { ErrorAlert } from "../../components/common/ErrorAlert";
 
 export function LoginPage() {
   const { session } = useAuth();
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const redirectTo = getAuthRedirect(searchParams, location);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  if (session) return <Navigate to="/mesas" replace />;
+  if (session) return <Navigate to={redirectTo} replace />;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -26,9 +30,13 @@ export function LoginPage() {
 
   const handleGoogle = async () => {
     setError(null);
+    const callbackUrl = new URL("/auth/callback", window.location.origin);
+    if (searchParams.get("redirect")) {
+      callbackUrl.searchParams.set("redirect", searchParams.get("redirect")!);
+    }
     const { error: authError } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: callbackUrl.toString() },
     });
     if (authError) setError(authError.message);
   };
