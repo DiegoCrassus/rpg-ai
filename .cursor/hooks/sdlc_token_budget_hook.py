@@ -10,9 +10,13 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 DSL = REPO / ".sdlc" / "dsl"
+HOOKS = Path(__file__).resolve().parent
 if str(DSL) not in sys.path:
     sys.path.insert(0, str(DSL))
+if str(HOOKS) not in sys.path:
+    sys.path.insert(0, str(HOOKS))
 
+from sdlc_gateway_lib import read_payload  # noqa: E402
 from token_budget import (  # noqa: E402
     check_allow_action,
     load_config,
@@ -20,17 +24,6 @@ from token_budget import (  # noqa: E402
     reset_session,
     status_text,
 )
-
-
-def _read_payload() -> dict:
-    raw = sys.stdin.read()
-    if not raw.strip():
-        return {}
-    try:
-        data = json.loads(raw)
-    except json.JSONDecodeError:
-        return {"raw": raw}
-    return data if isinstance(data, dict) else {}
 
 
 def _allow(extra: str = "") -> None:
@@ -122,9 +115,9 @@ def main() -> None:
         ],
     )
     args = parser.parse_args()
-    payload = _read_payload()
-
-    handlers = {
+    try:
+        payload = read_payload()
+        handlers = {
         "session-start": cmd_session_start,
         "after-response": cmd_after_response,
         "after-thought": cmd_after_thought,
@@ -132,8 +125,15 @@ def main() -> None:
         "subagent-stop": cmd_subagent_stop,
         "before-prompt": cmd_before_prompt,
         "stop": cmd_stop,
-    }
-    handlers[args.mode](payload)
+        }
+        handlers[args.mode](payload)
+    except SystemExit:
+        raise
+    except Exception as exc:
+        _deny(
+            "Token budget hook internal error — interaction blocked.",
+            f"{type(exc).__name__}: {exc}",
+        )
 
 
 if __name__ == "__main__":

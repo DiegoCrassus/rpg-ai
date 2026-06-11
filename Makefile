@@ -35,7 +35,7 @@ help:
 	@echo "  token-budget-status  Show token ledger (session/turn limits)"
 	@echo "  token-budget-reset   Reset token session counters"
 	@echo ""
-	@echo "  studio-dev        Studio API :8100 + UI :5174 (install npm in app/studio-frontend first)"
+	@echo "  studio-dev        Studio API :8100 + UI :5174 (install npm in studio/frontend first)"
 	@echo "  studio-api        Studio API only on :8100"
 	@echo "  studio-smoke      HTTP smoke (API must be running; honors STUDIO_AUTH_TOKEN)"
 	@echo "  studio-e2e        Playwright E2E — smoke routes + workflow builder"
@@ -161,20 +161,20 @@ export-pdf:
 
 studio-api:
 	@echo "Studio API http://127.0.0.1:8100 (Ctrl+C stops)"
-	@STUDIO_REPO_ROOT=$$(pwd) PYTHONPATH=app/studio-backend/src:$$PWD $(PYTHON) -m uvicorn studio_service.main:app --reload --host 127.0.0.1 --port 8100
+	@STUDIO_REPO_ROOT=$$(pwd) PYTHONPATH=studio/backend/src:$$PWD $(PYTHON) -m uvicorn studio_service.main:app --reload --host 127.0.0.1 --port 8100
 
 studio-smoke:
-	@cd app/studio-frontend && npm run smoke
+	@cd studio/frontend && npm run smoke
 
 studio-e2e:
 	@bash tests/e2e/run-studio-e2e.sh
 
 studio-dev:
-	@test -d app/studio-frontend/node_modules || (echo "Run: cd app/studio-frontend && npm install" && exit 1)
+	@test -d studio/frontend/node_modules || (echo "Run: cd studio/frontend && npm install" && exit 1)
 	@echo "Starting Studio API http://127.0.0.1:8100 and UI http://127.0.0.1:5174 (Ctrl+C stops both)"
 	@trap 'kill 0' INT TERM EXIT; \
-	  STUDIO_REPO_ROOT=$$(pwd) PYTHONPATH=app/studio-backend/src:$$PWD $(PYTHON) -m uvicorn studio_service.main:app --reload --host 127.0.0.1 --port 8100 & \
-	  cd app/studio-frontend && npm run dev & \
+	  STUDIO_REPO_ROOT=$$(pwd) PYTHONPATH=studio/backend/src:$$PWD $(PYTHON) -m uvicorn studio_service.main:app --reload --host 127.0.0.1 --port 8100 & \
+	  cd studio/frontend && npm run dev & \
 	  wait
 
 supabase-start:

@@ -95,16 +95,24 @@ def enforce_next_subagent(payload: dict, policy: dict) -> None:
 
 
 def main() -> None:
-    payload = read_payload()
-    policy = require_policy()
+    try:
+        payload = read_payload()
+        policy = require_policy()
 
-    deny_unsafe_shell(extract_command(payload), policy)
+        deny_unsafe_shell(extract_command(payload), policy)
 
-    # Pipeline routing applies only when gate enforcement is strict.
-    if not gate_enforcement_off():
-        enforce_next_subagent(payload, policy)
+        # Pipeline routing applies only when gate enforcement is strict.
+        if not gate_enforcement_off():
+            enforce_next_subagent(payload, policy)
 
-    allow()
+        allow()
+    except SystemExit:
+        raise
+    except Exception as exc:
+        deny(
+            "SDLC gateway internal error — interaction blocked.",
+            f"{type(exc).__name__}: {exc}",
+        )
 
 
 if __name__ == "__main__":

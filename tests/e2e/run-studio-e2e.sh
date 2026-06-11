@@ -25,13 +25,13 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-cd "$ROOT/app/studio-frontend"
+cd "$ROOT/studio/frontend"
 npm run build
 
 API_PORT="$(pick_free_port "${API_PORT}" 8102 8110)"
 UI_PORT="$(pick_free_port "${UI_PORT}" 5175 5180)"
 cd "$ROOT"
-STUDIO_REPO_ROOT="$ROOT" PYTHONPATH="$ROOT/app/studio-backend/src:$ROOT" \
+STUDIO_REPO_ROOT="$ROOT" PYTHONPATH="$ROOT/studio/backend/src:$ROOT" \
   python3 -m uvicorn studio_service.main:app --host 127.0.0.1 --port "$API_PORT" &
 API_PID=$!
 sleep 1
@@ -40,7 +40,7 @@ if ! kill -0 "$API_PID" 2>/dev/null; then
   exit 1
 fi
 
-cd "$ROOT/app/studio-frontend"
+cd "$ROOT/studio/frontend"
 VITE_STUDIO_API_URL="http://127.0.0.1:${API_PORT}" npm run preview -- --host 127.0.0.1 --port "$UI_PORT" &
 UI_PID=$!
 

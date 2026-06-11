@@ -1,0 +1,159 @@
+schema_id: studio.validation_result
+schema_version: "0.2.0"
+description: Descriptive, non-executable schema for Studio-readable validation result records over SDLC, Cursor, Plane, GitHub, and Studio artifacts.
+x_contract: ../validation-result-ir-contract.md
+x_invariants:
+  - Validation Result IR records describe outcomes and references only; they do not perform checks, trigger checks, enforce gates, invoke commands, call services, or update external systems.
+  - Durable delivery evidence remains in Plane, and PR, review, CI, merge, branch, and repository state remain in GitHub.
+  - Source references point to repository paths or external authorities without copying authoritative source bodies, generated outputs, command bodies, check output bodies, or durable evidence.
+  - Checker metadata names the descriptive checker authority only; it must not include invocation targets, command bodies, shell invocations, API calls, or validator internals.
+  - checked_at is descriptive date-time metadata only and does not imply freshness, live execution, or a guarantee that a check has been rerun.
+type: object
+required:
+  - id
+  - target_ref
+  - check_type
+  - status
+  - messages
+  - source_refs
+properties:
+  id:
+    type: string
+    description: Stable descriptive validation result identifier such as validation.<scope>.<name>; it identifies a record, not an executable check.
+    pattern: ^validation\.[a-z0-9][a-z0-9_.-]*$
+    maxLength: 140
+  target_ref:
+    $ref: "#/definitions/target_ref"
+  check_type:
+    type: string
+    description: Descriptive check category; this field does not implement or invoke the check.
+    enum:
+      - yaml_parse
+      - path_exists
+      - path_scope
+      - relationship_target
+      - doctor
+      - lint
+      - policy
+      - custom
+  status:
+    type: string
+    description: Outcome status recorded for display or traceability only.
+    enum:
+      - pass
+      - warn
+      - fail
+      - not_run
+  messages:
+    type: array
+    description: Human-readable messages with optional source path context; messages must stay concise and must not copy authoritative source bodies, generated output bodies, command output bodies, or durable delivery evidence.
+    minItems: 1
+    items:
+      $ref: "#/definitions/message"
+  source_refs:
+    type: array
+    description: Repository paths or external authority references that ground the validation result.
+    minItems: 1
+    uniqueItems: true
+    items:
+      $ref: "#/definitions/source_ref"
+  checked_by:
+    type: string
+    description: Optional descriptive checker name or authority label; not an invocation target, executable command, API endpoint, or agent handoff.
+    maxLength: 120
+  checker_version:
+    type: string
+    description: Optional descriptive checker version label; metadata only.
+    maxLength: 80
+  checker_authority:
+    $ref: "#/definitions/source_ref"
+  checked_at:
+    type: string
+    description: Optional date-time when this descriptive result was recorded or observed; it does not guarantee freshness or live execution.
+    format: date-time
+definitions:
+  target_ref:
+    type: object
+    description: Target described by this validation result; targets remain pointers to their authoritative source or derived Studio object.
+    required:
+      - ref_type
+      - ref
+    properties:
+      ref_type:
+        type: string
+        description: Target reference kind.
+        enum:
+          - graph
+          - node
+          - edge
+          - registry_entity
+          - workflow
+          - stage
+          - path
+          - plane
+          - github
+      ref:
+        type: string
+        description: Stable graph ID, node ID, edge ID, registry ID, workflow/stage identifier, repository path, Plane card ID, or GitHub PR/check reference.
+        minLength: 1
+        maxLength: 220
+      summary:
+        type: string
+        description: Optional concise explanation of the target; do not copy source bodies or evidence.
+        maxLength: 180
+    additionalProperties: false
+  source_ref:
+    type: object
+    required:
+      - ref_type
+      - ref
+    properties:
+      ref_type:
+        type: string
+        description: Whether ref points to a repository path or an external authority.
+        enum:
+          - path
+          - plane
+          - github
+      ref:
+        type: string
+        description: Repository path, Plane card ID, GitHub PR/check reference, or other stable external authority reference.
+        minLength: 1
+        maxLength: 220
+      summary:
+        type: string
+        description: Optional concise explanation of why this source grounds the result; do not copy source bodies, generated outputs, command outputs, or durable evidence.
+        maxLength: 180
+    additionalProperties: false
+  message:
+    type: object
+    required:
+      - level
+      - text
+    properties:
+      level:
+        type: string
+        description: Human-facing message severity.
+        enum:
+          - info
+          - warn
+          - error
+      text:
+        type: string
+        description: Concise human-readable text; do not copy authoritative source bodies, generated outputs, command output bodies, or durable delivery evidence.
+        minLength: 1
+        maxLength: 500
+      path:
+        type: string
+        description: Optional repository path related to the message.
+        maxLength: 220
+      line:
+        type: integer
+        description: Optional 1-based source line for human navigation only.
+        minimum: 1
+      column:
+        type: integer
+        description: Optional 1-based source column for human navigation only.
+        minimum: 1
+    additionalProperties: false
+additionalProperties: false

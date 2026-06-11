@@ -7,12 +7,14 @@ import json
 import sys
 
 from sdlc_gateway_lib import (
+    allow,
     emit_studio_event,
     fallback_for,
     handoff_value,
     normalize_agent,
     parse_handoff,
     read_handoff,
+    read_payload,
     require_policy,
     routing,
     validate_handoff,
@@ -66,9 +68,20 @@ Required action:
 
 
 def main() -> None:
-    # Read and ignore the event payload for now; the repository handoff is the
-    # deterministic source for routing after subagents stop.
-    sys.stdin.read()
+    try:
+        _run_main()
+    except SystemExit:
+        raise
+    except Exception as exc:
+        followup(
+            "planner",
+            "post-gateway internal error",
+            [f"{type(exc).__name__}: {exc}"],
+        )
+
+
+def _run_main() -> None:
+    read_payload()
 
     policy = require_policy()
 
@@ -136,7 +149,7 @@ def main() -> None:
         except Exception as exc:
             followup(previous, "handoff evidence verifier error", [str(exc)])
 
-    sys.exit(0)
+    allow()
 
 
 if __name__ == "__main__":

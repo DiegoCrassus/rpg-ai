@@ -1,0 +1,111 @@
+schema_id: studio.workflow
+schema_version: "0.1.0"
+description: Descriptive schema for SDLC workflow views assembled from existing repository artifacts.
+type: object
+required:
+  - workflow
+properties:
+  workflow:
+    type: object
+    required:
+      - id
+      - name
+      - description
+      - source_refs
+      - stages
+      - transitions
+      - non_goals
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+      source_refs:
+        type: array
+        description: Existing .sdlc/ or .cursor/ paths used to describe this workflow.
+        items:
+          type: string
+      stages:
+        type: array
+        description: Ordered or related descriptive stages; stages do not execute.
+        items:
+          type: object
+          required:
+            - id
+            - name
+            - stage_ref
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            stage_ref:
+              type: string
+              description: Registry entity ID for an SDLC stage or lifecycle artifact.
+            agent_ref:
+              type: string
+              description: Optional registry entity ID for a responsible agent.
+            gate_refs:
+              type: array
+              items:
+                type: string
+            skill_refs:
+              type: array
+              items:
+                type: string
+            command_refs:
+              type: array
+              items:
+                type: string
+            policy_refs:
+              type: array
+              items:
+                type: string
+            template_refs:
+              type: array
+              items:
+                type: string
+            hook_refs:
+              type: array
+              items:
+                type: string
+            rule_refs:
+              type: array
+              items:
+                type: string
+      transitions:
+        type: array
+        description: Descriptive transitions between workflow stages.
+        items:
+          type: object
+          required:
+            - from
+            - to
+            - relation
+            - source_refs
+          properties:
+            from:
+              type: string
+            to:
+              type: string
+            relation:
+              type: string
+              enum:
+                - next
+                - branch
+                - feedback
+                - recovery
+                - finish
+                - documents
+            source_refs:
+              type: array
+              items:
+                type: string
+      non_goals:
+        type: array
+        description: Explicit statements that this workflow view is non-executable.
+        items:
+          type: string
+additionalProperties: false

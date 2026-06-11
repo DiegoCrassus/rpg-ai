@@ -3,9 +3,11 @@
 
 from __future__ import annotations
 
+import io
 import json
 import re
 import sys
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -79,8 +81,29 @@ def emit_studio_event(
         return
 
 
+def read_stdin_text(timeout_seconds: float = 0.25) -> str:
+    """Read hook stdin without blocking indefinitely (Windows pipe-safe)."""
+    if sys.stdin.isatty():
+        return ""
+    if isinstance(sys.stdin, io.StringIO):
+        return sys.stdin.read()
+
+    chunks: list[str] = []
+
+    def _reader() -> None:
+        try:
+            chunks.append(sys.stdin.read())
+        except Exception:
+            return
+
+    thread = threading.Thread(target=_reader, daemon=True)
+    thread.start()
+    thread.join(timeout=timeout_seconds)
+    return chunks[0] if chunks else ""
+
+
 def read_payload() -> dict[str, Any]:
-    raw = sys.stdin.read()
+    raw = read_stdin_text()
     if not raw.strip():
         return {}
     try:

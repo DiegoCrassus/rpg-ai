@@ -1,0 +1,402 @@
+schema_id: studio.graph
+schema_version: "0.2.0"
+description: Descriptive, non-executable schema for SDLC Studio Graph IR documents.
+type: object
+required:
+  - graph
+  - nodes
+  - edges
+x_contract: ../graph-ir-contract.md
+x_invariants:
+  - Graph IR is derived and referential; it is not authoritative for process, workflow, workboard, PR, CI, merge, or evidence state.
+  - Authoritative behavior and durable state remain in .sdlc/, .cursor/, Plane, and GitHub; .sdlc/registry/ and Graph IR are referential only.
+  - Source references point to real repository paths or external authority references without copying rule bodies, lifecycle text, prompts, command bodies, hook logic, templates, evidence, generated outputs, or source file bodies.
+  - Nodes and edges are descriptive only and must not execute commands, enforce gates, invoke agents, run workflows, compile graphs, call validators, or store runtime state.
+  - Direction is semantic and explicit as from -> relation -> to; inverse or bidirectional meaning requires a separate edge.
+  - Annotations are advisory and non-authoritative.
+  - Validation attachments describe Validation Result IR concepts from ../validation-result-ir-contract.md; they do not run checks or store durable evidence.
+  - Graph IR is not coupled to UI libraries, canvas coordinates, React components, React Flow, TLDraw, compiler internals, validator logic, backend, frontend, APIs, or databases.
+properties:
+  graph:
+    type: object
+    required:
+      - id
+      - name
+      - description
+      - version
+      - source_refs
+      - non_goals
+    properties:
+      id:
+        type: string
+        description: Stable Studio graph identifier.
+        pattern: ^graph\.[a-z0-9][a-z0-9_.-]*$
+        maxLength: 96
+      name:
+        type: string
+        description: Human-readable graph name.
+        minLength: 1
+        maxLength: 120
+      description:
+        type: string
+        description: Short description of the derived graph view.
+        minLength: 1
+        maxLength: 240
+      version:
+        type: string
+        description: Graph document version; descriptive metadata only.
+        maxLength: 32
+      source_refs:
+        type: array
+        description: Repository paths or external authority references that ground the graph view.
+        minItems: 1
+        uniqueItems: true
+        items:
+          $ref: "#/definitions/source_ref"
+      annotations:
+        type: array
+        description: Advisory notes for the graph view.
+        items:
+          $ref: "#/definitions/annotation"
+      validation_attachments:
+        type: array
+        description: Descriptive Validation Result IR attachments for the graph view; attachments do not run checks or store durable evidence.
+        items:
+          $ref: "#/definitions/validation_attachment"
+      non_goals:
+        type: array
+        description: Explicit non-executable boundaries for this graph view.
+        minItems: 1
+        uniqueItems: true
+        items:
+          type: string
+          maxLength: 240
+    additionalProperties: false
+  nodes:
+    type: array
+    description: Descriptive Graph IR nodes for workflows, registry entities, artifacts, validation concepts, and SDLC/Cursor source areas.
+    items:
+      type: object
+      required:
+        - id
+        - type
+        - category
+        - label
+        - source_refs
+      properties:
+        id:
+          type: string
+          description: Stable node identifier within the graph.
+          pattern: ^node\.[a-z0-9][a-z0-9_.-]*$
+          maxLength: 120
+        type:
+          type: string
+          description: Descriptive node type.
+          enum:
+            - workflow
+            - stage
+            - agent
+            - skill
+            - command
+            - gate
+            - policy
+            - template
+            - hook
+            - rule
+            - module
+            - registry_entity
+            - registry_relationship
+            - validation
+            - artifact
+            - external_authority
+        category:
+          type: string
+          description: Broad source category for grouping; category is not executable behavior.
+          enum:
+            - sdlc
+            - cursor
+            - registry
+            - studio
+            - plane
+            - github
+            - derived
+        label:
+          type: string
+          description: Human-readable display label.
+          minLength: 1
+          maxLength: 120
+        registry_ref:
+          type: string
+          description: Optional registry entity or relationship ID such as sdlc.*, cursor.*, or rel.*.
+          pattern: ^((sdlc|cursor)\.[a-z0-9][a-z0-9_.-]*|rel\.[a-z0-9][a-z0-9_.-]*)$
+          maxLength: 120
+        entity_ref:
+          type: string
+          description: Optional stable entity reference for a source artifact or external authority.
+          maxLength: 160
+        workflow_ref:
+          type: string
+          description: Optional workflow or stage reference from descriptive workflow views.
+          maxLength: 160
+        source_refs:
+          type: array
+          description: Repository paths or external authority references that ground the node.
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: "#/definitions/source_ref"
+        annotations:
+          type: array
+          description: Advisory node annotations.
+          items:
+            $ref: "#/definitions/annotation"
+        validation_attachments:
+          type: array
+          description: Descriptive Validation Result IR attachments for this node; attachments do not run checks or store durable evidence.
+          items:
+            $ref: "#/definitions/validation_attachment"
+      additionalProperties: false
+    uniqueItems: true
+  edges:
+    type: array
+    description: Directed descriptive Graph IR relationships between nodes; edges do not execute commands or workflows.
+    items:
+      type: object
+      required:
+        - id
+        - from
+        - to
+        - relation
+        - source_refs
+      properties:
+        id:
+          type: string
+          description: Stable edge identifier within the graph.
+          pattern: ^edge\.[a-z0-9][a-z0-9_.-]*$
+          maxLength: 140
+        from:
+          type: string
+          description: Source node ID; direction is semantic and non-executable.
+          pattern: ^node\.[a-z0-9][a-z0-9_.-]*$
+          maxLength: 120
+        to:
+          type: string
+          description: Target node ID; direction is semantic and non-executable.
+          pattern: ^node\.[a-z0-9][a-z0-9_.-]*$
+          maxLength: 120
+        relation:
+          type: string
+          description: Descriptive relationship type; it does not invoke behavior.
+          enum:
+            - contains
+            - references
+            - governs
+            - validates
+            - uses
+            - hands_off_to
+            - transitions_to
+            - documents
+            - indexes
+            - supports
+        label:
+          type: string
+          description: Optional human-readable edge label.
+          maxLength: 120
+        summary:
+          type: string
+          description: Optional short referential edge summary without copied source content or evidence.
+          maxLength: 180
+        source_refs:
+          type: array
+          description: Repository paths or external authority references that ground the relationship.
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: "#/definitions/source_ref"
+        annotations:
+          type: array
+          description: Advisory edge annotations.
+          items:
+            $ref: "#/definitions/annotation"
+        validation_attachments:
+          type: array
+          description: Descriptive Validation Result IR attachments for this edge; attachments do not run checks or store durable evidence.
+          items:
+            $ref: "#/definitions/validation_attachment"
+      additionalProperties: false
+    uniqueItems: true
+definitions:
+  source_ref:
+    type: object
+    required:
+      - ref_type
+      - ref
+    properties:
+      ref_type:
+        type: string
+        description: Whether ref points to a repository path or an external authority.
+        enum:
+          - path
+          - plane
+          - github
+      ref:
+        type: string
+        description: Repository path, Plane card ID, GitHub PR/check reference, or other stable external authority reference.
+        minLength: 1
+        maxLength: 220
+      summary:
+        type: string
+        description: Optional concise explanation of why this source grounds the derived graph object; do not copy source bodies or evidence.
+        maxLength: 180
+    additionalProperties: false
+  annotation:
+    type: object
+    required:
+      - kind
+      - text
+    properties:
+      kind:
+        type: string
+        description: Advisory annotation kind; annotations are non-authoritative.
+        enum:
+          - note
+          - rationale
+          - risk
+          - open_question
+          - evidence_hint
+          - handoff_context
+      text:
+        type: string
+        description: Concise advisory text without copied source bodies, generated outputs, or durable evidence.
+        minLength: 1
+        maxLength: 500
+      source_refs:
+        type: array
+        description: Optional source references that ground this annotation.
+        uniqueItems: true
+        items:
+          $ref: "#/definitions/source_ref"
+    additionalProperties: false
+  validation_attachment:
+    type: object
+    description: Embedded descriptive summary or reference aligned with Validation Result IR; this attachment does not execute validation and is not durable evidence.
+    required:
+      - target_ref
+      - check_type
+      - status
+      - messages
+      - source_refs
+    properties:
+      target_ref:
+        $ref: "#/definitions/target_ref"
+      validation_ref:
+        type: string
+        description: Optional reference to a Studio-readable Validation Result IR record.
+        pattern: ^validation\.[a-z0-9][a-z0-9_.-]*$
+        maxLength: 140
+      check_type:
+        type: string
+        description: Descriptive check type aligned with Validation Result IR concepts; this field does not implement or invoke the check.
+        enum:
+          - yaml_parse
+          - path_exists
+          - path_scope
+          - relationship_target
+          - doctor
+          - lint
+          - policy
+          - custom
+      status:
+        type: string
+        description: Descriptive outcome status; this field does not run or trigger the check.
+        enum:
+          - pass
+          - warn
+          - fail
+          - not_run
+      messages:
+        type: array
+        description: Human-readable validation messages; do not copy source bodies, generated output bodies, command output bodies, or durable evidence.
+        minItems: 1
+        items:
+          type: object
+          required:
+            - level
+            - text
+          properties:
+            level:
+              type: string
+              enum:
+                - info
+                - warn
+                - error
+            text:
+              type: string
+              description: Concise human-readable text without copied source bodies, generated outputs, command outputs, or durable evidence.
+              maxLength: 500
+            path:
+              type: string
+              description: Optional repository path related to the message.
+              maxLength: 220
+            line:
+              type: integer
+              description: Optional 1-based source line for human navigation only.
+              minimum: 1
+            column:
+              type: integer
+              description: Optional 1-based source column for human navigation only.
+              minimum: 1
+          additionalProperties: false
+      source_refs:
+        type: array
+        description: Repository paths or external authority references that supplied validation context.
+        minItems: 1
+        uniqueItems: true
+        items:
+          $ref: "#/definitions/source_ref"
+      checked_by:
+        type: string
+        description: Optional descriptive checker name or authority; not an invocation target.
+        maxLength: 120
+      checker_version:
+        type: string
+        description: Optional descriptive checker version label; metadata only.
+        maxLength: 80
+      checker_authority:
+        $ref: "#/definitions/source_ref"
+      checked_at:
+        type: string
+        description: Optional descriptive timestamp from a validation result concept; it does not imply freshness or live execution.
+        format: date-time
+    additionalProperties: false
+  target_ref:
+    type: object
+    description: Target described by a Validation Result IR concept; targets remain pointers to authoritative sources or derived Studio objects.
+    required:
+      - ref_type
+      - ref
+    properties:
+      ref_type:
+        type: string
+        description: Target reference kind.
+        enum:
+          - graph
+          - node
+          - edge
+          - registry_entity
+          - workflow
+          - stage
+          - path
+          - plane
+          - github
+      ref:
+        type: string
+        description: Stable graph ID, node ID, edge ID, registry ID, workflow/stage identifier, repository path, Plane card ID, or GitHub PR/check reference.
+        minLength: 1
+        maxLength: 220
+      summary:
+        type: string
+        description: Optional concise explanation of the target; do not copy source bodies or evidence.
+        maxLength: 180
+    additionalProperties: false
+additionalProperties: false

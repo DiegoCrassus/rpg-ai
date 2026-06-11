@@ -97,6 +97,36 @@ def test_pre_gateway_allows_invalid_json_payload(capsys, monkeypatch) -> None:
     assert result["permission"] == "allow"
 
 
+def test_read_stdin_text_returns_empty_without_blocking(monkeypatch) -> None:
+    import threading
+    import time
+
+    class BlockingReader:
+        def isatty(self) -> bool:
+            return False
+
+        def read(self) -> str:
+            time.sleep(5)
+            return "{}"
+
+    monkeypatch.setattr(gateway.sys, "stdin", BlockingReader())
+
+    start = time.monotonic()
+    assert gateway.read_stdin_text(timeout_seconds=0.1) == ""
+    assert time.monotonic() - start < 1.0
+
+
+def test_pre_gateway_allows_empty_stdin_without_hanging(capsys, monkeypatch) -> None:
+    monkeypatch.setattr(pre_gateway, "require_policy", lambda: {"pre_gateway": {}})
+    monkeypatch.setattr(pre_gateway, "gate_enforcement_off", lambda: True)
+    monkeypatch.setattr(gateway, "read_stdin_text", lambda timeout_seconds=0.25: "")
+    with pytest.raises(SystemExit) as exc_info:
+        pre_gateway.main()
+    assert exc_info.value.code == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["permission"] == "allow"
+
+
 def test_pre_gateway_skips_subagent_routing_when_enforcement_off(
     capsys, monkeypatch
 ) -> None:

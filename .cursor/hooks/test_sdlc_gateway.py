@@ -230,3 +230,35 @@ def test_post_gateway_blocks_unresolved_blockers(capsys, monkeypatch) -> None:
 
 def test_post_gateway_treats_active_qa_none_wording_as_clear() -> None:
     assert post_gateway.blockers_are_clear("- None for QA; implementation is ready")
+
+
+def test_post_gateway_allows_complete_handoff(capsys, monkeypatch, tmp_path) -> None:
+    policy = {
+        **POLICY,
+        "post_gateway": {
+            **(POLICY.get("post_gateway") or {}),
+            "verify_handoff_evidence": False,
+        },
+    }
+    handoff_path = tmp_path / "orchestrator-handoff.md"
+    handoff_path.write_text(handoff_markdown(), encoding="utf-8")
+    monkeypatch.setattr(post_gateway, "require_policy", lambda: policy)
+    monkeypatch.setattr(gateway, "HANDOFF_PATH", handoff_path)
+    monkeypatch.setattr(gateway, "read_stdin_text", lambda timeout_seconds=0.25: "")
+    monkeypatch.setattr(
+        post_gateway,
+        "routing",
+        lambda policy: {
+            "previous_agent": "implementer",
+            "next_agent": "qa",
+            "stage_complete": "yes",
+            "blockers": "- none",
+        },
+    )
+
+    with pytest.raises(SystemExit) as exc_info:
+        post_gateway.main()
+
+    assert exc_info.value.code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["permission"] == "allow"

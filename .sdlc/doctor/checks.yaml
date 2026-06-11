@@ -33,10 +33,10 @@ checks:
     - app/frontend
     - app/infra
     - app/shared
-    - app/studio-backend
-    - app/studio-backend/src/studio_service
-    - app/studio-frontend
     - studio
+    - studio/backend
+    - studio/backend/src/studio_service
+    - studio/frontend
     - tests/e2e
     - tests/e2e/studio
     - docs
@@ -99,13 +99,13 @@ checks:
     - .cursor/hooks.json
     - Makefile
     - README.md
-    - app/studio-backend/README.md
-    - app/studio-frontend/README.md
     - studio/README.md
-    - app/studio-backend/src/studio_service/main.py
-    - app/studio-backend/src/studio_service/api/router.py
-    - app/studio-frontend/package.json
-    - app/studio-frontend/vite.config.ts
+    - studio/backend/README.md
+    - studio/frontend/README.md
+    - studio/backend/src/studio_service/main.py
+    - studio/backend/src/studio_service/api/router.py
+    - studio/frontend/package.json
+    - studio/frontend/vite.config.ts
     - tests/e2e/playwright.config.ts
     - tests/e2e/studio/smoke.spec.ts
     - tests/e2e/studio/builder.spec.ts
