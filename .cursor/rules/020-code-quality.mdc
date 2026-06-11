@@ -1,0 +1,50 @@
+---
+description: Code quality standards. Applied during implementation and review stages.
+globs: ["app/**", ".sdlc/dsl/**"]
+---
+
+# Code Quality Standards
+
+## General
+
+- Write code for humans to read first, machines to execute second.
+- Prefer explicit over implicit.
+- Prefer simple over clever.
+- Keep functions small and single-purpose.
+
+## Python
+
+- Follow PEP 8.
+- Use type hints on all public functions.
+- Use `dataclasses` or `Pydantic` for structured data (prefer dataclasses unless Pydantic is already in use).
+- Use `pathlib.Path` over `os.path` for new code.
+- Use `yaml.safe_load` — never `yaml.load`.
+- Handle errors explicitly; never swallow exceptions silently.
+- No `print` statements in library code — use `logging`.
+
+## Testing
+
+- Tests go in `app/<area>/tests/` or `tests/`.
+- Test file names: `test_<module>.py`.
+- Each new function must have at least one unit test.
+- Tests must be deterministic — no random state, no network calls in unit tests.
+
+## Dependencies
+
+- Add dependencies only when necessary.
+- Add to `pyproject.toml` with a minimum version constraint.
+- Never pin to an exact version unless a known incompatibility exists.
+- Standard library preferred over third-party for simple tasks.
+
+## Diffs
+
+- Each commit must be focused on a single concern.
+- Do not mix refactoring with feature changes.
+- Do not reformat files that are not being modified.
+
+## Comments
+
+- Comment intent, not mechanics.
+- Avoid comments that restate what the code already says.
+- Use `# TODO(author): <reason>` format for known gaps.
+- Use `# NOTE:` for non-obvious constraints or trade-offs.

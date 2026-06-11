@@ -1,0 +1,156 @@
+registry_version: "0.1.0"
+relationship_model:
+  schema_ref: studio/schemas/registry-relationship.schema.yaml
+  id_namespace: rel.
+  directionality: Each record is read from -> relation -> to; inverse or bidirectional meaning requires a separate relationship.
+  allowed_relation_types:
+    - indexes
+    - uses
+    - governs
+    - validates
+    - references
+    - supports
+    - documents
+  source_ref_policy: Real repository paths under .sdlc/ or .cursor/ only; references ground relationships without copying source bodies.
+  summary_policy: Short referential summaries only; no copied authoritative content or delivery evidence.
+relationships:
+  - id: rel.sdlc.manifest.indexes.workflows
+    from: sdlc.manifest.index
+    to: sdlc.workflow.transitions
+    relation: indexes
+    source_refs:
+      - .sdlc/sdlc.yaml
+    summary: Manifest points to workflow transition data.
+  - id: rel.sdlc.manifest.indexes.stages
+    from: sdlc.manifest.index
+    to: sdlc.stage.lifecycle
+    relation: indexes
+    source_refs:
+      - .sdlc/sdlc.yaml
+    summary: Manifest points to stage lifecycle data.
+  - id: rel.sdlc.manifest.indexes.gates
+    from: sdlc.manifest.index
+    to: sdlc.gate.paths
+    relation: indexes
+    source_refs:
+      - .sdlc/sdlc.yaml
+    summary: Manifest points to gate path data.
+  - id: rel.sdlc.manifest.indexes.pipeline
+    from: sdlc.manifest.index
+    to: sdlc.pipeline.agents
+    relation: indexes
+    source_refs:
+      - .sdlc/sdlc.yaml
+    summary: Manifest points to agent pipeline data.
+  - id: rel.sdlc.process.governs.workflow
+    from: sdlc.process.change_lifecycle
+    to: sdlc.workflow.transitions
+    relation: governs
+    source_refs:
+      - .sdlc/process/change-lifecycle.md
+      - .sdlc/workflows/transitions.yaml
+    summary: Change lifecycle governs workflow transition usage.
+  - id: rel.sdlc.master.governs.pipeline
+    from: sdlc.process.master
+    to: sdlc.pipeline.agents
+    relation: governs
+    source_refs:
+      - .sdlc/process/master-workflow.md
+      - .sdlc/pipeline/agents.yaml
+    summary: Master workflow governs agent pipeline order.
+  - id: rel.sdlc.workflow.uses.stages
+    from: sdlc.workflow.transitions
+    to: sdlc.stage.definitions
+    relation: uses
+    source_refs:
+      - .sdlc/workflows/transitions.yaml
+      - .sdlc/stages/definitions.yaml
+    summary: Workflow transitions use stage definitions.
+  - id: rel.sdlc.gates.use.gateway.policy
+    from: sdlc.gate.paths
+    to: sdlc.gateway.policy
+    relation: uses
+    source_refs:
+      - .sdlc/gates/paths.yaml
+      - .sdlc/gateways/policy.yaml
+    summary: Gate paths are checked alongside gateway policy.
+  - id: rel.sdlc.doctor.validates.manifest
+    from: sdlc.doctor.checks
+    to: sdlc.manifest.index
+    relation: validates
+    source_refs:
+      - .sdlc/doctor/checks.yaml
+      - .sdlc/sdlc.yaml
+    summary: Doctor checks validate SDLC structure and manifest expectations.
+  - id: rel.cursor.orchestrator.governs.delegation
+    from: cursor.rule.orchestrator
+    to: cursor.skill.subagent_delegation
+    relation: governs
+    source_refs:
+      - .cursor/rules/orchestrator.mdc
+      - .cursor/skills/subagent-delegation/SKILL.md
+    summary: Orchestrator rule and delegation skill define agent boundaries.
+  - id: rel.cursor.implementer.uses.start.change
+    from: cursor.agent.implementer
+    to: cursor.skill.start_change
+    relation: uses
+    source_refs:
+      - .cursor/agents/implementer.md
+      - .cursor/skills/start-change/SKILL.md
+    summary: Implementer works within a started gated change.
+  - id: rel.cursor.qa.uses.checklist
+    from: cursor.agent.qa
+    to: cursor.skill.qa_minimum_checklist
+    relation: uses
+    source_refs:
+      - .cursor/agents/qa.md
+      - .cursor/skills/qa-minimum-checklist/SKILL.md
+    summary: QA agent uses the minimum checklist skill.
+  - id: rel.cursor.devops.uses.finish.change
+    from: cursor.agent.devops
+    to: cursor.skill.finish_change
+    relation: uses
+    source_refs:
+      - .cursor/agents/devops.md
+      - .cursor/skills/finish-change/SKILL.md
+    summary: DevOps uses finish-change guidance for completion.
+  - id: rel.cursor.doctor.command.references.sdlc.doctor
+    from: cursor.command.sdlc_doctor
+    to: sdlc.doctor.checks
+    relation: references
+    source_refs:
+      - .cursor/commands/sdlc-doctor.md
+      - .sdlc/doctor/checks.yaml
+    summary: Cursor doctor command references SDLC doctor checks.
+  - id: rel.cursor.run.command.references.cli
+    from: cursor.command.sdlc_run
+    to: sdlc.script.cli
+    relation: references
+    source_refs:
+      - .cursor/commands/sdlc-run.md
+      - .sdlc/dsl/cli.py
+    summary: Cursor run command references SDLC CLI workflow operations.
+  - id: rel.sdlc.template.plane.supports.workboard
+    from: sdlc.template.plane
+    to: sdlc.workboard.granularity
+    relation: supports
+    source_refs:
+      - .sdlc/templates/plane/evidence-template.json
+      - .sdlc/workboard/granularity.yaml
+    summary: Plane template supports workboard evidence conventions.
+  - id: rel.cursor.hook.gate.references.policy
+    from: cursor.hook.sdlc_gate
+    to: sdlc.gateway.policy
+    relation: references
+    source_refs:
+      - .cursor/hooks/sdlc_gate_hook.py
+      - .sdlc/gateways/policy.yaml
+    summary: Gate hook references SDLC gateway policy expectations.
+  - id: rel.sdlc.memory.records.pipeline.handoff
+    from: sdlc.memory.handoff
+    to: sdlc.pipeline.agents
+    relation: documents
+    source_refs:
+      - .sdlc/memory/orchestrator-handoff.md
+      - .sdlc/pipeline/agents.yaml
+    summary: Handoff records current agent routing context.

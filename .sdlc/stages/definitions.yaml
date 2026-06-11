@@ -1,0 +1,335 @@
+version: '2.0'
+description: Stage definitions with ordering, mode, V-Bounce emphasis, hooks, context
+  budget, inputs, outputs, evidence, and gates.
+stages:
+- id: ticket
+  name: Ticket / Idea
+  order: 1
+  mode: deterministic
+  vbounce_role: front-load
+  emphasis: high
+  context_budget_tokens: 8000
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - docs/product
+    - docs/architecture
+    - app/
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - Plane work item exists with title and acceptance criteria
+    - Scope statement is present and bounded
+  objective: Capture and validate a work item before refinement begins.
+  inputs:
+  - User request or business need
+  - Context from .sdlc/memory/business-rules.md
+  outputs:
+  - Ticket description with title and intent
+  - Acceptance criteria (at least 3)
+  - Initial constraints list
+  required_evidence:
+  - Written ticket with title, description, and acceptance criteria
+  gates:
+  - Acceptance criteria are explicit and measurable
+  - Scope is bounded (not "refactor everything")
+- id: requirements
+  name: Requirements
+  order: 2
+  mode: deterministic
+  vbounce_role: front-load
+  emphasis: high
+  context_budget_tokens: 16000
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - docs/architecture/overview.md
+    - .sdlc/memory/business-rules.md
+    - .sdlc/memory/architecture.md
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - Plane work item has non-goals list (min 3 entries)
+    - Risk registry exists with at least 2 risks
+    - Test skeleton file exists (.sdlc/memory/test-skeleton.md)
+  objective: Produce a refined specification and test skeleton that guides architecture
+    and implementation.
+  inputs:
+  - Ticket output
+  - .sdlc/memory/business-rules.md
+  - Relevant docs
+  outputs:
+  - Refined scope statement
+  - Assumptions list
+  - Non-goals list
+  - Risk registry (at least 2 risks)
+  - Test skeleton (.sdlc/memory/test-skeleton.md) — see GAP-008
+  required_evidence:
+  - Plane work item with story, scope, and acceptance criteria in description
+  gates:
+  - Non-goals explicitly documented
+  - Risks have mitigations or accepted status
+  - Test skeleton produced (even if stubs only)
+- id: architecture
+  name: Architecture
+  order: 3
+  mode: deterministic
+  vbounce_role: front-load
+  emphasis: high
+  context_budget_tokens: 24000
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - docs/architecture
+    - .sdlc/memory/architecture.md
+    - app/
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - Trade-offs section present in architecture notes
+    - Impacted files list is non-empty
+    - ADR entry created if a significant decision was made
+  objective: Define the technical solution before any code is written.
+  inputs:
+  - Requirements output
+  - .sdlc/memory/architecture.md
+  - docs/architecture/overview.md
+  outputs:
+  - Technical approach description
+  - Component/boundary diagram or description
+  - ADR entry if a significant decision was made
+  - List of impacted files and modules
+  required_evidence:
+  - Architecture notes on Plane work item and/or docs/architecture/decisions.md (ADR)
+  gates:
+  - Trade-offs documented
+  - Impacted areas listed
+  - No code written before this gate passes
+- id: implementation
+  name: Implementation
+  order: 4
+  mode: deterministic
+  vbounce_role: bounce
+  emphasis: bounce
+  context_budget_tokens: 40000
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - app/
+    - .sdlc/memory/architecture.md
+    - .sdlc/memory/test-skeleton.md
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - At least one test file changed or created
+    - Diff does not touch files outside task scope
+    - Docs updated if public interfaces changed
+  objective: Implement the planned change in small, reversible, well-scoped diffs.
+  inputs:
+  - Architecture output
+  - Test skeleton from requirements stage
+  - Relevant tests and existing code
+  outputs:
+  - Code changes
+  - Updated tests (from test skeleton)
+  - Docs updated if architecture/infra changed
+  required_evidence:
+  - Working code that passes linting and unit tests
+  gates:
+  - Tests exist for new logic
+  - Diff is focused and does not touch unrelated areas
+  - Docs updated if public interfaces changed
+- id: validation
+  name: Validation
+  order: 5
+  mode: deterministic
+  vbounce_role: back-load
+  emphasis: high
+  context_budget_tokens: 20000
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - app/
+    - .sdlc/memory/test-skeleton.md
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - Test results file exists with pass/fail counts
+    - Each acceptance criterion has a verification entry
+    - Doctor exit code recorded
+  objective: Confirm the implementation meets acceptance criteria.
+  inputs:
+  - Implementation output
+  - Acceptance criteria from ticket
+  - Test skeleton from requirements stage
+  outputs:
+  - Test results
+  - QA notes
+  - Evidence of passing gates
+  required_evidence:
+  - Test output (pass/fail) recorded
+  - Each acceptance criterion verified
+  gates:
+  - All required tests pass
+  - No fake validation (results must be real)
+  - Acceptance criteria met
+- id: review
+  name: PR & Review
+  order: 6
+  mode: deterministic
+  vbounce_role: back-load
+  emphasis: high
+  context_budget_tokens: 20000
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - docs/architecture
+    - .sdlc/process/change-lifecycle.md
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - Review decision is APPROVE, REQUEST CHANGES, or ESCALATE
+    - Risk notes section present
+    - No unaddressed high-risk items remain
+  objective: Human or agent review of correctness, security, and maintainability.
+  inputs:
+  - Validation output
+  - PR diff
+  outputs:
+  - Review decision (approve / request changes)
+  - Risk notes
+  - Required fixes list
+  required_evidence:
+  - Review comments recorded
+  - Decision documented
+  gates:
+  - Security considerations checked
+  - No unaddressed high-risk items
+  - Maintainability reviewed
+- id: deployment
+  name: Deployment
+  order: 7
+  mode: deterministic
+  vbounce_role: back-load
+  emphasis: medium
+  context_budget_tokens: 16000
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - docs/infrastructure/deployment.md
+    - .sdlc/integrations/services.yaml
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - Rollback plan is documented
+    - Environment variables verified
+    - Deployment notes record what changed and when
+  objective: Release the change safely to the target environment.
+  inputs:
+  - Review approval
+  - docs/infrastructure/deployment.md
+  outputs:
+  - Deployment notes
+  - Rollback plan
+  - Environment assumptions
+  required_evidence:
+  - Deployment executed (or skipped with reason)
+  - Rollback procedure documented
+  gates:
+  - Rollback plan exists
+  - Environment variables verified
+- id: observability
+  name: Observability
+  order: 8
+  mode: deterministic
+  vbounce_role: back-load
+  emphasis: medium
+  context_budget_tokens: 12000
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - docs/operations/observability.md
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - At least error logging confirmed
+    - Key metrics identified
+    - Observability checklist file exists
+  objective: Confirm signals are in place to detect problems after deployment.
+  inputs:
+  - Deployment output
+  - docs/operations/observability.md
+  outputs:
+  - Log coverage notes
+  - Metric definitions
+  - Expected trace paths
+  required_evidence:
+  - Observability checklist completed
+  gates:
+  - At least error logging confirmed
+  - Key metrics identified
+- id: incident
+  name: Incident
+  order: 9
+  mode: triggered
+  vbounce_role: triggered
+  emphasis: high
+  context_budget_tokens: 16000
+  trigger: Production alert or user report
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - .sdlc/memory/incidents.md
+    - docs/operations/incident-response.md
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - Incident record written to .sdlc/memory/incidents.md
+    - Root cause identified and documented
+  objective: Record and resolve production incidents systematically.
+  inputs:
+  - Incident report or alert
+  - .sdlc/memory/incidents.md
+  outputs:
+  - Incident record
+  - Mitigation steps
+  - Post-mortem summary
+  required_evidence:
+  - Incident documented in .sdlc/memory/incidents.md
+  - Root cause identified
+  gates:
+  - Mitigation applied or scheduled
+  - Communication sent if user-facing
+- id: autofix
+  name: Auto Fix
+  order: 10
+  mode: triggered
+  vbounce_role: triggered
+  emphasis: medium
+  context_budget_tokens: 24000
+  trigger: Incident evidence or validation failure
+  max_cycles: 2
+  discovery_hook:
+    script: .sdlc/scripts/discovery_hook.py
+    reads:
+    - app/
+    - .sdlc/memory/incidents.md
+    output: .sdlc/memory/discovery-context.json
+  validation_hook:
+    checks:
+    - Fix is traceable to specific error evidence
+    - Regression test added to prevent recurrence
+    - No new undocumented risks introduced
+  objective: Automatically prepare corrective changes based on incident or validation
+    evidence.
+  inputs:
+  - Incident output or validation failure
+  - Relevant code context
+  outputs:
+  - Proposed fix (diff or description)
+  - Validation plan for the fix
+  required_evidence:
+  - Fix traceable to specific evidence (not guessed)
+  gates:
+  - Fix does not introduce new risks without documentation
+  - Human review required before merge

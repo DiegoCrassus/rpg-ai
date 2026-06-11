@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "python3",
+      "args": [
+        ".cursor/mcp/env_stdio.py",
+        "--from-env",
+        "GITHUB_PERSONAL_ACCESS_TOKEN=GITHUB_PERSONAL_ACCESS_TOKEN_CLASSIC",
+        "--",
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ]
+    },
+    "plane": {
+      "command": "python3",
+      "args": [
+        ".cursor/mcp/env_stdio.py",
+        "--from-env",
+        "PLANE_API_KEY=PLANE_API_KEY",
+        "--from-env",
+        "PLANE_WORKSPACE_SLUG=BOARD_WORKSPACE_SLUG",
+        "--default",
+        "PLANE_BASE_URL=https://api.plane.so",
+        "--",
+        "uvx",
+        "plane-mcp-server",
+        "stdio"
+      ]
+    }
+  }
+}

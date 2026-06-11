@@ -1,0 +1,14 @@
+{
+  "gate_status": "open",
+  "card": "RPG-3",
+  "branch": "feature/RPG-3-backend-api-mesas-agent",
+  "stage": "implementation",
+  "intent": "FEATURE",
+  "opened_at": "2026-06-11T20:02:45.338750+00:00",
+  "last_agent": "",
+  "last_commit": "",
+  "stage_started_at": "2026-06-11T20:02:45.338750+00:00",
+  "meta": {
+    "last_gate_stage": "implementation"
+  }
+}

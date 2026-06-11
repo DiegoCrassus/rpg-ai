@@ -1,0 +1,99 @@
+version: '1.0'
+description: Governance rules enforced across all SDLC stages.
+rules:
+- id: no_fake_validation
+  name: No Fake Validation
+  severity: required
+  description: 'Never claim a command passed unless it actually ran and produced real
+    output. Never fabricate test results, Doctor results, or acceptance criteria verification.
+
+    '
+  enforced_at:
+  - validation
+  - review
+  - doctor
+- id: docs_sync_required
+  name: Docs Sync Required
+  severity: required
+  description: 'When architecture, infrastructure, operations, or public interfaces
+    change, the corresponding docs must be updated in the same work unit.
+
+    '
+  enforced_at:
+  - implementation
+  - deployment
+  - review
+- id: doctor_after_structural_change
+  name: Doctor After Structural Change
+  severity: required
+  description: 'Run the SDLC Doctor after any change that adds, removes, or renames
+    top-level directories, SDLC YAML files, or Cursor configuration files.
+
+    '
+  enforced_at:
+  - implementation
+  - deployment
+- id: small_diffs_preferred
+  name: Small Diffs Preferred
+  severity: warning
+  description: 'Prefer small, reversible, well-scoped changes over broad rewrites.
+    If a large change is necessary, document the reason explicitly.
+
+    '
+  enforced_at:
+  - implementation
+- id: explicit_assumptions
+  name: Explicit Assumptions Required
+  severity: required
+  description: 'When information is missing, record explicit assumptions. Never silently
+    assume context that is not in the codebase or docs.
+
+    '
+  enforced_at:
+  - requirements
+  - architecture
+  - implementation
+- id: handoff_before_major_transition
+  name: Handoff Before Major Transition
+  severity: required
+  description: 'Before transitioning between major stages (requirements→architecture,
+    architecture→implementation, implementation→validation), a handoff summary must
+    be produced or updated.
+
+    '
+  enforced_at:
+  - requirements
+  - architecture
+  - implementation
+  - validation
+- id: no_broad_rewrites
+  name: No Broad Rewrites Without Reason
+  severity: required
+  description: 'Never perform broad rewrites of existing code without an explicit
+    reason documented in the requirements or architecture stage.
+
+    '
+  enforced_at:
+  - implementation
+- id: inspect_before_acting
+  name: Inspect Repository Before Acting
+  severity: required
+  description: 'Before any major task, inspect the repository state. Read .sdlc/sdlc.yaml
+    and relevant memory files before proceeding.
+
+    '
+  enforced_at:
+  - ticket
+  - requirements
+  - architecture
+  - implementation
+- id: human_in_the_loop
+  name: Human In The Loop When Needed
+  severity: required
+  description: 'Auto-fix and broad refactors require human review before merge. Agent
+    must not self-approve destructive or irreversible changes.
+
+    '
+  enforced_at:
+  - autofix
+  - deployment

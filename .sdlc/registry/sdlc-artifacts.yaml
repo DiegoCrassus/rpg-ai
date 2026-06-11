@@ -1,0 +1,170 @@
+registry_version: "0.1.0"
+artifacts:
+  - id: sdlc.manifest.index
+    kind: manifest
+    name: SDLC machine index
+    path: .sdlc/sdlc.yaml
+    source_system: sdlc
+    source_module: manifest
+    summary: Machine-readable entry point for SDLC modules and core paths.
+    tags: [manifest, index, source-of-truth]
+  - id: sdlc.module.index
+    kind: module
+    name: SDLC README index
+    path: .sdlc/README.md
+    source_system: sdlc
+    source_module: manifest
+    summary: Human navigation index for SDLC modules.
+    tags: [module, documentation]
+  - id: sdlc.workflow.transitions
+    kind: workflow
+    name: Workflow transitions
+    path: .sdlc/workflows/transitions.yaml
+    source_system: sdlc
+    source_module: workflows
+    summary: Authoritative workflow transition data.
+    tags: [workflow, transitions]
+  - id: sdlc.stage.lifecycle
+    kind: stage
+    name: Stage lifecycle
+    path: .sdlc/stages/lifecycle.yaml
+    source_system: sdlc
+    source_module: stages
+    summary: Lifecycle stage data for SDLC work.
+    tags: [stage, lifecycle]
+  - id: sdlc.stage.definitions
+    kind: stage
+    name: Stage definitions
+    path: .sdlc/stages/definitions.yaml
+    source_system: sdlc
+    source_module: stages
+    summary: Stage definition data used by SDLC workflows.
+    tags: [stage, definitions]
+  - id: sdlc.gate.paths
+    kind: gate
+    name: Gate paths
+    path: .sdlc/gates/paths.yaml
+    source_system: sdlc
+    source_module: gates
+    summary: Gate path data for workflow validation.
+    tags: [gate, paths]
+  - id: sdlc.gateway.policy
+    kind: gateway_policy
+    name: Gateway policy
+    path: .sdlc/gateways/policy.yaml
+    source_system: sdlc
+    source_module: gateways
+    summary: Gateway policy data for SDLC controls.
+    tags: [gateway, policy]
+  - id: sdlc.workboard.granularity
+    kind: workboard_policy
+    name: Workboard granularity
+    path: .sdlc/workboard/granularity.yaml
+    source_system: sdlc
+    source_module: workboard
+    summary: Workboard granularity policy for Plane-backed cards.
+    tags: [workboard, plane, policy]
+  - id: sdlc.pipeline.agents
+    kind: pipeline
+    name: Agent pipeline
+    path: .sdlc/pipeline/agents.yaml
+    source_system: sdlc
+    source_module: pipeline
+    summary: Pipeline data for SDLC agent responsibilities.
+    tags: [pipeline, agents]
+  - id: sdlc.process.master
+    kind: process
+    name: Master workflow
+    path: .sdlc/process/master-workflow.md
+    source_system: sdlc
+    source_module: process
+    summary: Process authority for the SDLC workflow.
+    tags: [process, authority]
+  - id: sdlc.process.change_lifecycle
+    kind: process
+    name: Change lifecycle
+    path: .sdlc/process/change-lifecycle.md
+    source_system: sdlc
+    source_module: process
+    summary: Process authority for change delivery.
+    tags: [process, lifecycle]
+  - id: sdlc.template.root
+    kind: template
+    name: Template index
+    path: .sdlc/templates/README.md
+    source_system: sdlc
+    source_module: templates
+    summary: Entry point for SDLC templates.
+    tags: [template, documentation]
+  - id: sdlc.template.plane
+    kind: template
+    name: Plane evidence template
+    path: .sdlc/templates/plane/evidence-template.json
+    source_system: sdlc
+    source_module: templates
+    summary: Template reference for Plane evidence formatting.
+    tags: [template, plane, evidence]
+  - id: sdlc.template.planner
+    kind: template
+    name: Planner example
+    path: .sdlc/templates/planner/example-sdlc-plan.md
+    source_system: sdlc
+    source_module: templates
+    summary: Example planner template for SDLC planning.
+    tags: [template, planner]
+  - id: sdlc.doctor.checks
+    kind: doctor
+    name: Doctor checks
+    path: .sdlc/doctor/checks.yaml
+    source_system: sdlc
+    source_module: doctor
+    summary: Doctor validation check configuration.
+    tags: [doctor, validation]
+  - id: sdlc.integration.services
+    kind: integration
+    name: Integration services
+    path: .sdlc/integrations/services.yaml
+    source_system: sdlc
+    source_module: integrations
+    summary: Integration service metadata for SDLC tooling.
+    tags: [integration, services]
+  - id: sdlc.rule.governance
+    kind: rule
+    name: Governance rules
+    path: .sdlc/rules/governance.yaml
+    source_system: sdlc
+    source_module: rules
+    summary: SDLC governance rule data.
+    tags: [rules, governance]
+  - id: sdlc.script.cli
+    kind: script
+    name: SDLC CLI
+    path: .sdlc/dsl/cli.py
+    source_system: sdlc
+    source_module: scripts
+    summary: CLI entry point for SDLC workflow operations.
+    tags: [script, cli, workflow]
+  - id: sdlc.script.plane_card
+    kind: script
+    name: Plane card validator
+    path: .sdlc/scripts/plane_card.py
+    source_system: sdlc
+    source_module: scripts
+    summary: Script for Plane card validation.
+    tags: [script, plane, validation]
+  - id: sdlc.script.plane_state
+    kind: script
+    name: Plane state helper
+    path: .sdlc/scripts/plane_state.py
+    source_system: sdlc
+    source_module: scripts
+    summary: Script for Plane state transitions.
+    tags: [script, plane, workflow]
+  - id: sdlc.memory.handoff
+    kind: memory
+    name: Orchestrator handoff
+    path: .sdlc/memory/orchestrator-handoff.md
+    source_system: sdlc
+    source_module: memory
+    summary: Current handoff context between SDLC agents.
+    tags: [memory, handoff]

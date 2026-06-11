@@ -1,0 +1,330 @@
+version: '5.2-minimal'
+description: Minimal Doctor validation rules for the SDLC repository (includes Studio Service).
+checks:
+  directories:
+    severity: required
+    items:
+    - .cursor
+    - .cursor/agents
+    - .cursor/commands
+    - .cursor/hooks
+    - .cursor/rules
+    - .cursor/skills
+    - .sdlc
+    - .sdlc/doctor
+    - .sdlc/dsl
+    - .sdlc/gates
+    - .sdlc/gateways
+    - .sdlc/integrations
+    - .sdlc/manifest
+    - .sdlc/memory
+    - .sdlc/pipeline
+    - .sdlc/process
+    - .sdlc/rules
+    - .sdlc/scripts
+    - .sdlc/stages
+    - .sdlc/templates
+    - .sdlc/templates/plane
+    - .sdlc/templates/planner
+    - .sdlc/workboard
+    - .sdlc/workflows
+    - app
+    - app/backend
+    - app/frontend
+    - app/infra
+    - app/shared
+    - app/studio-backend
+    - app/studio-backend/src/studio_service
+    - app/studio-frontend
+    - studio
+    - tests/e2e
+    - tests/e2e/studio
+    - docs
+    - docs/architecture
+    - docs/handoff
+    - docs/infrastructure
+    - docs/operations
+    - docs/product
+    - docs/roadmap
+  files:
+    severity: required
+    items:
+    - AGENTS.md
+    - .sdlc/sdlc.yaml
+    - .sdlc/README.md
+    - .sdlc/doctor/README.md
+    - .sdlc/gates/README.md
+    - .sdlc/gateways/README.md
+    - .sdlc/gateways/policy.yaml
+    - .sdlc/integrations/README.md
+    - .sdlc/manifest/README.md
+    - .sdlc/memory/README.md
+    - .sdlc/pipeline/README.md
+    - .sdlc/process/README.md
+    - .sdlc/rules/README.md
+    - .sdlc/scripts/README.md
+    - .sdlc/stages/README.md
+    - .sdlc/templates/README.md
+    - .sdlc/templates/plane/README.md
+    - .sdlc/templates/plane/evidence-template.json
+    - .sdlc/templates/planner/README.md
+    - .sdlc/templates/planner/example-sdlc-plan.md
+    - .sdlc/workboard/README.md
+    - .sdlc/workflows/README.md
+    - .sdlc/manifest/catalog.yaml
+    - .sdlc/stages/lifecycle.yaml
+    - .sdlc/stages/definitions.yaml
+    - .sdlc/gates/paths.yaml
+    - .sdlc/workboard/granularity.yaml
+    - .sdlc/pipeline/agents.yaml
+    - .sdlc/workflows/transitions.yaml
+    - .sdlc/rules/governance.yaml
+    - .sdlc/integrations/services.yaml
+    - .sdlc/doctor/checks.yaml
+    - .sdlc/dsl/cli.py
+    - .sdlc/dsl/doctor.py
+    - .sdlc/dsl/doctor_health_canvas.py
+    - .sdlc/dsl/gate.py
+    - .sdlc/dsl/loader.py
+    - .sdlc/dsl/core_config.py
+    - .sdlc/dsl/workflow.py
+    - .sdlc/dsl/plane_granularity.py
+    - .sdlc/scripts/sdlc_gate.py
+    - .sdlc/scripts/plane_card.py
+    - .sdlc/scripts/plane_state.py
+    - .sdlc/scripts/auto_merge_pr.py
+    - .sdlc/scripts/discovery_hook.py
+    - .sdlc/process/master-workflow.md
+    - .sdlc/process/change-lifecycle.md
+    - .cursor/hooks.json
+    - Makefile
+    - README.md
+    - app/studio-backend/README.md
+    - app/studio-frontend/README.md
+    - studio/README.md
+    - app/studio-backend/src/studio_service/main.py
+    - app/studio-backend/src/studio_service/api/router.py
+    - app/studio-frontend/package.json
+    - app/studio-frontend/vite.config.ts
+    - tests/e2e/playwright.config.ts
+    - tests/e2e/studio/smoke.spec.ts
+    - tests/e2e/studio/builder.spec.ts
+    - tests/e2e/run-studio-e2e.sh
+    - docs/studio-service-operator-guide.md
+    - docs/architecture/studio-service-platform.md
+  forbidden_paths:
+    severity: required
+    items:
+    - .sdlc/agents.yaml
+    - .sdlc/doctor.yaml
+    - .sdlc/gate-paths.yaml
+    - .sdlc/integrations.yaml
+    - .sdlc/lifecycle.yaml
+    - .sdlc/manifest.yaml
+    - .sdlc/meta
+    - .sdlc/pipeline.yaml
+    - .sdlc/plane-granularity.yaml
+    - .sdlc/rules.yaml
+    - .sdlc/rules/index.yaml
+    - .sdlc/settings
+    - .sdlc/skills.yaml
+    - .sdlc/stages.yaml
+    - .sdlc/workflows.yaml
+    - .cursor/rules/000-project-governance.mdc
+    - .cursor/rules/001-sdlc-anti-bypass.mdc
+    - .cursor/rules/002-sdlc-orchestrator-principal.mdc
+    - .cursor/rules/003-orchestrator-delegation-only.mdc
+    - .cursor/rules/010-ai-native-sdlc.mdc
+    - .cursor/commands/sdlc-plan.md
+    - .cursor/commands/sdlc-implement.md
+    - .cursor/commands/sdlc-handoff.md
+    - .cursor/skills/sdlc-orchestrator
+    - .sdlc/guides
+    - .sdlc/references
+    - docs/sdlc
+    - docs/helper
+    - docs/references
+    - SDLC-MINIMALISM-TRACKING.md
+  cursor:
+    severity: required
+    commands:
+    - .cursor/commands/sdlc-run.md
+    - .cursor/commands/sdlc-doctor.md
+    - .cursor/commands/sdlc-review.md
+    rules:
+    - .cursor/rules/orchestrator.mdc
+    - .cursor/rules/020-code-quality.mdc
+    - .cursor/rules/030-docs-and-handoff.mdc
+    - .cursor/rules/040-doctor-gates.mdc
+    - .cursor/rules/sdlc-core.mdc
+    skills:
+    - .cursor/skills/intent-classification/SKILL.md
+    - .cursor/skills/board-task-creation/SKILL.md
+    - .cursor/skills/start-change/SKILL.md
+    - .cursor/skills/finish-change/SKILL.md
+    - .cursor/skills/repository-sdlc/SKILL.md
+    - .cursor/skills/board-sdlc/SKILL.md
+    - .cursor/skills/subagent-delegation/SKILL.md
+    - .cursor/skills/plane-formatting/SKILL.md
+    - .cursor/skills/qa-minimum-checklist/SKILL.md
+    agents:
+    - .cursor/agents/intent-analyst.md
+    - .cursor/agents/planner.md
+    - .cursor/agents/architect.md
+    - .cursor/agents/implementer.md
+    - .cursor/agents/qa.md
+    - .cursor/agents/auto-fixer.md
+    - .cursor/agents/reviewer.md
+    - .cursor/agents/devops.md
+    - .cursor/agents/doctor.md
+    hooks:
+    - .cursor/hooks/sdlc_gate_hook.py
+    - .cursor/hooks/sdlc_gateway_lib.py
+    - .cursor/hooks/sdlc_pre_gateway.py
+    - .cursor/hooks/sdlc_post_gateway.py
+  docs:
+    severity: required
+    items:
+    - docs/README.md
+    - docs/architecture/overview.md
+    - docs/architecture/decisions.md
+    - docs/architecture/system-context.md
+    - docs/infrastructure/overview.md
+    - docs/infrastructure/local-development.md
+    - docs/infrastructure/deployment.md
+    - docs/handoff/template.md
+    - docs/handoff/current-state.md
+    - docs/roadmap/roadmap.md
+    - docs/operations/observability.md
+    - docs/operations/incident-response.md
+    - docs/operations/maintenance.md
+    - docs/studio-service-operator-guide.md
+    - docs/architecture/studio-service-platform.md
+  yaml_validity:
+    severity: required
+    files:
+    - .sdlc/sdlc.yaml
+    - .sdlc/manifest/catalog.yaml
+    - .sdlc/stages/lifecycle.yaml
+    - .sdlc/stages/definitions.yaml
+    - .sdlc/gates/paths.yaml
+    - .sdlc/gateways/policy.yaml
+    - .sdlc/workboard/granularity.yaml
+    - .sdlc/pipeline/agents.yaml
+    - .sdlc/workflows/transitions.yaml
+    - .sdlc/rules/governance.yaml
+    - .sdlc/integrations/services.yaml
+    - .sdlc/doctor/checks.yaml
+  content_markers:
+    severity: required
+    items:
+    - path: .sdlc/README.md
+      contains:
+      - "## Module map"
+      - "## Runtime artifacts"
+    - path: .sdlc/process/README.md
+      contains:
+      - "## Purpose"
+      - "## When to read"
+    - path: .sdlc/memory/README.md
+      contains:
+      - "## Handoff format (Markdown"
+      - "Do not"
+    - path: .sdlc/gateways/README.md
+      contains:
+      - "## Purpose"
+      - "## Gateway flow"
+    - path: .sdlc/scripts/README.md
+      contains:
+      - "## Purpose"
+      - "## When to read"
+    - path: .sdlc/templates/README.md
+      contains:
+      - "## Purpose"
+      - "## When to read"
+    - path: .sdlc/templates/plane/README.md
+      contains:
+      - "## Purpose"
+      - "## When to use"
+    - path: .sdlc/templates/planner/README.md
+      contains:
+      - "## Purpose"
+      - "## When to use"
+    - path: app/studio-backend/README.md
+      contains:
+      - "studio-dev"
+      - "/studio"
+    - path: app/studio-frontend/README.md
+      contains:
+      - "studio-frontend"
+      - "5174"
+    - path: studio/README.md
+      contains:
+      - "Studio Service"
+      - ".sdlc/"
+    - path: docs/studio-service-operator-guide.md
+      contains:
+      - "studio-dev"
+      - "STUDIO_AUTH_TOKEN"
+  forbidden_content:
+    severity: required
+    items:
+    - path: .sdlc/memory/orchestrator-handoff.md
+      not_contains:
+      - "```yaml"
+  workflow_files:
+    severity: required
+    items:
+    - AGENTS.md
+    - .sdlc/sdlc.yaml
+    - .sdlc/README.md
+    - .sdlc/process/master-workflow.md
+    - .sdlc/process/change-lifecycle.md
+    - .sdlc/gates/paths.yaml
+    - .sdlc/gateways/policy.yaml
+    - .sdlc/workboard/granularity.yaml
+    - .sdlc/scripts/sdlc_gate.py
+    - .sdlc/scripts/discovery_hook.py
+    - .sdlc/dsl/gate.py
+    - .sdlc/dsl/workflow.py
+    - .sdlc/dsl/plane_granularity.py
+    - .cursor/hooks.json
+    - .cursor/hooks/sdlc_gate_hook.py
+    - .cursor/hooks/sdlc_gateway_lib.py
+    - .cursor/hooks/sdlc_pre_gateway.py
+    - .cursor/hooks/sdlc_post_gateway.py
+    - .cursor/rules/orchestrator.mdc
+    - .cursor/agents/intent-analyst.md
+    - .cursor/skills/subagent-delegation/SKILL.md
+    - .cursor/skills/intent-classification/SKILL.md
+    - .cursor/skills/board-task-creation/SKILL.md
+    - .cursor/skills/qa-minimum-checklist/SKILL.md
+    - .cursor/skills/repository-sdlc/SKILL.md
+  integrations:
+    severity: warning
+    items:
+    - role: repository
+      env_logical: repository_token
+    - role: board
+      env_logical: board_api_key
+    - role: llm
+      env_logical: llm_api_key
+  makefile:
+    severity: required
+    targets:
+    - sdlc-doctor
+    - sdlc-validate
+    - sdlc-stages
+    - docs-check
+    - workflow-status
+    - workflow-discover
+    - studio-dev
+    - studio-api
+    - studio-smoke
+    - studio-e2e
+  studio:
+    severity: required
+    import_app: studio_service.main
+  python_dsl:
+    severity: required
+    importable: .sdlc/dsl/cli.py

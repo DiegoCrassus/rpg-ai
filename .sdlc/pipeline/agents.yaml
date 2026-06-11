@@ -1,0 +1,111 @@
+version: '2.0'
+description: Agent-skill pipeline — maps SDLC stages to agents and their skill definitions.
+pipeline:
+- id: planner
+  name: Planner
+  stages:
+  - ticket
+  - requirements
+  cursor_agent: .cursor/agents/planner.md
+  skill:
+    id: requirements-refinement
+    name: Requirements Refinement
+    description: Elicits, structures, and validates requirements from raw ideas.
+    expected_outputs:
+    - Scope statement
+    - Assumptions list
+    - Non-goals list
+    - Risk registry
+- id: architect
+  name: Architect
+  stages:
+  - architecture
+  cursor_agent: .cursor/agents/architect.md
+  skill:
+    id: architecture-analysis
+    name: Architecture Analysis
+    description: Evaluates technical options and defines system boundaries.
+    expected_outputs:
+    - Technical approach
+    - ADR entry
+    - Impacted areas list
+- id: implementer
+  name: Implementer
+  stages:
+  - implementation
+  - autofix
+  cursor_agent: .cursor/agents/implementer.md
+  skill:
+    id: implementation
+    name: Implementation
+    description: Produces focused, reversible code changes with tests.
+    expected_outputs:
+    - Code diff
+    - Test coverage
+    - Docs update if needed
+- id: qa
+  name: QA
+  stages:
+  - requirements
+  - validation
+  cursor_agent: .cursor/agents/qa.md
+  skill:
+    id: qa-validation
+    name: QA Validation
+    description: 'Requirements stage: generates test skeleton (.sdlc/memory/test-skeleton.md).
+      Validation stage: verifies acceptance criteria with real test evidence.
+
+      '
+    expected_outputs:
+    - '[requirements] test skeleton (.sdlc/memory/test-skeleton.md)'
+    - '[validation] Test results with pass/fail counts'
+    - '[validation] Acceptance criteria verification'
+    - '[validation] QA notes and coverage gaps'
+- id: reviewer
+  name: Reviewer
+  stages:
+  - review
+  cursor_agent: .cursor/agents/reviewer.md
+  skill:
+    id: code-review
+    name: Code Review
+    description: Reviews diffs for correctness, security, and maintainability.
+    expected_outputs:
+    - Review decision (APPROVE | ESCALATE)
+    - Risk notes
+    - Required fixes
+- id: devops
+  name: DevOps
+  stages:
+  - deployment
+  - observability
+  cursor_agent: .cursor/agents/devops.md
+  skill:
+    id: observability
+    name: Observability
+    description: Manages deployment, rollback, and verifies observability signals.
+    expected_outputs:
+    - Deployment notes
+    - Rollback plan
+    - Observability checklist
+- id: doctor
+  name: Doctor
+  stages:
+  - ticket
+  - requirements
+  - architecture
+  - implementation
+  - validation
+  - review
+  - deployment
+  - observability
+  - incident
+  - autofix
+  cursor_agent: .cursor/agents/doctor.md
+  skill:
+    id: structural-validation
+    name: Structural Validation
+    description: Validates repository structure, YAML consistency, and SDLC compliance.
+    expected_outputs:
+    - Doctor report (PASS / FAIL per check)
+    - List of failures to fix

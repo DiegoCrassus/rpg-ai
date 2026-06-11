@@ -1,0 +1,57 @@
+---
+description: Documentation sync and handoff rules. Applied when architecture, infra, or interfaces change.
+globs: ["docs/**", "app/**", ".sdlc/process/**"]
+---
+
+# Documentation and Handoff
+
+## When to Update Docs
+
+Update docs in the same work unit when:
+- Architecture boundaries change (`docs/architecture/`)
+- Infrastructure setup changes (`docs/infrastructure/`)
+- A new public interface is added or changed
+- An incident is resolved (`docs/operations/incident-response.md`, `.sdlc/memory/incidents.md`)
+- A major stage transition happens (`docs/handoff/current-state.md`)
+
+## Docs Structure
+
+| Directory                  | Purpose                                  |
+|----------------------------|------------------------------------------|
+| `docs/architecture/`       | System design, decisions, context        |
+| `docs/infrastructure/`     | Infra, local dev, deployment             |
+| `docs/handoff/`            | State summaries and transition records   |
+| `docs/roadmap/`            | Planned work and timeline                |
+| `docs/operations/`         | Observability, incidents, maintenance    |
+| `.sdlc/process/`           | SDLC process authority                   |
+
+## Docs Quality
+
+- No empty files. Every doc must have useful content.
+- Use tables for structured data (stage lists, integration status, etc.).
+- Use headers to make docs scannable.
+- Keep docs honest — no aspirational statements presented as current state.
+- Mark sections as "TBD" or "placeholder" when content is not yet defined.
+
+## Handoff Format
+
+Every handoff document must include:
+1. What changed
+2. Why it changed
+3. What was validated
+4. Known risks or open questions
+5. Next steps
+6. Rollback instructions (if applicable)
+
+## ADR Format
+
+Architecture decisions go in `docs/architecture/decisions.md`:
+```
+## ADR-NNN — <title>
+
+- **Date:** YYYY-MM-DD
+- **Status:** proposed | accepted | superseded
+- **Context:** Why the decision was needed.
+- **Decision:** What was decided.
+- **Consequences:** What this means going forward.
+```

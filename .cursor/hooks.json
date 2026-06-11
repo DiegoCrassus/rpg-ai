@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_token_budget_hook.py session-start"
+      },
+      {
+        "command": "python3 .cursor/hooks/sdlc_obs_session.py pre"
+      }
+    ],
+    "beforeSubmitPrompt": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_token_budget_hook.py before-prompt",
+        "failClosed": true
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_gate_hook.py",
+        "matcher": "Write",
+        "failClosed": true
+      },
+      {
+        "command": "python3 .cursor/hooks/sdlc_pre_gateway.py",
+        "matcher": "Task|Subagent|Shell",
+        "failClosed": true
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_pre_gateway.py",
+        "failClosed": true
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "python3 .cursor/hooks/post-tool-validator.py",
+        "failClosed": false
+      }
+    ],
+    "afterAgentResponse": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_token_budget_hook.py after-response",
+        "failClosed": false
+      }
+    ],
+    "afterAgentThought": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_token_budget_hook.py after-thought",
+        "failClosed": false
+      }
+    ],
+    "subagentStart": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_token_budget_hook.py subagent-start",
+        "failClosed": true
+      },
+      {
+        "command": "python3 .cursor/hooks/sdlc_pre_gateway.py",
+        "failClosed": true
+      }
+    ],
+    "subagentStop": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_token_budget_hook.py subagent-stop",
+        "failClosed": false
+      },
+      {
+        "command": "python3 .cursor/hooks/sdlc_post_gateway.py",
+        "failClosed": true,
+        "loop_limit": 2
+      }
+    ],
+    "stop": [
+      {
+        "command": "python3 .cursor/hooks/sdlc_token_budget_hook.py stop"
+      },
+      {
+        "command": "python3 .cursor/hooks/sdlc_obs_session.py post"
+      }
+    ]
+  }
+}

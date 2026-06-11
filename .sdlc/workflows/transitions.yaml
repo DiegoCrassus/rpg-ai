@@ -1,0 +1,101 @@
+version: '1.0'
+description: DEPRECATED shim — graph from lifecycle-model.yaml; metadata overlay for loader.
+workflows:
+- id: ticket_to_requirements
+  name: Ticket → Requirements
+  from_stage: ticket
+  to_stage: requirements
+  description: Refine ticket into requirements on Plane.
+  agent: planner
+  skill: plane-task-creation
+  outputs:
+  - Plane work item with requirements
+- id: requirements_to_architecture
+  name: Requirements → Architecture
+  from_stage: requirements
+  to_stage: architecture
+  description: Transition from approved requirements to architecture definition.
+  preconditions:
+  - Plane work item exists with requirements in description
+  - Non-goals documented on Plane work item
+  agent: architect
+  skill: architecture-analysis
+  outputs:
+  - Architecture notes
+  - ADR entry if applicable
+- id: architecture_to_implementation
+  name: Architecture → Implementation
+  from_stage: architecture
+  to_stage: implementation
+  description: Begin implementation only after architecture is approved.
+  preconditions:
+  - Trade-offs documented
+  - Impacted areas listed
+  agent: implementer
+  skill: implementation
+  outputs:
+  - Code changes
+  - Updated tests
+- id: implementation_to_validation
+  name: Implementation → Validation
+  from_stage: implementation
+  to_stage: validation
+  description: Run validation after implementation is complete.
+  preconditions:
+  - Tests exist
+  - Diff is focused
+  agent: qa
+  skill: qa-validation
+  outputs:
+  - Test results
+  - Acceptance criteria verification
+- id: validation_to_review
+  name: Validation → PR & Review
+  from_stage: validation
+  to_stage: review
+  description: Open PR and request review after validation passes.
+  preconditions:
+  - All tests pass
+  - No fake validation
+  agent: reviewer
+  skill: code-review
+  outputs:
+  - Review decision
+  - Risk notes
+- id: review_to_deployment
+  name: PR & Review → Deployment
+  from_stage: review
+  to_stage: deployment
+  description: Deploy after review approval.
+  preconditions:
+  - Review approved
+  - No unaddressed high-risk items
+  agent: devops
+  skill: implementation
+  outputs:
+  - Deployment notes
+  - Rollback plan
+- id: deployment_to_observability
+  name: Deployment → Observability
+  from_stage: deployment
+  to_stage: observability
+  description: Confirm observability signals after deployment.
+  preconditions:
+  - Deployment executed or skipped with reason
+  agent: devops
+  skill: observability
+  outputs:
+  - Observability checklist
+- id: incident_to_autofix
+  name: Incident → Auto Fix
+  from_stage: incident
+  to_stage: autofix
+  description: Prepare corrective changes from incident evidence.
+  preconditions:
+  - Incident documented
+  - Root cause identified
+  agent: implementer
+  skill: implementation
+  outputs:
+  - Proposed fix
+  - Validation plan

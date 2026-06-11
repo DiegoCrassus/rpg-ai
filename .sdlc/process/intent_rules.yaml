@@ -1,0 +1,99 @@
+version: "1.0"
+description: Canonical intent classification rules (workflow classify + Intent Analyst).
+
+rules:
+  - id: empty_readonly
+    intent: READONLY
+    priority: 100
+    match:
+      empty_text: true
+
+  - id: sdlc_meta
+    intent: SDLC_META
+    priority: 90
+    match:
+      all_keywords:
+        - sdlc
+      any_keywords:
+        - orchestrator
+        - gate
+        - workflow
+        - doctor
+        - .sdlc
+        - .cursor
+        - master-workflow
+
+  - id: docs_only
+    intent: DOCS_ONLY
+    priority: 80
+    match:
+      any_keywords:
+        - docs only
+        - só docs
+        - documentação
+
+  - id: hotfix
+    intent: HOTFIX
+    priority: 75
+    match:
+      any_keywords:
+        - hotfix
+        - urgência produção
+
+  - id: bugfix
+    intent: BUGFIX
+    priority: 70
+    match:
+      any_keywords:
+        - bugfix
+        - corrigir bug
+        - fix bug
+
+  - id: infra
+    intent: INFRA
+    priority: 65
+    match:
+      any_keywords:
+        - infra
+        - ci/cd
+        - terraform
+        - docker
+
+  - id: greenfield
+    intent: GREENFIELD
+    priority: 60
+    match:
+      any_keywords:
+        - do zero
+        - greenfield
+        - não reaproveite
+        - nao reaproveite
+        - repense
+        - from scratch
+        - rethought
+
+  - id: readonly_question
+    intent: READONLY
+    priority: 50
+    match:
+      ends_with_question: true
+      any_keywords:
+        - como funciona
+        - explique
+        - analise
+        - analyze
+        - what is
+        - qual é
+
+defaults:
+  intent: FEATURE
+  confidence: 0.7
+  next_agent_map:
+    READONLY: none
+    SDLC_META: planner
+    DOCS_ONLY: planner
+    GREENFIELD: planner
+    FEATURE: planner
+    BUGFIX: planner
+    HOTFIX: planner
+    INFRA: architect
