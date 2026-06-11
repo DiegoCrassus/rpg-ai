@@ -4,35 +4,31 @@
 
 | Field | Value |
 |-------|-------|
-| **Next agent** | `qa` |
+| **Next agent** | `orchestrator` |
 | **Stage complete** | `yes` |
-| **Previous agent** | `implementer` |
+| **Previous agent** | `devops` |
 
 ## Session
 
 | Field | Value |
 |-------|-------|
-| **Card** | `RPG-4` |
-| **Epic** | `RPG-1` |
-| **Branch** | `feature/RPG-4-frontend-auth-mesa-sheets` |
-| **Stage** | `review-fix` |
-| **Intent** | `FEATURE` |
+| **Card** | `(none)` |
+| **Epic** | `RPG-1` (Done) |
+| **Branch** | `(none)` |
+| **Stage** | `idle` |
+| **Intent** | `(none)` |
 
 ## Delta
 
-- Reviewer blockers fixed: media pytest, invite→login redirect, field_key sanitization
-- backend: `_validate_field_key` pattern `^[a-zA-Z][a-zA-Z0-9_]*$` → 422; `test_character_media.py` 3 cases
-- frontend: `authRedirect.ts`; AcceptInvitePage encodeURIComponent; LoginPage/AuthCallbackPage/PublicOnlyRoute honor redirect
-- tests: pytest 16/16; vitest 6/6; frontend build pass
+- Gate closed after RPG-5 merge (PR #6 @ 88d54d2)
+- Epic RPG-1 closed: children RPG-2/3/4/5 all Done
+- develop @ 88d54d2: bootstrap + backend + frontend + app/Makefile + README
 
-## Validation
+## Open items
 
-| Check | Result | Evidence |
-|-------|--------|----------|
-| `pytest app/backend/tests` | **PASS** | 16/16 |
-| `npm test` | **PASS** | 6/6 vitest |
-| `npm run build` | **PASS** | tsc + vite exit 0 |
+- Manual MVP journeys 1-3: run with `make -C app supabase-start` + `make -C app dev`
+- Local git: 5 stashes with historical WIP (review before drop)
 
 ## Next
 
-spawn QA — re-run automated suite on review-fix commit; verify AC-3 redirect path
+await new user intent; spawn intent-analyst on next FEATURE/BUGFIX request

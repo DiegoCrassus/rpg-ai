@@ -4,62 +4,85 @@
 
 ## Current State
 
-**Status:** App reset for SDLC retest — `app/backend/` and `app/frontend/` placeholders. Plane RPG-19..24 Done (historical). Observability: `app/infra/sdlc_obs/`.
+**Status:** RPG Platform MVP on `develop` (epic RPG-1 Done). Product code live under `app/` — FastAPI backend, React SPA, Supabase migrations, shared JSON contracts. SDLC Studio orthogonal in `studio/`. Observability: `app/infra/sdlc_obs/`.
+
+**develop HEAD:** `88d54d2` — includes RPG-2/3/4/5 delivery + bootstrap (PRs #1, #2, #4, #5, #6).
 
 ## Workflow
 
 **Source of truth:** `.sdlc/process/change-lifecycle.md`
 
+**Gate:** closed (no active card). Handoff idle — await new intent.
+
 ## Environments
 
-| Environment | Status       | Notes                          |
-|-------------|--------------|--------------------------------|
-| local       | active       | SQLite (obs), no product services |
-| dev         | not_ready    | Pending product implementation |
-| production  | not_ready    | Pending deployment setup       |
+| Environment | Status    | Notes |
+|-------------|-----------|-------|
+| local       | active    | Supabase CLI + Docker for product; `make -C app dev` |
+| dev         | not_ready | No cloud deploy yet |
+| production  | not_ready | Pending deployment setup |
 
-## Local Development
+## Local Development — RPG Platform
 
-- Observability DB: `app/infra/sdlc_obs/data/`
-- Python environment: managed via `pyproject.toml`
-- No product containers yet
+```bash
+cp .env.example .env
+cp app/frontend/.env.example app/frontend/.env
+make -C app supabase-start    # copy CLI keys to .env files
+make -C app install
+make -C app dev               # API :8000, UI :5173
+```
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://127.0.0.1:5173 |
+| API / OpenAPI | http://127.0.0.1:8000/docs |
+| Supabase Studio | http://127.0.0.1:54323 |
+
+**Tests:** `make -C app test` · **Contracts:** `make -C app contracts`
+
+## Local Development — SDLC / Studio
+
+- **Doctor:** `make sdlc-doctor`
+- **Studio stack:** `make studio-dev` (API :8100, UI :5174)
+- **Observability:** `make obs-server` -> http://localhost:7700
 
 ## SDLC Observability
 
 - **Tool:** `app/infra/sdlc_obs/` (SQLite + Python stdlib server)
-- **Dashboard:** `make obs-server` → http://localhost:7700
-- **Metrics:** precision, cost, time, tool success, hallucination rate, completion rate, regressions
-- **Hooks:** `.cursor/hooks.json` (sessionStart/stop) + `pre_task.py` / `post_task.py`
+- **Hooks:** `.cursor/hooks.json` + gateway hooks
 
 ## External Services (Active)
 
-| Service    | Purpose              | Configured Via          | MCP      |
-|------------|----------------------|-------------------------|----------|
-| GitHub     | Version control / PR | GITHUB_PERSONAL_ACCESS_TOKEN_CLASSIC | ✅ active |
-| Plane      | Task management      | PLANE_API_KEY           | MCP + `.sdlc/scripts/plane_state.py` |
-| OpenAI     | LLM inference        | OPENAI_API_KEY          | —        |
+| Service | Purpose | Configured Via |
+|---------|---------|----------------|
+| GitHub | Version control / PR | `GITHUB_PERSONAL_ACCESS_TOKEN_CLASSIC` |
+| Plane | Task management | `PLANE_API_KEY` / `BOARD_*` |
+| OpenAI | LLM + Sheet Import Agent | `OPENAI_API_KEY` |
+| Supabase | Auth + Postgres + Storage | `SUPABASE_*` in `.env` |
 
 ## Plane — active project
 
-- **Workspace:** `investments-sdlc` (`PLANE_WORKSPACE_SLUG`)
-- **Project:** `investiments` (`PLANE_PROJECT_NAME`)
+- **Workspace:** `RPG-AI` (`BOARD_WORKSPACE_SLUG`)
+- **Project:** `RPG` (`BOARD_PROJECT_ID`)
 - **Card prefix:** `RPG-N` (branch: `feature/RPG-N-<slug>`)
+- **Epic RPG-1:** Done (children RPG-2..5 Done)
 
-Cards are created in project `investiments` **before** any code edit.
-
-## Process automation (2026-05-27)
+## Process automation
 
 | Script | Purpose |
 |--------|---------|
 | `.sdlc/scripts/plane_state.py` | In Progress / Done / comment on RPG-N |
 | `.sdlc/scripts/auto_merge_pr.py` | Autonomous squash merge when CI green |
-| `.sdlc/scripts/github_issue_triage.py` | Close superseded GitHub issues |
 
-Makefile: `make plane-in-progress CARD=RPG-N`, `make auto-merge-pr PR=N CARD=RPG-N`, `make issue-triage TRIAGE=1`
+Makefile: `make workflow-status`, `make board-in-progress CARD=RPG-N`
 
 ## Key Configuration
 
 - `AGENT_MODEL=openai:gpt-4.1-mini`
-- `PLANE_WORKSPACE_SLUG=investments-sdlc`
-- `PLANE_PROJECT_NAME=investiments`
-- `GITHUB_REPOSITORY=DiegoCrassus/sdlc-ai`
+- `BOARD_WORKSPACE_SLUG=RPG-AI`
+- `REPOSITORY_SLUG=DiegoCrassus/rpg-ai`
+- Python **3.11+** required (`pyproject.toml`)
+
+## Pending sign-off
+
+Manual MVP journeys 1-3 (`docs/product/mvp-scope.md`) not exercised in CI — run against local stack before release demo.
