@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpg-ai.local/contracts/character-meta.v1.schema.json",
+  "title": "rpg.character-meta v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "meta", "payload"],
+  "properties": {
+    "contract": { "const": "rpg.character-meta" },
+    "contract_version": { "const": "1.0.0" },
+    "meta": { "$ref": "envelope.v1.schema.json#/$defs/meta" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "sheetStatus": {
+      "type": "string",
+      "enum": ["active", "dead", "retired", "archived"]
+    },
+    "sheetVisibility": {
+      "type": "string",
+      "enum": ["owner_only", "mesa_masters", "all_players"]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "character_name",
+        "owner_id",
+        "template_id",
+        "status",
+        "visibility"
+      ],
+      "properties": {
+        "character_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "owner_id": { "type": "string", "format": "uuid" },
+        "template_id": { "type": "string", "format": "uuid" },
+        "status": { "$ref": "#/$defs/sheetStatus" },
+        "visibility": { "$ref": "#/$defs/sheetVisibility" }
+      }
+    }
+  }
+}

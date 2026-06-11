@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpg-ai.local/contracts/sheet-import-proposal.v1.schema.json",
+  "title": "rpg.sheet-import-proposal v1.0.0",
+  "description": "Internal agent output before envelope conversion (API only).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "job_id",
+    "detected_system",
+    "detection_confidence",
+    "source_pages",
+    "template_proposal",
+    "field_confidence",
+    "warnings",
+    "requires_review"
+  ],
+  "properties": {
+    "job_id": { "type": "string", "format": "uuid" },
+    "detected_system": {
+      "type": "string",
+      "enum": ["dnd5e_2024", "dnd5e_2014", "pathfinder2e", "custom"]
+    },
+    "detection_confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "source_pages": { "type": "integer", "minimum": 1 },
+    "template_proposal": { "$ref": "#/$defs/templateProposal" },
+    "character_proposal": { "$ref": "#/$defs/characterProposal" },
+    "field_confidence": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fieldConfidence" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "requires_review": { "const": true }
+  },
+  "$defs": {
+    "fieldKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,63}$"
+    },
+    "templateField": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["key", "type", "label"],
+      "properties": {
+        "key": { "$ref": "#/$defs/fieldKey" },
+        "type": { "type": "string" },
+        "label": { "type": "string" },
+        "required": { "type": "boolean" },
+        "order": { "type": "integer" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/templateField" }
+        }
+      }
+    },
+    "templateProposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "slug", "fields"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,79}$" },
+        "description": { "type": "string" },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/templateField" }
+        }
+      }
+    },
+    "characterProposal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["character_name", "values", "extraction_confidence"],
+      "properties": {
+        "character_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "values": {
+          "type": "object",
+          "additionalProperties": true
+        },
+        "extraction_confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "fieldConfidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "confidence"],
+      "properties": {
+        "key": { "$ref": "#/$defs/fieldKey" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source_region": { "type": "string" }
+      }
+    }
+  }
+}

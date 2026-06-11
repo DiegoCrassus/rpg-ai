@@ -1,0 +1,144 @@
+name: SDLC CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop]
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+
+  sdlc-doctor:
+    name: SDLC Doctor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install pyyaml
+      - run: pip install -e ".[dev]"
+      - name: Run SDLC Doctor
+        run: python3 .sdlc/dsl/cli.py doctor
+      - name: Run SDLC Audit
+        run: python3 app/infra/sdlc_obs/auditor.py
+        continue-on-error: true
+
+  sdlc-pytest:
+    name: SDLC Pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install pyyaml pytest httpx
+      - name: Run SDLC DSL and gateway tests
+        run: |
+          python3 -m pytest .sdlc/dsl -q --tb=short
+          python3 -m pytest .cursor/hooks/test_sdlc_gateway.py .cursor/hooks/test_sdlc_gate_hook.py -q --tb=short
+
+  contracts-validate:
+    name: RPG JSON Contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install -e ".[dev]"
+      - name: Validate shared contracts and seeds
+        run: make contracts-validate
+      - name: Run contract pytest suite
+        run: PYTHONPATH=. python3 -m pytest app/shared/tests -q --tb=short
+
+  sdlc-ruff:
+    name: SDLC Ruff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install ruff
+      - name: Lint SDLC Python paths
+        run: |
+          ruff check .sdlc/dsl .sdlc/scripts \
+            .cursor/hooks/sdlc_gateway_lib.py \
+            .cursor/hooks/sdlc_gate_hook.py \
+            .cursor/hooks/sdlc_pre_gateway.py \
+            .cursor/hooks/sdlc_post_gateway.py \
+            .cursor/hooks/test_sdlc_gate_hook.py \
+            app/infra/sdlc_obs
+
+  sdlc-validate:
+    name: SDLC Validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install pyyaml
+      - name: Run SDLC validate
+        run: make sdlc-validate
+
+  secrets-scan:
+    name: Secrets Scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  studio-e2e:
+    name: Studio E2E (smoke + builder)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install -e ".[dev]"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: |
+            app/studio-frontend/package-lock.json
+            tests/e2e/package-lock.json
+      - name: Install Studio frontend deps
+        run: cd app/studio-frontend && npm ci
+      - name: Install Playwright deps
+        run: cd tests/e2e && npm ci && npx playwright install --with-deps chromium
+      - name: Run Studio Playwright E2E
+        run: make studio-e2e
+
+  auto-merge-gate:
+    name: Auto-Merge Gate
+    needs: [sdlc-doctor, sdlc-pytest, sdlc-validate, contracts-validate, secrets-scan, studio-e2e]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Evaluate gates
+        run: |
+          for result in \
+            "${{ needs.sdlc-doctor.result }}" \
+            "${{ needs.sdlc-pytest.result }}" \
+            "${{ needs.sdlc-validate.result }}" \
+            "${{ needs.contracts-validate.result }}" \
+            "${{ needs.secrets-scan.result }}" \
+            "${{ needs.studio-e2e.result }}"; do
+            if [ "$result" = "failure" ]; then
+              echo "❌ Gate failed"
+              exit 1
+            fi
+          done
+          echo "✅ ALL GATES GREEN"

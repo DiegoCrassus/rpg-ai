@@ -1,0 +1,230 @@
+{
+  "edition_id": "dnd5e_2024",
+  "edition_label": "D&D 5e (2024 Player's Handbook sheet)",
+  "source_pdf": "https://media.dndbeyond.com/compendium-images/phb/downloads/DnD_2024_Character-Sheet.pdf",
+  "pages": 2,
+  "distinguishing_features": [
+    "Skills grouped under parent abilities",
+    "Species instead of Race",
+    "Heroic Inspiration",
+    "Three attunement slots",
+    "Spells on page 2"
+  ],
+  "editions": {
+    "dnd5e_2024": {
+      "pages": 2,
+      "features": ["species", "heroic_inspiration", "skills_under_abilities"]
+    },
+    "dnd5e_2014": {
+      "pages": 3,
+      "features": ["race", "inspiration", "personality_traits_block"]
+    }
+  },
+  "alignment_options": [
+    { "key": "lg", "label": "Lawful Good" },
+    { "key": "ng", "label": "Neutral Good" },
+    { "key": "cg", "label": "Chaotic Good" },
+    { "key": "ln", "label": "Lawful Neutral" },
+    { "key": "tn", "label": "True Neutral" },
+    { "key": "cn", "label": "Chaotic Neutral" },
+    { "key": "le", "label": "Lawful Evil" },
+    { "key": "ne", "label": "Neutral Evil" },
+    { "key": "ce", "label": "Chaotic Evil" }
+  ],
+  "size_options": [
+    { "key": "tiny", "label": "Tiny" },
+    { "key": "small", "label": "Small" },
+    { "key": "medium", "label": "Medium" },
+    { "key": "large", "label": "Large" },
+    { "key": "huge", "label": "Huge" },
+    { "key": "gargantuan", "label": "Gargantuan" }
+  ],
+  "spellcasting_abilities": ["int", "wis", "cha"],
+  "skill_ability_mapping": {
+    "STR": ["Athletics"],
+    "DEX": ["Acrobatics", "Sleight of Hand", "Stealth"],
+    "INT": ["Arcana", "History", "Investigation", "Nature", "Religion"],
+    "WIS": ["Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
+    "CHA": ["Deception", "Intimidation", "Performance", "Persuasion"]
+  },
+  "sections": {
+    "page_1": [
+      {
+        "section": "identity",
+        "fields": [
+          { "key": "character_name", "type": "text", "label": "Character Name" },
+          { "key": "species", "type": "text", "label": "Species" },
+          { "key": "class", "type": "text", "label": "Class" },
+          { "key": "level", "type": "number", "label": "Level" },
+          { "key": "subclass", "type": "text", "label": "Subclass" },
+          { "key": "background", "type": "text", "label": "Background" },
+          { "key": "alignment", "type": "select", "label": "Alignment" },
+          { "key": "experience_points", "type": "number", "label": "Experience Points" }
+        ]
+      },
+      {
+        "section": "combat_summary",
+        "fields": [
+          { "key": "armor_class", "type": "number", "label": "Armor Class" },
+          { "key": "initiative", "type": "number", "label": "Initiative" },
+          { "key": "speed", "type": "number", "label": "Speed" },
+          { "key": "size", "type": "select", "label": "Size" },
+          { "key": "passive_perception", "type": "number", "label": "Passive Perception" }
+        ]
+      },
+      {
+        "section": "proficiency_inspiration",
+        "fields": [
+          { "key": "proficiency_bonus", "type": "number", "label": "Proficiency Bonus" },
+          { "key": "heroic_inspiration", "type": "checkbox", "label": "Heroic Inspiration" }
+        ]
+      },
+      {
+        "section": "hit_points",
+        "fields": [
+          { "key": "hp_max", "type": "number", "label": "HP Max" },
+          { "key": "hp_current", "type": "number", "label": "HP Current" },
+          { "key": "hp_temp", "type": "number", "label": "HP Temp" },
+          { "key": "hit_dice", "type": "text", "label": "Hit Dice" },
+          { "key": "death_save_successes", "type": "number", "label": "Death Save Successes" },
+          { "key": "death_save_failures", "type": "number", "label": "Death Save Failures" }
+        ]
+      },
+      {
+        "section": "ability_scores",
+        "abilities": ["str", "dex", "con", "int", "wis", "cha"],
+        "field_pattern": [
+          { "suffix": "_score", "type": "number", "label_suffix": " Score" },
+          { "suffix": "_modifier", "type": "number", "label_suffix": " Modifier" },
+          { "suffix": "_save_proficient", "type": "checkbox", "label_suffix": " Save Proficient" }
+        ]
+      },
+      {
+        "section": "skills",
+        "skills": [
+          "acrobatics",
+          "animal_handling",
+          "arcana",
+          "athletics",
+          "deception",
+          "history",
+          "insight",
+          "intimidation",
+          "investigation",
+          "medicine",
+          "nature",
+          "perception",
+          "performance",
+          "persuasion",
+          "religion",
+          "sleight_of_hand",
+          "stealth",
+          "survival"
+        ],
+        "field_pattern": {
+          "key_prefix": "skill_",
+          "type": "group",
+          "children": [
+            {
+              "key": "proficiency",
+              "type": "select",
+              "options": ["none", "proficient", "expertise"]
+            },
+            { "key": "modifier", "type": "number" }
+          ]
+        }
+      },
+      {
+        "section": "attacks",
+        "repeater_key": "attacks",
+        "item_fields": [
+          { "key": "attack_name", "type": "text" },
+          { "key": "attack_bonus", "type": "number" },
+          { "key": "attack_damage", "type": "text" },
+          { "key": "attack_notes", "type": "text" }
+        ]
+      },
+      {
+        "section": "spellcasting_summary",
+        "fields": [
+          { "key": "spellcasting_ability", "type": "select", "label": "Spellcasting Ability" },
+          { "key": "spell_modifier", "type": "number", "label": "Spell Modifier" },
+          { "key": "spell_save_dc", "type": "number", "label": "Spell Save DC" },
+          { "key": "spell_attack_bonus", "type": "number", "label": "Spell Attack Bonus" }
+        ]
+      },
+      {
+        "section": "features_traits",
+        "repeaters": [
+          { "key": "class_features", "item_fields": ["name", "description"] },
+          { "key": "species_traits", "item_fields": ["name", "description"] },
+          { "key": "feats", "item_fields": ["name", "description"] }
+        ]
+      }
+    ],
+    "page_2": [
+      {
+        "section": "coins",
+        "fields": [
+          { "key": "coins_cp", "type": "number", "label": "CP" },
+          { "key": "coins_sp", "type": "number", "label": "SP" },
+          { "key": "coins_ep", "type": "number", "label": "EP" },
+          { "key": "coins_gp", "type": "number", "label": "GP" },
+          { "key": "coins_pp", "type": "number", "label": "PP" }
+        ]
+      },
+      {
+        "section": "equipment",
+        "fields": [
+          { "key": "equipment", "type": "textarea", "label": "Equipment" },
+          { "key": "equipment_detailed", "type": "textarea", "label": "Equipment (Detailed)" }
+        ]
+      },
+      {
+        "section": "training",
+        "fields": [
+          { "key": "armor_training", "type": "textarea", "label": "Armor Training" },
+          { "key": "weapon_proficiencies", "type": "textarea", "label": "Weapon Proficiencies" },
+          { "key": "tool_proficiencies", "type": "textarea", "label": "Tool Proficiencies" },
+          { "key": "languages", "type": "textarea", "label": "Languages" }
+        ]
+      },
+      {
+        "section": "attunement",
+        "fields": [
+          { "key": "attunement_1", "type": "text", "label": "Attunement 1" },
+          { "key": "attunement_2", "type": "text", "label": "Attunement 2" },
+          { "key": "attunement_3", "type": "text", "label": "Attunement 3" }
+        ]
+      },
+      {
+        "section": "spells",
+        "fields": [
+          { "key": "cantrips", "type": "repeater", "label": "Cantrips" },
+          { "key": "prepared_spells", "type": "repeater", "label": "Prepared Spells" },
+          { "key": "slots_level_1", "type": "number", "label": "Level 1 Slots" },
+          { "key": "slots_level_2", "type": "number", "label": "Level 2 Slots" },
+          { "key": "slots_level_3", "type": "number", "label": "Level 3 Slots" },
+          { "key": "slots_level_4", "type": "number", "label": "Level 4 Slots" },
+          { "key": "slots_level_5", "type": "number", "label": "Level 5 Slots" },
+          { "key": "slots_level_6", "type": "number", "label": "Level 6 Slots" },
+          { "key": "slots_level_7", "type": "number", "label": "Level 7 Slots" },
+          { "key": "slots_level_8", "type": "number", "label": "Level 8 Slots" },
+          { "key": "slots_level_9", "type": "number", "label": "Level 9 Slots" }
+        ]
+      },
+      {
+        "section": "backstory",
+        "fields": [
+          { "key": "backstory", "type": "textarea", "label": "Backstory" },
+          { "key": "appearance", "type": "textarea", "label": "Appearance" }
+        ]
+      }
+    ]
+  },
+  "proficiency_encoding": {
+    "none": "empty circle",
+    "proficient": "filled circle",
+    "expertise": "double circle"
+  }
+}

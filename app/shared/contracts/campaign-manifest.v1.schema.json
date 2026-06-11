@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpg-ai.local/contracts/campaign-manifest.v1.schema.json",
+  "title": "rpg.campaign-manifest v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "meta", "payload"],
+  "properties": {
+    "contract": { "const": "rpg.campaign-manifest" },
+    "contract_version": { "const": "1.0.0" },
+    "meta": { "$ref": "envelope.v1.schema.json#/$defs/meta" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mesa_id",
+        "mesa_name",
+        "rpg_system",
+        "entity_version",
+        "counts",
+        "updated_at"
+      ],
+      "properties": {
+        "mesa_id": { "type": "string", "format": "uuid" },
+        "mesa_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "rpg_system": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "entity_version": { "type": "integer", "minimum": 1 },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["templates", "characters", "documents", "assets"],
+          "properties": {
+            "templates": { "type": "integer", "minimum": 0 },
+            "characters": { "type": "integer", "minimum": 0 },
+            "documents": { "type": "integer", "minimum": 0 },
+            "assets": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "updated_at": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}

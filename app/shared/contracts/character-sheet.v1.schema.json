@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpg-ai.local/contracts/character-sheet.v1.schema.json",
+  "title": "rpg.character-sheet v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "meta", "payload"],
+  "properties": {
+    "contract": { "const": "rpg.character-sheet" },
+    "contract_version": { "const": "1.0.0" },
+    "meta": { "$ref": "envelope.v1.schema.json#/$defs/meta" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template_id", "template_entity_version", "values"],
+      "properties": {
+        "template_id": { "type": "string", "format": "uuid" },
+        "template_entity_version": { "type": "integer", "minimum": 1 },
+        "values": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

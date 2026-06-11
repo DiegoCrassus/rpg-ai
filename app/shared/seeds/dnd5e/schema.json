@@ -1,0 +1,231 @@
+{
+  "contract": "rpg.sheet-template",
+  "contract_version": "1.0.0",
+  "meta": {
+    "mesa_id": "00000000-0000-4000-8000-000000000001",
+    "resource_id": "00000000-0000-4000-8000-000000000002",
+    "entity_version": 1,
+    "created_at": "2026-06-11T00:00:00Z",
+    "updated_at": "2026-06-11T00:00:00Z"
+  },
+  "payload": {
+    "name": "D&D 5e Character",
+    "description": "Official 2024 player character sheet — platform seed aligned with dnd5e-sheet-reference.md",
+    "slug": "dnd5e-character",
+    "is_seed": true,
+    "seed_key": "dnd5e",
+    "fields": [
+      {
+        "key": "identity",
+        "type": "group",
+        "label": "Identity",
+        "order": 0,
+        "children": [
+          { "key": "character_name", "type": "text", "label": "Character Name", "required": true, "order": 0, "constraints": { "max_length": 120 } },
+          { "key": "species", "type": "text", "label": "Species", "order": 1 },
+          { "key": "class", "type": "text", "label": "Class", "order": 2 },
+          { "key": "level", "type": "number", "label": "Level", "order": 3, "constraints": { "min": 1, "max": 20, "integer": true } },
+          { "key": "subclass", "type": "text", "label": "Subclass", "order": 4 },
+          { "key": "background", "type": "text", "label": "Background", "order": 5 },
+          {
+            "key": "alignment",
+            "type": "select",
+            "label": "Alignment",
+            "order": 6,
+            "constraints": {
+              "options": ["lg", "ng", "cg", "ln", "tn", "cn", "le", "ne", "ce"]
+            }
+          },
+          { "key": "experience_points", "type": "number", "label": "Experience Points", "order": 7, "constraints": { "min": 0, "integer": true } }
+        ]
+      },
+      {
+        "key": "combat",
+        "type": "group",
+        "label": "Combat Summary",
+        "order": 1,
+        "children": [
+          { "key": "armor_class", "type": "number", "label": "Armor Class", "order": 0 },
+          { "key": "initiative", "type": "number", "label": "Initiative", "order": 1 },
+          { "key": "speed", "type": "number", "label": "Speed", "order": 2 },
+          {
+            "key": "size",
+            "type": "select",
+            "label": "Size",
+            "order": 3,
+            "constraints": {
+              "options": ["tiny", "small", "medium", "large", "huge", "gargantuan"]
+            }
+          },
+          { "key": "passive_perception", "type": "number", "label": "Passive Perception", "order": 4 }
+        ]
+      },
+      { "key": "proficiency_bonus", "type": "number", "label": "Proficiency Bonus", "order": 2 },
+      { "key": "heroic_inspiration", "type": "checkbox", "label": "Heroic Inspiration", "order": 3 },
+      {
+        "key": "hit_points",
+        "type": "group",
+        "label": "Hit Points",
+        "order": 4,
+        "children": [
+          { "key": "hp_max", "type": "number", "label": "HP Max", "order": 0 },
+          { "key": "hp_current", "type": "number", "label": "HP Current", "order": 1 },
+          { "key": "hp_temp", "type": "number", "label": "HP Temp", "order": 2 },
+          { "key": "hit_dice", "type": "text", "label": "Hit Dice", "order": 3 },
+          { "key": "death_save_successes", "type": "number", "label": "Death Save Successes", "order": 4, "constraints": { "min": 0, "max": 3, "integer": true } },
+          { "key": "death_save_failures", "type": "number", "label": "Death Save Failures", "order": 5, "constraints": { "min": 0, "max": 3, "integer": true } }
+        ]
+      },
+      {
+        "key": "abilities",
+        "type": "group",
+        "label": "Ability Scores",
+        "order": 5,
+        "children": [
+          {
+            "key": "str",
+            "type": "group",
+            "label": "Strength",
+            "order": 0,
+            "children": [
+              { "key": "str_score", "type": "number", "label": "Score", "constraints": { "min": 1, "max": 30, "integer": true } },
+              { "key": "str_modifier", "type": "number", "label": "Modifier" },
+              { "key": "str_save_proficient", "type": "checkbox", "label": "Save Proficient" }
+            ]
+          },
+          {
+            "key": "dex",
+            "type": "group",
+            "label": "Dexterity",
+            "order": 1,
+            "children": [
+              { "key": "dex_score", "type": "number", "label": "Score", "constraints": { "min": 1, "max": 30, "integer": true } },
+              { "key": "dex_modifier", "type": "number", "label": "Modifier" },
+              { "key": "dex_save_proficient", "type": "checkbox", "label": "Save Proficient" }
+            ]
+          },
+          {
+            "key": "con",
+            "type": "group",
+            "label": "Constitution",
+            "order": 2,
+            "children": [
+              { "key": "con_score", "type": "number", "label": "Score", "constraints": { "min": 1, "max": 30, "integer": true } },
+              { "key": "con_modifier", "type": "number", "label": "Modifier" },
+              { "key": "con_save_proficient", "type": "checkbox", "label": "Save Proficient" }
+            ]
+          },
+          {
+            "key": "int",
+            "type": "group",
+            "label": "Intelligence",
+            "order": 3,
+            "children": [
+              { "key": "int_score", "type": "number", "label": "Score", "constraints": { "min": 1, "max": 30, "integer": true } },
+              { "key": "int_modifier", "type": "number", "label": "Modifier" },
+              { "key": "int_save_proficient", "type": "checkbox", "label": "Save Proficient" }
+            ]
+          },
+          {
+            "key": "wis",
+            "type": "group",
+            "label": "Wisdom",
+            "order": 4,
+            "children": [
+              { "key": "wis_score", "type": "number", "label": "Score", "constraints": { "min": 1, "max": 30, "integer": true } },
+              { "key": "wis_modifier", "type": "number", "label": "Modifier" },
+              { "key": "wis_save_proficient", "type": "checkbox", "label": "Save Proficient" }
+            ]
+          },
+          {
+            "key": "cha",
+            "type": "group",
+            "label": "Charisma",
+            "order": 5,
+            "children": [
+              { "key": "cha_score", "type": "number", "label": "Score", "constraints": { "min": 1, "max": 30, "integer": true } },
+              { "key": "cha_modifier", "type": "number", "label": "Modifier" },
+              { "key": "cha_save_proficient", "type": "checkbox", "label": "Save Proficient" }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "skill_acrobatics",
+        "type": "group",
+        "label": "Acrobatics (DEX)",
+        "order": 6,
+        "children": [
+          { "key": "proficiency", "type": "select", "label": "Proficiency", "constraints": { "options": ["none", "proficient", "expertise"] } },
+          { "key": "modifier", "type": "number", "label": "Modifier" }
+        ]
+      },
+      {
+        "key": "skill_athletics",
+        "type": "group",
+        "label": "Athletics (STR)",
+        "order": 7,
+        "children": [
+          { "key": "proficiency", "type": "select", "label": "Proficiency", "constraints": { "options": ["none", "proficient", "expertise"] } },
+          { "key": "modifier", "type": "number", "label": "Modifier" }
+        ]
+      },
+      {
+        "key": "skill_stealth",
+        "type": "group",
+        "label": "Stealth (DEX)",
+        "order": 8,
+        "children": [
+          { "key": "proficiency", "type": "select", "label": "Proficiency", "constraints": { "options": ["none", "proficient", "expertise"] } },
+          { "key": "modifier", "type": "number", "label": "Modifier" }
+        ]
+      },
+      {
+        "key": "skill_perception",
+        "type": "group",
+        "label": "Perception (WIS)",
+        "order": 9,
+        "children": [
+          { "key": "proficiency", "type": "select", "label": "Proficiency", "constraints": { "options": ["none", "proficient", "expertise"] } },
+          { "key": "modifier", "type": "number", "label": "Modifier" }
+        ]
+      },
+      {
+        "key": "attacks",
+        "type": "repeater",
+        "label": "Attacks",
+        "order": 10,
+        "item_label": "Attack",
+        "constraints": { "max_items": 20 },
+        "children": [
+          { "key": "attack_name", "type": "text", "label": "Name", "required": true },
+          { "key": "attack_bonus", "type": "number", "label": "Bonus" },
+          { "key": "attack_damage", "type": "text", "label": "Damage" },
+          { "key": "attack_notes", "type": "text", "label": "Notes" }
+        ]
+      },
+      {
+        "key": "spellcasting",
+        "type": "group",
+        "label": "Spellcasting Summary",
+        "order": 11,
+        "children": [
+          {
+            "key": "spellcasting_ability",
+            "type": "select",
+            "label": "Spellcasting Ability",
+            "constraints": { "options": ["int", "wis", "cha"] }
+          },
+          { "key": "spell_modifier", "type": "number", "label": "Spell Modifier" },
+          { "key": "spell_save_dc", "type": "number", "label": "Spell Save DC" },
+          { "key": "spell_attack_bonus", "type": "number", "label": "Spell Attack Bonus" }
+        ]
+      },
+      { "key": "coins_gp", "type": "number", "label": "Gold Pieces", "order": 12 },
+      { "key": "equipment", "type": "textarea", "label": "Equipment", "order": 13 },
+      { "key": "languages", "type": "textarea", "label": "Languages", "order": 14 },
+      { "key": "backstory", "type": "textarea", "label": "Backstory", "order": 15 },
+      { "key": "portrait", "type": "image", "label": "Portrait", "order": 16, "constraints": { "allowed_extensions": ["webp", "png", "jpg"] } }
+    ]
+  }
+}
