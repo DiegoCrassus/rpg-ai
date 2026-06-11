@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+
 try:
     from datetime import UTC
 except ImportError:
@@ -116,7 +117,7 @@ def _check_integration_env(role: str, env_var: str) -> Finding:
 
 def _check_studio_import(root: str, module: str) -> Finding:
     """Import studio_service without starting Uvicorn (validates PYTHONPATH layout)."""
-    backend_src = os.path.join(root, "app", "studio-backend", "src")
+    backend_src = os.path.join(root, "studio", "backend", "src")
     main_py = os.path.join(backend_src, "studio_service", "main.py")
     if not os.path.isfile(main_py):
         return ("FAIL", f"Studio backend entry missing: {main_py}")

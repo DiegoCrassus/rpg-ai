@@ -79,7 +79,7 @@ def test_board() -> bool:
     if yaml_ws and str(yaml_ws).lower() != workspace.lower():
         print(f"  WARN: sdlc.yaml workspace={yaml_ws} differs from .env")
     if yaml_pid and str(yaml_pid) != project_id:
-        print(f"  WARN: sdlc.yaml project_id differs from BOARD_PROJECT_ID in .env")
+        print("  WARN: sdlc.yaml project_id differs from BOARD_PROJECT_ID in .env")
 
     headers = {"X-API-Key": api_key, "Content-Type": "application/json"}
     ok = True

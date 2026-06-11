@@ -1,5 +1,6 @@
 export type PageHelpId =
   | "dashboard"
+  | "builder"
   | "workflows"
   | "agents"
   | "rules"
@@ -31,6 +32,17 @@ export const PAGE_HELP: Record<PageHelpId, PageHelp> = {
       "When the gate is open, Active work shows Track in Workflow to follow the live stage",
       "Plane workboard lists recent cards; SDLC activity shows gateway/handoff/gate/obs events",
       "All data is derived — apply changes via git/Plane, not Studio writes",
+    ],
+  },
+  builder: {
+    title: "Workflow Builder",
+    subtitle: "Author lifecycle transitions and agent assignments",
+    summary:
+      "Drag stages and agents onto the canvas, wire transitions, and export propose-only patches for git review.",
+    bullets: [
+      "Does not apply changes to the repo directly",
+      "Aligns with transitions.yaml and pipeline agents",
+      "Export produces a reviewable patch for Plane/git workflow",
     ],
   },
   workflows: {

@@ -8,9 +8,9 @@ import {
 } from "./workflowRuntime";
 
 const stages = [
-  { id: "ticket", name: "Ticket", order: 1 },
-  { id: "requirements", name: "Requirements", order: 2 },
-  { id: "implementation", name: "Implementation", order: 4 },
+  { id: "ticket", name: "Ticket", order: 1, description: "Intake" },
+  { id: "requirements", name: "Requirements", order: 2, description: "Plan" },
+  { id: "implementation", name: "Implementation", order: 4, description: "Build" },
 ];
 
 const nodes: CanvasNode[] = stages.map((stage) => ({

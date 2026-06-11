@@ -7,7 +7,7 @@ workflows:
   to_stage: requirements
   description: Refine ticket into requirements on Plane.
   agent: planner
-  skill: plane-task-creation
+  skill: board-task-creation
   outputs:
   - Plane work item with requirements
 - id: requirements_to_architecture

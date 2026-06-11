@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import re
 import sys
 from pathlib import Path
 from re import Pattern
@@ -18,7 +17,6 @@ from core_config import (  # noqa: E402
     card_pattern,
     card_prefix,
     env_map,
-    load_core,
     repository,
 )
 

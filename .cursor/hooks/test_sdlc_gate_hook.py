@@ -98,7 +98,6 @@ def test_pre_gateway_allows_invalid_json_payload(capsys, monkeypatch) -> None:
 
 
 def test_read_stdin_text_returns_empty_without_blocking(monkeypatch) -> None:
-    import threading
     import time
 
     class BlockingReader:

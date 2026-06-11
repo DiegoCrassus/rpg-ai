@@ -250,11 +250,11 @@ checks:
       contains:
       - "## Purpose"
       - "## When to use"
-    - path: app/studio-backend/README.md
+    - path: studio/backend/README.md
       contains:
       - "studio-dev"
       - "/studio"
-    - path: app/studio-frontend/README.md
+    - path: studio/frontend/README.md
       contains:
       - "studio-frontend"
       - "5174"

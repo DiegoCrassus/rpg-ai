@@ -9,7 +9,7 @@ import { planeStateGroupClass } from "./planeStateStyle";
 const CARD_PATTERN = /^INVES-\d+$/i;
 
 type ActiveWorkPanelProps = {
-  session: DashboardSummary["session"];
+  session?: DashboardSummary["session"];
   handoffPresent?: boolean;
 };
 
