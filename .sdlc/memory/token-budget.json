@@ -1,0 +1,30 @@
+{
+  "session_id": "a7017d8f-788e-4d2b-90c7-f79eee60ec98",
+  "started_at": "2026-06-11T20:16:15.745558+00:00",
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "estimated_tokens": 0,
+  "turns": 2,
+  "subagent_spawns": 0,
+  "blocked": false,
+  "block_reason": "",
+  "last_event": "before-prompt",
+  "events": [
+    {
+      "at": "2026-06-11T20:16:53.465024+00:00",
+      "event": "after-thought",
+      "input": 0,
+      "output": 0,
+      "estimated": 0,
+      "total": 0
+    },
+    {
+      "at": "2026-06-11T20:16:57.163077+00:00",
+      "event": "before-prompt",
+      "input": 0,
+      "output": 0,
+      "estimated": 0,
+      "total": 0
+    }
+  ]
+}

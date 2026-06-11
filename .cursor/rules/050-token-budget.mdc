@@ -1,0 +1,38 @@
+---
+description: Token budget discipline — hooks enforce limits; agents stay dense.
+alwaysApply: true
+---
+
+# Token budget (L0)
+
+Config: `.sdlc/sdlc.yaml` → `core.tokens` · Ledger: `.sdlc/memory/token-budget.json`
+
+## Hooks (fail-closed where marked)
+
+| Event | Effect |
+|-------|--------|
+| `sessionStart` | reset ledger |
+| `afterAgentResponse` / `afterAgentThought` | accumulate usage |
+| `subagentStart` | **deny** Task if budget exceeded |
+| `beforeSubmitPrompt` | **deny** prompt if budget exceeded |
+| `stop` | print summary (stderr) |
+
+## Agent rules
+
+1. **Caveman** for inter-agent text — see `AGENTS.md` Token law.
+2. **Handoff** — use `.sdlc/templates/orchestrator/handoff-template.md`; ≤ `handoff_max_lines`.
+3. **Subagent Task** — spawn template only; no chat dump.
+4. **No re-read** large files already in handoff.
+5. User chat — Portuguese prose (exception to caveman).
+
+## CLI
+
+```bash
+python3 .sdlc/scripts/token_budget_status.py status
+python3 .sdlc/scripts/token_budget_status.py reset
+make token-budget-status
+```
+
+## On block
+
+Run `reset` only after human confirms or new session/card. Do not bypass hooks.

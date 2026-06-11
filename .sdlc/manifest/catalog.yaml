@@ -1,0 +1,196 @@
+version: '5.2'
+description: SDLC agent manifest — catalog of agents, skills, MCPs, commands, and
+  conventions.
+project:
+  repository: rpg-ai
+  repository_slug: DiegoCrassus/rpg-ai
+  board_workspace: RPG-AI
+  board_project: RPG
+  board_cards_prefix: RPG
+  sdlc_version: '5.2'
+  default_branch: develop
+reading_order:
+- file: AGENTS.md
+  note: L0 manifest — required first; decision tree + delegation matrix
+- file: .sdlc/process/master-workflow.md
+  note: Approved P0/P1 full process
+- file: .sdlc/process/change-lifecycle.md
+  note: Gitflow + Plane — authority for branch and merge
+- file: .sdlc/README.md
+  note: SDLC module map
+- file: .sdlc/sdlc.yaml
+  note: Machine index — core + contract.modules
+- file: .sdlc/manifest/catalog.yaml
+  note: Agent/skill catalog data
+- file: .sdlc/memory/operational-context.md
+  note: Current operational state
+- note: Load cursor agent or skill for the active stage
+agents:
+  pipeline:
+  - id: intent-analyst
+    path: .cursor/agents/intent-analyst.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Classifies request — always first (via Task)
+  - id: planner
+    path: .cursor/agents/planner.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Epic + children on Plane
+  - id: architect
+    path: .cursor/agents/architect.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Architecture notes on Plane
+  - id: implementer
+    path: .cursor/agents/implementer.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Code + autonomous commits
+  - id: qa
+    path: .cursor/agents/qa.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Lint, tests, doctor
+  - id: auto-fixer
+    path: .cursor/agents/auto-fixer.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Fixes CI/lint failures (max 2 cycles)
+  - id: reviewer
+    path: .cursor/agents/reviewer.md
+    model: inherit
+    readonly: true
+    is_background: false
+    role: APPROVE | ESCALATE
+  - id: devops
+    path: .cursor/agents/devops.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Push, PR, merge
+  support:
+  - id: doctor
+    path: .cursor/agents/doctor.md
+    model: fast
+    readonly: true
+    is_background: false
+    role: Structural validation
+  - id: observer
+    path: .cursor/agents/observer.md
+    model: fast
+    readonly: false
+    is_background: true
+    role: Observability metrics (background)
+  - id: issue-analyst
+    path: .cursor/agents/issue-analyst.md
+    model: fast
+    readonly: false
+    is_background: false
+    role: GitHub Issues triage
+  - id: sdlc-auditor
+    path: .cursor/agents/sdlc-auditor.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Autonomous SDLC audit
+  - id: security-scanner
+    path: .cursor/agents/security-scanner.md
+    model: inherit
+    readonly: true
+    is_background: false
+    role: SAST/secrets scanning
+  - id: migration-runner
+    path: .cursor/agents/migration-runner.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Database migrations
+  - id: contract-validator
+    path: .cursor/agents/contract-validator.md
+    model: fast
+    readonly: true
+    is_background: false
+    role: OpenAPI ↔ TypeScript validation
+  - id: rollback-agent
+    path: .cursor/agents/rollback-agent.md
+    model: inherit
+    readonly: false
+    is_background: false
+    role: Rollback procedures
+skills:
+- id: subagent-delegation
+  path: .cursor/skills/subagent-delegation/SKILL.md
+  when: Orchestrator → Task matrix
+- id: board-task-creation
+  path: .cursor/skills/board-task-creation/SKILL.md
+  when: Creating epic + child cards on the workboard
+- id: board-sdlc
+  path: .cursor/skills/board-sdlc/SKILL.md
+  when: Any board MCP operation
+- id: intent-classification
+  path: .cursor/skills/intent-classification/SKILL.md
+  when: Classify request intent
+- id: qa-minimum-checklist
+  path: .cursor/skills/qa-minimum-checklist/SKILL.md
+  when: Minimum validation checklist
+- id: start-change
+  path: .cursor/skills/start-change/SKILL.md
+  when: Open feature branch + Plane gate
+- id: finish-change
+  path: .cursor/skills/finish-change/SKILL.md
+  when: Merge PR + close Plane card
+mcps:
+- id: board
+  config: .cursor/mcp.json
+  skill: board-sdlc
+  description: Work items, evidence, Done status (Plane provider)
+- id: repository
+  config: .cursor/mcp.json
+  skill: repository-sdlc
+  description: PRs, CI status, merge (GitHub provider)
+commands:
+- id: sdlc-run
+  path: .cursor/commands/sdlc-run.md
+  purpose: Run the orchestrated SDLC loop
+- id: sdlc-review
+  path: .cursor/commands/sdlc-review.md
+  purpose: PR review
+- id: sdlc-doctor
+  path: .cursor/commands/sdlc-doctor.md
+  purpose: Doctor validation
+hooks:
+- id: sdlc-gate
+  path: .cursor/hooks/sdlc_gate_hook.py
+  event: preToolUse
+  purpose: Block protected writes when the session gate is closed or wrong
+- id: sdlc-pre-gateway
+  path: .cursor/hooks/sdlc_pre_gateway.py
+  event: beforeShellExecution | subagentStart
+  purpose: Block unsafe bypass commands and wrong routed subagents
+- id: sdlc-post-gateway
+  path: .cursor/hooks/sdlc_post_gateway.py
+  event: subagentStop
+  purpose: Validate handoff and route back when evidence is incomplete
+conventions:
+  task_names: '[AI][EPIC|BACKEND|FRONTEND|INFRA|SHARED] Short imperative title'
+  branch_pattern: 'feature/RPG-N-<slug>  (also: bugfix/, sdlc/, hotfix/)'
+  before_app_code: workflow start --card RPG-M  (child card, never epic)
+  before_merge: green CI + Reviewer APPROVE + finish-change skill
+  after_structural_change: make sdlc-doctor
+prohibitions:
+- Never create specs/ folder or local tickets/evidence
+- Orchestrator never implements, commits, lints, or runs tests directly
+- No single [AI][FULLSTACK] card for GREENFIELD or FEATURE intents
+- Never skip stages without an explicit documented reason
+escalate_to_human:
+- AutoFixer exhausted 2 cycles and QA still fails
+- Reviewer returns ESCALATE
+- External blocker (Plane/GitHub/API unavailable)
+- Product decision outside card scope

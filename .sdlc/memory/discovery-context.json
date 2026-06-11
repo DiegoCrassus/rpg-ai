@@ -1,0 +1,15 @@
+{
+  "app_placeholder": false,
+  "legacy_docs": [
+    {
+      "path": "docs/architecture/investment-radar-api.md",
+      "reason": "legacy product/architecture doc"
+    },
+    {
+      "path": "docs/product/investment-radar-runbook.md",
+      "reason": "legacy product/architecture doc"
+    }
+  ],
+  "greenfield_hint": false,
+  "recommendation": "review legacy_docs before plan"
+}

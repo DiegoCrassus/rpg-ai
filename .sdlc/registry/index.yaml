@@ -1,0 +1,52 @@
+registry_version: "0.1.0"
+description: Referential registry for SDLC Studio Foundation indexes.
+source_of_truth_statement: Existing .sdlc/ and .cursor/ artifacts remain authoritative; registry entries only point to them.
+entity_model:
+  schema_ref: studio/schemas/registry-entity.schema.yaml
+  id_namespaces:
+    sdlc: .sdlc/
+    cursor: .cursor/
+  summary_policy: Short referential summaries only; no copied authoritative content.
+  relationship_policy: Relationship endpoints use registry entity IDs and source_refs use repository paths.
+relationship_model:
+  schema_ref: studio/schemas/registry-relationship.schema.yaml
+  id_namespace: rel.
+  directionality: from -> relation -> to is the semantic direction; inverse or bidirectional meaning requires an explicit separate relationship.
+  allowed_relation_types:
+    - indexes
+    - uses
+    - governs
+    - validates
+    - references
+    - supports
+    - documents
+  source_ref_policy: source_refs point to real .sdlc/ or .cursor/ repository paths and do not copy source bodies.
+  summary_policy: Short referential summaries only; no copied authoritative content.
+files:
+  - path: .sdlc/registry/sdlc-artifacts.yaml
+    purpose: Index existing SDLC modules, policies, workflows, templates, scripts, and process artifacts.
+    contains:
+      - sdlc artifacts
+      - source modules
+      - short summaries
+      - tags
+  - path: .sdlc/registry/cursor-artifacts.yaml
+    purpose: Index existing Cursor agents, skills, commands, rules, and hooks.
+    contains:
+      - cursor artifacts
+      - source modules
+      - short summaries
+      - tags
+  - path: .sdlc/registry/relationships.yaml
+    purpose: Describe lightweight relationships between registered SDLC and Cursor entities.
+    contains:
+      - relationship IDs
+      - directed from and to entity IDs
+      - relation kinds
+      - source references
+non_goals:
+  - Copy authoritative SDLC or Cursor content into registry files.
+  - Define executable workflow behavior, command execution, or runtime semantics.
+  - Replace Plane, GitHub, SDLC CLI commands, rules, skills, hooks, or process documents.
+  - Store local tickets, backlog items, specs, or delivery evidence.
+  - Store generated Studio outputs or validation evidence.

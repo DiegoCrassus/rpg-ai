@@ -1,0 +1,47 @@
+---
+description: Doctor validation gates. Applied after structural changes.
+alwaysApply: true
+---
+
+# Doctor Validation Gates
+
+## When to Run the Doctor
+
+Run `make sdlc-doctor` after any of the following:
+- Adding or removing top-level directories
+- Creating or deleting `.sdlc/*.yaml` files
+- Creating or deleting `.cursor/` configuration files
+- Changing the Makefile structure
+- Initializing or restructuring the project
+
+## Doctor Command
+
+```bash
+make sdlc-doctor
+# or directly:
+python .sdlc/dsl/cli.py doctor
+```
+
+## Exit Codes
+
+- `0` — All required checks passed (warnings allowed)
+- `1` — One or more required checks failed
+
+## On Failure
+
+1. Read the FAIL lines in the Doctor output.
+2. Fix each failure — do not suppress or skip it.
+3. Re-run the Doctor.
+4. Only proceed to the next task when Doctor exits with `0`.
+
+## Never
+
+- Never claim the Doctor passed without running it.
+- Never modify Doctor rules to hide real failures.
+- Never skip the Doctor gate because "it's just a small change."
+
+## Warnings
+
+Warnings indicate non-critical gaps (e.g., optional integrations not configured).
+Warnings do not fail the Doctor but must be reviewed.
+If a warning represents a real risk, address it or document why it is accepted.

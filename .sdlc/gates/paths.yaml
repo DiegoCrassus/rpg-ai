@@ -1,0 +1,40 @@
+# DEPRECATED shim — canonical write_policy lives in process/lifecycle-model.yaml
+gate_paths:
+  protected_prefixes:
+  - app/backend/
+  - app/frontend/
+  - app/shared/
+  - pyproject.toml
+  stages:
+    planning:
+      allowed_prefixes:
+      - .sdlc/
+      - .cursor/
+    architecture:
+      allowed_prefixes:
+      - .sdlc/
+      - .cursor/
+    implementation:
+      allowed_prefixes:
+      - app/backend/
+      - app/frontend/
+      - app/shared/
+      - pyproject.toml
+      - data/
+    sdlc_meta:
+      allowed_prefixes:
+      - .sdlc/
+      - .cursor/
+      - .github/
+      - Makefile
+      - AGENTS.md
+      - docs/
+    validation:
+      allowed_prefixes:
+      - app/
+      - pyproject.toml
+      - .sdlc/templates/
+    review:
+      allowed_prefixes:
+      - .sdlc/templates/
+      - docs/

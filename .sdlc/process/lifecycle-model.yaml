@@ -1,0 +1,167 @@
+version: "1.0"
+description: Canonical SDLC lifecycle — stages, transitions, write policy, operational map.
+
+stages:
+  - id: ticket
+    name: Ticket / Idea
+    order: 1
+    mode: planning
+    agent: planner
+  - id: requirements
+    name: Requirements
+    order: 2
+    mode: planning
+    agent: planner
+  - id: architecture
+    name: Architecture
+    order: 3
+    mode: architecture
+    agent: architect
+  - id: implementation
+    name: Implementation
+    order: 4
+    mode: implementation
+    agent: implementer
+  - id: validation
+    name: Validation
+    order: 5
+    mode: validation
+    agent: qa
+  - id: review
+    name: PR & Review
+    order: 6
+    mode: review
+    agent: reviewer
+  - id: deployment
+    name: Deployment
+    order: 7
+    mode: deployment
+    agent: devops
+  - id: observability
+    name: Observability
+    order: 8
+    mode: observability
+    agent: devops
+  - id: incident
+    name: Incident
+    order: 9
+    mode: incident
+    agent: implementer
+  - id: autofix
+    name: Auto Fix
+    order: 10
+    mode: implementation
+    agent: auto-fixer
+
+# Gate session keys (paths.yaml legacy names) → lifecycle stage ids
+gate_stage_aliases:
+  planning: [ticket, requirements]
+  architecture: [architecture]
+  implementation: [implementation, autofix]
+  validation: [validation]
+  review: [review]
+  sdlc_meta: [ticket, requirements, architecture, implementation, validation, review]
+
+transitions:
+  - id: ticket_to_requirements
+    from_stage: ticket
+    to_stage: requirements
+    agent: planner
+  - id: requirements_to_architecture
+    from_stage: requirements
+    to_stage: architecture
+    agent: architect
+  - id: architecture_to_implementation
+    from_stage: architecture
+    to_stage: implementation
+    agent: implementer
+  - id: implementation_to_validation
+    from_stage: implementation
+    to_stage: validation
+    agent: qa
+  - id: validation_to_review
+    from_stage: validation
+    to_stage: review
+    agent: reviewer
+  - id: review_to_deployment
+    from_stage: review
+    to_stage: deployment
+    agent: devops
+  - id: deployment_to_observability
+    from_stage: deployment
+    to_stage: observability
+    agent: devops
+  - id: incident_to_autofix
+    from_stage: incident
+    to_stage: autofix
+    agent: implementer
+
+write_policy:
+  protected_prefixes:
+    - app/backend/
+    - app/frontend/
+    - app/shared/
+    - pyproject.toml
+  stages:
+    planning:
+      allowed_prefixes:
+        - .sdlc/
+        - .cursor/
+    architecture:
+      allowed_prefixes:
+        - .sdlc/
+        - .cursor/
+    implementation:
+      allowed_prefixes:
+        - app/backend/
+        - app/frontend/
+        - app/shared/
+        - pyproject.toml
+        - data/
+    sdlc_meta:
+      allowed_prefixes:
+        - .sdlc/
+        - .cursor/
+        - .github/
+        - Makefile
+        - AGENTS.md
+        - docs/
+    validation:
+      allowed_prefixes:
+        - app/
+        - pyproject.toml
+        - .sdlc/templates/
+    review:
+      allowed_prefixes:
+        - .sdlc/templates/
+        - docs/
+
+operational_map:
+  - step: intent_routing
+    lifecycle_stages: []
+    agent: intent-analyst
+    gate_stage: null
+  - step: plan
+    lifecycle_stages: [ticket, requirements]
+    agent: planner
+    gate_stage: planning
+  - step: architecture
+    lifecycle_stages: [architecture]
+    agent: architect
+    gate_stage: architecture
+  - step: implement
+    lifecycle_stages: [implementation, autofix]
+    agent: implementer
+    gate_stage: implementation
+  - step: validate
+    lifecycle_stages: [validation]
+    agent: qa
+    gate_stage: validation
+  - step: review
+    lifecycle_stages: [review]
+    agent: reviewer
+    gate_stage: review
+  - step: deploy
+    lifecycle_stages: [deployment, observability]
+    agent: devops
+    gate_stage: null

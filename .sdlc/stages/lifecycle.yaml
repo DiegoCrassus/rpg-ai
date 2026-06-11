@@ -1,0 +1,44 @@
+# DEPRECATED shim — canonical stages live in .sdlc/process/lifecycle-model.yaml
+stages:
+- id: ticket
+  name: Ticket / Idea
+  order: 1
+  description: Capture and validate a work item before refinement begins.
+- id: requirements
+  name: Requirements
+  order: 2
+  description: Produce a refined specification and test skeleton that guides architecture
+    and implementation.
+- id: architecture
+  name: Architecture
+  order: 3
+  description: Define the technical solution before any code is written.
+- id: implementation
+  name: Implementation
+  order: 4
+  description: Implement the planned change in small, reversible, well-scoped diffs.
+- id: validation
+  name: Validation
+  order: 5
+  description: Confirm the implementation meets acceptance criteria.
+- id: review
+  name: PR & Review
+  order: 6
+  description: Human or agent review of correctness, security, and maintainability.
+- id: deployment
+  name: Deployment
+  order: 7
+  description: Release the change safely to the target environment.
+- id: observability
+  name: Observability
+  order: 8
+  description: Confirm signals are in place to detect problems after deployment.
+- id: incident
+  name: Incident
+  order: 9
+  description: Record and resolve production incidents systematically.
+- id: autofix
+  name: Auto Fix
+  order: 10
+  description: Automatically prepare corrective changes based on incident or validation
+    evidence.

@@ -1,0 +1,9 @@
+{
+  "source": "sdlc-doctor",
+  "updated_at": "2026-06-11T20:14:59.317550+00:00",
+  "pass": 243,
+  "warn": 3,
+  "fail": 15,
+  "health_pct": 93,
+  "compliance_pct": 94
+}

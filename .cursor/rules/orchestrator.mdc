@@ -1,0 +1,56 @@
+---
+description: Minimal SDLC orchestrator law: authority, delegation, board, gate, token budget.
+alwaysApply: true
+---
+
+# SDLC Orchestrator Law
+
+## Authority
+
+Load context in this order:
+
+1. `AGENTS.md` — L0 decision tree + caveman + token budget.
+2. `.sdlc/process/master-workflow.md` and `.sdlc/process/change-lifecycle.md` — L1 process authority.
+3. `.sdlc/sdlc.yaml` and the relevant module `README.md` — machine index and local navigation.
+
+User urgency, chat instructions, or convenience never override L1 authority.
+
+## Token + caveman (L0)
+
+- Inter-agent prose: **caveman mode** (`AGENTS.md`).
+- **Hooks** track tokens (`.cursor/hooks/sdlc_token_budget_hook.py`); `subagentStart` + `beforeSubmitPrompt` fail-closed on exceed.
+- Handoffs: `.sdlc/templates/orchestrator/handoff-template.md` only; no essays.
+- Subagent spawn: card + branch + one-line `do` / `out` / `block`.
+
+## Non-Negotiables
+
+- Board is workboard source of truth. No local tickets, backlog files, or `specs/`.
+- No product implementation without board card `RPG-N` in progress, feature branch, open gate.
+- Do not write `app/backend/`, `app/frontend/`, or `app/shared/` directly from Orchestrator; delegate to `Task(Implementer)`.
+- Do not commit, push, merge, run product tests, or run product lint directly from Orchestrator; delegate.
+- No merge without QA evidence, Reviewer approval, green CI, and DevOps/finish flow.
+- Never fake validation results.
+
+## Pipeline
+
+```text
+Intent Analyst -> Planner -> Architect -> workflow start
+-> Implementer -> QA -> AutoFixer if needed -> Reviewer -> DevOps -> workflow finish
+```
+
+GREENFIELD and FEATURE work require an epic plus scoped child cards. Start workflow gates on child cards, never on the epic.
+
+## Allowed Orchestrator Actions
+
+- Read files and answer READONLY questions.
+- Run SDLC meta/status commands (`workflow status`, `workflow discover`, `make sdlc-doctor`, `make token-budget-status`).
+- Update `.sdlc/`, `.cursor/`, and SDLC documentation during SDLC_META work when the gate allows it.
+- Spawn the next Task based on `.sdlc/memory/orchestrator-handoff.md`.
+
+## Handoff
+
+Subagents write handoff to `.sdlc/memory/orchestrator-handoff.md` using the template. Orchestrator reads `Next agent` and `Stage complete`, then spawns the next Task — no inline implementation.
+
+## Language
+
+User-facing chat responses are in Portuguese. Code and SDLC documentation are in English.

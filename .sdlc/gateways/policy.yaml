@@ -1,0 +1,115 @@
+version: "1.0"
+description: Deterministic pre/post interaction gateways for SDLC agent harness.
+
+valid_agents:
+  - intent-analyst
+  - planner
+  - architect
+  - implementer
+  - qa
+  - auto-fixer
+  - reviewer
+  - devops
+  - doctor
+  - none
+
+agent_order:
+  intent-analyst:
+    next: planner
+    fallback: intent-analyst
+  planner:
+    next: architect
+    fallback: intent-analyst
+  architect:
+    next: implementer
+    fallback: planner
+  implementer:
+    next: qa
+    fallback: architect
+  qa:
+    next: reviewer
+    fallback: implementer
+    failure_next: auto-fixer
+  auto-fixer:
+    next: qa
+    fallback: implementer
+  reviewer:
+    next: devops
+    fallback: implementer
+  devops:
+    next: none
+    fallback: reviewer
+
+handoff:
+  required_sections:
+    - Routing
+    - Session
+    - Scope
+    - Blockers
+  required_fields:
+    Routing:
+      - Next agent
+      - Stage complete
+      - Previous agent
+    Session:
+      - Card
+      - Branch
+      - Stage
+  complete_values:
+    - "yes"
+    - "no"
+  empty_values:
+    - ""
+    - "-"
+    - "—"
+    - "none"
+    - "(none)"
+
+pre_gateway:
+  deny_shell_patterns:
+    - "git\\s+reset\\s+--hard"
+    - "git\\s+push\\s+--force"
+    - "rm\\s+-rf\\s+/"
+    - "mkdir\\s+(-p\\s+)?specs\\b"
+    - "touch\\s+specs/"
+  deny_message: "Deterministic SDLC gateway blocked an unsafe or bypassing shell command."
+
+post_gateway:
+  reroute_on_missing_handoff: true
+  reroute_on_incomplete_stage: true
+  reroute_on_blockers: true
+  verify_handoff_evidence: true
+  max_autofix_cycles: 2
+
+# Studio S4 propose-only mutations (RPG-84). Reference for gateway-check simulation;
+# hooks do not parse this block today — studio_service reads it + gate.py.
+studio_proposals:
+  authority_badge: proposed_non_authoritative
+  mandatory_dry_run_steps:
+    - validate
+    - doctor
+    - gateway-check
+  allowed_target_prefixes:
+    - .sdlc/workflows/
+    - .sdlc/stages/
+    - .sdlc/pipeline/
+    - .sdlc/manifest/
+    - .sdlc/gates/
+    - .cursor/agents/
+    - .cursor/rules/
+    - .cursor/skills/
+    - .cursor/commands/
+  forbidden_target_prefixes:
+    - .sdlc/memory/
+    - .sdlc/templates/plane/
+    - .cursor/hooks/
+    - .cursor/mcp.json
+    - app/
+    - specs/
+  forbidden_api_patterns:
+    - "POST /studio/proposals/{id}/apply"
+    - "git commit"
+    - "git push"
+    - "gh pr merge"
+  gate_check_module: .sdlc/dsl/gate.py
+  gate_check_function: check_write

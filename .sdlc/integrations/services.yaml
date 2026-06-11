@@ -1,0 +1,112 @@
+integrations:
+- id: repository
+  role: repository
+  implementation: github
+  name: GitHub
+  status: active
+  description: Version control, PR workflow, and CI/CD triggers.
+  env_logical: repository_token
+  config_env: GITHUB_PERSONAL_ACCESS_TOKEN_CLASSIC
+  capabilities:
+  - issues
+  - pull_requests
+  - actions
+  - webhooks
+- id: board
+  role: board
+  implementation: plane
+  name: Plane
+  status: active
+  description: Workboard — tasks, sprints, and pages.
+  env_logical: board_api_key
+  config_env: PLANE_API_KEY
+  capabilities:
+  - work_items
+  - sprints
+  - pages
+- id: openai
+  role: llm
+  name: OpenAI
+  status: placeholder
+  description: LLM inference for agent tasks.
+  env_logical: llm_api_key
+  config_env: OPENAI_API_KEY
+  capabilities:
+  - chat_completion
+  - embeddings
+- id: cicd
+  role: cicd
+  name: CI/CD
+  status: not_configured
+  description: Automated build, test, and deployment pipeline.
+  env_logical: null
+  config_env: null
+  capabilities:
+  - build
+  - test
+  - deploy
+  - lint
+- id: docker
+  role: docker
+  name: Docker
+  status: not_configured
+  description: Container build and local development environment.
+  env_logical: null
+  config_env: null
+  capabilities:
+  - build
+  - compose
+  - registry
+- id: kubernetes
+  role: kubernetes
+  name: Kubernetes
+  status: not_configured
+  description: Container orchestration for production deployment.
+  env_logical: null
+  config_env: null
+  capabilities:
+  - deploy
+  - scale
+  - rollback
+- id: opentelemetry
+  role: opentelemetry
+  name: OpenTelemetry
+  status: not_configured
+  description: Distributed tracing, metrics, and log correlation.
+  env_logical: null
+  config_env: null
+  capabilities:
+  - traces
+  - metrics
+  - logs
+- id: sentry
+  role: sentry
+  name: Sentry
+  status: not_configured
+  description: Error tracking and performance monitoring.
+  env_logical: null
+  config_env: null
+  capabilities:
+  - error_tracking
+  - performance
+  - alerts
+- id: slack
+  role: slack
+  name: Slack
+  status: not_configured
+  description: Team notifications and incident alerts.
+  env_logical: null
+  config_env: null
+  capabilities:
+  - notifications
+  - incident_alerts
+- id: email
+  role: email
+  name: Email
+  status: not_configured
+  description: Transactional and alert email delivery.
+  env_logical: null
+  config_env: null
+  capabilities:
+  - transactional
+  - alerts

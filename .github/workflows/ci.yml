@@ -71,8 +71,7 @@ jobs:
             .cursor/hooks/sdlc_gate_hook.py \
             .cursor/hooks/sdlc_pre_gateway.py \
             .cursor/hooks/sdlc_post_gateway.py \
-            .cursor/hooks/test_sdlc_gate_hook.py \
-            app/infra/sdlc_obs
+            .cursor/hooks/test_sdlc_gate_hook.py
 
   sdlc-validate:
     name: SDLC Validate
@@ -112,10 +111,10 @@ jobs:
           node-version: "20"
           cache: npm
           cache-dependency-path: |
-            app/studio-frontend/package-lock.json
+            studio/frontend/package-lock.json
             tests/e2e/package-lock.json
       - name: Install Studio frontend deps
-        run: cd app/studio-frontend && npm ci
+        run: cd studio/frontend && npm ci
       - name: Install Playwright deps
         run: cd tests/e2e && npm ci && npx playwright install --with-deps chromium
       - name: Run Studio Playwright E2E

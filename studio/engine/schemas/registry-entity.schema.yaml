@@ -1,0 +1,144 @@
+schema_id: studio.registry_entity
+schema_version: "0.1.0"
+description: Descriptive, non-executable schema for one referential Studio registry entity.
+type: object
+required:
+  - entity
+x_invariants:
+  - Registry entities point to authoritative .sdlc/ or .cursor/ artifacts by stable ID and path.
+  - Registry IDs stay in the sdlc.* or cursor.* namespace and must align with source_system.
+  - Paths stay under .sdlc/ or .cursor/ and must align with source_system.
+  - Summaries are short referential descriptions, not copied source content.
+  - Relationship targets are registry entity IDs, not embedded target bodies; detailed edge records use studio.registry_relationship.
+  - Entity records must not include content-bearing fields such as body, prompt, template, policy, command, hook_logic, evidence, or output.
+properties:
+  entity:
+    type: object
+    required:
+      - id
+      - kind
+      - name
+      - path
+      - source_system
+      - source_module
+      - summary
+      - tags
+    properties:
+      id:
+        type: string
+        description: Stable registry identifier in the sdlc.* or cursor.* namespace.
+        pattern: ^(sdlc|cursor)\.[a-z0-9][a-z0-9_.-]*$
+        maxLength: 96
+      kind:
+        type: string
+        description: Referential artifact kind; this classifies the source artifact without redefining its behavior.
+        enum:
+          - workflow
+          - stage
+          - gate
+          - gateway_policy
+          - workboard_policy
+          - pipeline
+          - process
+          - template
+          - doctor
+          - integration
+          - rule
+          - manifest
+          - script
+          - agent
+          - skill
+          - command
+          - hook
+          - module
+          - memory
+      name:
+        type: string
+        description: Short display name for the referenced artifact.
+        minLength: 1
+        maxLength: 80
+      path:
+        type: string
+        description: Real repository path under .sdlc/ or .cursor/; path scope must align with source_system.
+        pattern: ^\.(sdlc|cursor)/[A-Za-z0-9._/-]+$
+        maxLength: 180
+      source_system:
+        type: string
+        description: Authoritative source area for the referenced artifact; must match the path prefix and ID namespace.
+        enum:
+          - sdlc
+          - cursor
+      source_module:
+        type: string
+        description: Owning SDLC or Cursor module name.
+        pattern: ^[a-z][a-z0-9_-]*$
+        maxLength: 48
+      summary:
+        type: string
+        description: Short referential summary; do not copy authoritative rule bodies, command bodies, lifecycle text, prompts, hooks, templates, evidence, or runtime behavior.
+        minLength: 1
+        maxLength: 160
+      tags:
+        type: array
+        description: Lightweight classification tags only.
+        minItems: 1
+        uniqueItems: true
+        maxItems: 8
+        items:
+          type: string
+          pattern: ^[a-z][a-z0-9_-]*$
+          maxLength: 32
+      relationships:
+        type: array
+        description: Optional lightweight outgoing relationships to other registry entity IDs.
+        maxItems: 16
+        items:
+          type: object
+          required:
+            - relation
+            - target_ref
+          properties:
+            relation:
+              type: string
+              description: Short relationship verb such as indexes, uses, governs, validates, references, supports, or documents.
+              enum:
+                - indexes
+                - uses
+                - governs
+                - validates
+                - references
+                - supports
+                - documents
+            target_ref:
+              type: string
+              description: Existing registry entity ID in the sdlc.* or cursor.* namespace.
+              pattern: ^(sdlc|cursor)\.[a-z0-9][a-z0-9_.-]*$
+            summary:
+              type: string
+              description: Short referential relationship summary without copied source content.
+              maxLength: 160
+          additionalProperties: false
+        uniqueItems: true
+    allOf:
+      - if:
+          properties:
+            source_system:
+              const: sdlc
+        then:
+          properties:
+            id:
+              pattern: ^sdlc\.
+            path:
+              pattern: ^\.sdlc/
+      - if:
+          properties:
+            source_system:
+              const: cursor
+        then:
+          properties:
+            id:
+              pattern: ^cursor\.
+            path:
+              pattern: ^\.cursor/
+    additionalProperties: false
+additionalProperties: false

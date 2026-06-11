@@ -1,0 +1,35 @@
+{
+  "card": "RPG-N",
+  "title": "[AI][TYPE] Short title",
+  "summary": "What was delivered and why it matters.",
+  "problems_solved": [
+    "Problem or risk addressed"
+  ],
+  "technical": {
+    "modules": [
+      "path/to/changed/module"
+    ],
+    "decisions": [
+      "Decision or trade-off"
+    ],
+    "files_changed": [
+      "path/to/file"
+    ]
+  },
+  "validation": {
+    "tests": "real command output summary",
+    "doctor": "make sdlc-doctor result",
+    "ci": "CI status or not run with reason"
+  },
+  "artifacts": {
+    "pr": "PR number or URL",
+    "branch": "feature/RPG-N-slug",
+    "commit": "commit SHA or not applicable",
+    "docs": [
+      "docs/path-or-sdlc/path"
+    ]
+  },
+  "context_for_future": [
+    "Follow-up context for the next agent or future card"
+  ]
+}

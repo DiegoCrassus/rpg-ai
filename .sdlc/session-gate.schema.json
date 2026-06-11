@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "session-gate.schema.json",
+  "title": "SDLC Session Gate",
+  "description": "Runtime session state for the SDLC workflow gate. Persisted at .sdlc/memory/session-gate.json.",
+  "type": "object",
+  "required": ["gate_status"],
+  "properties": {
+    "gate_status": {
+      "type": "string",
+      "enum": ["open", "closed"],
+      "description": "Whether the gate is open (writes to protected paths allowed) or closed."
+    },
+    "card": {
+      "type": "string",
+      "pattern": "^(RPG-\\d+|)$",
+      "description": "Active board card ID (e.g. RPG-42). Empty when gate is closed."
+    },
+    "branch": {
+      "type": "string",
+      "description": "Current feature branch (e.g. feature/RPG-42-my-slug)."
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "ticket", "requirements", "architecture", "implementation",
+        "validation", "review", "deployment", "observability",
+        "incident", "autofix", "sdlc_meta", ""
+      ],
+      "description": "Active SDLC stage controlling which paths are writable."
+    },
+    "intent": {
+      "type": "string",
+      "enum": [
+        "GREENFIELD", "FEATURE", "BUGFIX", "HOTFIX",
+        "SDLC_META", "DOCS_ONLY", "INFRA", "READONLY", ""
+      ],
+      "description": "Intent classification result from intent-analyst."
+    },
+    "opened_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the gate was last opened."
+    },
+    "last_agent": {
+      "type": "string",
+      "description": "ID of the last agent that updated the gate (e.g. 'implementer', 'qa')."
+    },
+    "last_commit": {
+      "type": "string",
+      "description": "Short hash of the last commit on the feature branch."
+    },
+    "stage_started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the current stage began."
+    },
+    "meta": {
+      "type": "object",
+      "description": "Arbitrary key-value pairs for agent-specific context.",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

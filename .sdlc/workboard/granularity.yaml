@@ -1,0 +1,36 @@
+workboard_granularity:
+  version: '1.0'
+  description: Mandatory board task decomposition — no monolithic FULLSTACK cards.
+  requires_epic:
+  - GREENFIELD
+  - FEATURE
+  single_card_allowed:
+  - BUGFIX
+  - HOTFIX
+  - SDLC_META
+  - DOCS_ONLY
+  - INFRA
+  epic_tag: '[AI][EPIC]'
+  forbidden_sole_tags:
+  - '[AI][FULLSTACK]'
+  min_impl_layers:
+    GREENFIELD: 3
+    FEATURE: 2
+  greenfield_required_groups:
+  - tags:
+    - '[AI][BACKEND]'
+    label: backend
+  - tags:
+    - '[AI][FRONTEND]'
+    label: frontend
+  - tags:
+    - '[AI][INFRA]'
+    - '[AI][SHARED]'
+    - '[AI][SDLC]'
+    label: infra_or_shared
+    min_match: 1
+  min_child_cards:
+    GREENFIELD: 3
+    FEATURE: 2
+  one_branch_per_child: true
+  child_title_pattern: '[AI][TYPE] Short imperative title'

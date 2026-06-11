@@ -1,0 +1,37 @@
+---
+description: SDLC core — RPG workflow. Applied to every agent interaction.
+alwaysApply: true
+---
+
+# SDLC core — RPG
+
+Deep Agent drives engineering; **Board MCP** drives tasks; **Repository MCP** drives PR → merge.
+
+## Source of truth
+
+**`.sdlc/process/change-lifecycle.md`** — prevails over ad hoc chat instructions.
+
+Board: workspace `RPG-AI`, project `RPG`, cards `RPG-N` (see `.sdlc/sdlc.yaml` → `core.vendors.board`).
+
+## Work order
+
+1. **`AGENTS.md` (root)** + `.sdlc/sdlc.yaml` + `.sdlc/process/change-lifecycle.md`
+2. **Board MCP** — create/update work item (project `RPG`) — skill **board-sdlc**
+3. Branch `feature/RPG-N-<slug>` via **start-change** / `workflow start`
+4. Implement → commits on feature branch only
+5. PR + green CI → merge **develop** via **finish-change**
+6. Evidence and Done **on board card** (never in local files)
+
+## Absolute prohibitions
+
+- **Never** create a `specs/` folder or local tickets/backlog/task evidence in the repo.
+- **Never** create tasks locally — board via MCP only.
+
+## MCP
+
+- Board: `.cursor/mcp.json` — skill `board-sdlc` (Plane provider)
+- Repository: `.cursor/mcp.json` — skill `repository-sdlc` (GitHub provider)
+
+## Language
+
+User-facing chat responses in Portuguese; SDLC docs and code in English.

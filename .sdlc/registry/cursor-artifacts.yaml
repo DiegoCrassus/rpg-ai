@@ -1,0 +1,306 @@
+registry_version: "0.1.0"
+artifacts:
+  - id: cursor.agent.intent_analyst
+    kind: agent
+    name: Intent analyst
+    path: .cursor/agents/intent-analyst.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for request classification.
+    tags: [agent, classification]
+  - id: cursor.agent.planner
+    kind: agent
+    name: Planner
+    path: .cursor/agents/planner.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for SDLC work planning.
+    tags: [agent, planning]
+  - id: cursor.agent.architect
+    kind: agent
+    name: Architect
+    path: .cursor/agents/architect.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for architecture planning.
+    tags: [agent, architecture]
+  - id: cursor.agent.implementer
+    kind: agent
+    name: Implementer
+    path: .cursor/agents/implementer.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for focused implementation work.
+    tags: [agent, implementation]
+  - id: cursor.agent.qa
+    kind: agent
+    name: QA
+    path: .cursor/agents/qa.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for validation and QA evidence.
+    tags: [agent, qa, validation]
+  - id: cursor.agent.auto_fixer
+    kind: agent
+    name: Auto fixer
+    path: .cursor/agents/auto-fixer.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for bounded automated fixes.
+    tags: [agent, fixes]
+  - id: cursor.agent.reviewer
+    kind: agent
+    name: Reviewer
+    path: .cursor/agents/reviewer.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for code review.
+    tags: [agent, review]
+  - id: cursor.agent.devops
+    kind: agent
+    name: DevOps
+    path: .cursor/agents/devops.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for PR and merge operations.
+    tags: [agent, devops]
+  - id: cursor.agent.doctor
+    kind: agent
+    name: Doctor
+    path: .cursor/agents/doctor.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for SDLC doctor validation.
+    tags: [agent, doctor]
+  - id: cursor.agent.observer
+    kind: agent
+    name: Observer
+    path: .cursor/agents/observer.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for SDLC observation.
+    tags: [agent, observability]
+  - id: cursor.agent.contract_validator
+    kind: agent
+    name: Contract validator
+    path: .cursor/agents/contract-validator.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for API contract validation.
+    tags: [agent, contracts]
+  - id: cursor.agent.migration_runner
+    kind: agent
+    name: Migration runner
+    path: .cursor/agents/migration-runner.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for database migration execution.
+    tags: [agent, migrations]
+  - id: cursor.agent.security_scanner
+    kind: agent
+    name: Security scanner
+    path: .cursor/agents/security-scanner.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for security scanning.
+    tags: [agent, security]
+  - id: cursor.agent.issue_analyst
+    kind: agent
+    name: Issue analyst
+    path: .cursor/agents/issue-analyst.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for GitHub issue triage.
+    tags: [agent, issues]
+  - id: cursor.agent.rollback
+    kind: agent
+    name: Rollback agent
+    path: .cursor/agents/rollback-agent.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for rollback execution.
+    tags: [agent, rollback]
+  - id: cursor.agent.sdlc_auditor
+    kind: agent
+    name: SDLC auditor
+    path: .cursor/agents/sdlc-auditor.md
+    source_system: cursor
+    source_module: agents
+    summary: Agent definition for SDLC audits.
+    tags: [agent, audit]
+  - id: cursor.skill.intent_classification
+    kind: skill
+    name: Intent classification
+    path: .cursor/skills/intent-classification/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for classifying SDLC request intent.
+    tags: [skill, classification]
+  - id: cursor.skill.plane_task_creation
+    kind: skill
+    name: Plane task creation
+    path: .cursor/skills/plane-task-creation/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for creating Plane work items.
+    tags: [skill, plane, planning]
+  - id: cursor.skill.plane_sdlc
+    kind: skill
+    name: Plane SDLC
+    path: .cursor/skills/plane-sdlc/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for Plane-backed SDLC operations.
+    tags: [skill, plane]
+  - id: cursor.skill.plane_formatting
+    kind: skill
+    name: Plane formatting
+    path: .cursor/skills/plane-formatting/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for Plane content formatting.
+    tags: [skill, plane, formatting]
+  - id: cursor.skill.start_change
+    kind: skill
+    name: Start change
+    path: .cursor/skills/start-change/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for starting a gated SDLC change.
+    tags: [skill, workflow, branch]
+  - id: cursor.skill.finish_change
+    kind: skill
+    name: Finish change
+    path: .cursor/skills/finish-change/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for completing a gated SDLC change.
+    tags: [skill, workflow, merge]
+  - id: cursor.skill.subagent_delegation
+    kind: skill
+    name: Subagent delegation
+    path: .cursor/skills/subagent-delegation/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for SDLC agent delegation boundaries.
+    tags: [skill, delegation]
+  - id: cursor.skill.qa_minimum_checklist
+    kind: skill
+    name: QA minimum checklist
+    path: .cursor/skills/qa-minimum-checklist/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for minimum QA validation.
+    tags: [skill, qa, validation]
+  - id: cursor.skill.github_sdlc
+    kind: skill
+    name: GitHub SDLC
+    path: .cursor/skills/github-sdlc/SKILL.md
+    source_system: cursor
+    source_module: skills
+    summary: Skill for GitHub-backed SDLC operations.
+    tags: [skill, github]
+  - id: cursor.command.sdlc_doctor
+    kind: command
+    name: SDLC doctor command
+    path: .cursor/commands/sdlc-doctor.md
+    source_system: cursor
+    source_module: commands
+    summary: Cursor command reference for SDLC doctor checks.
+    tags: [command, doctor]
+  - id: cursor.command.sdlc_review
+    kind: command
+    name: SDLC review command
+    path: .cursor/commands/sdlc-review.md
+    source_system: cursor
+    source_module: commands
+    summary: Cursor command reference for SDLC review flow.
+    tags: [command, review]
+  - id: cursor.command.sdlc_run
+    kind: command
+    name: SDLC run command
+    path: .cursor/commands/sdlc-run.md
+    source_system: cursor
+    source_module: commands
+    summary: Cursor command reference for SDLC run flow.
+    tags: [command, workflow]
+  - id: cursor.rule.orchestrator
+    kind: rule
+    name: Orchestrator rule
+    path: .cursor/rules/orchestrator.mdc
+    source_system: cursor
+    source_module: rules
+    summary: Cursor rule for SDLC orchestration.
+    tags: [rule, orchestrator]
+  - id: cursor.rule.sdlc_core
+    kind: rule
+    name: SDLC core rule
+    path: .cursor/rules/sdlc-core.mdc
+    source_system: cursor
+    source_module: rules
+    summary: Cursor rule for core SDLC behavior.
+    tags: [rule, sdlc]
+  - id: cursor.rule.code_quality
+    kind: rule
+    name: Code quality rule
+    path: .cursor/rules/020-code-quality.mdc
+    source_system: cursor
+    source_module: rules
+    summary: Cursor rule for code quality guidance.
+    tags: [rule, quality]
+  - id: cursor.rule.docs_handoff
+    kind: rule
+    name: Docs and handoff rule
+    path: .cursor/rules/030-docs-and-handoff.mdc
+    source_system: cursor
+    source_module: rules
+    summary: Cursor rule for documentation and handoff behavior.
+    tags: [rule, docs, handoff]
+  - id: cursor.rule.doctor_gates
+    kind: rule
+    name: Doctor gates rule
+    path: .cursor/rules/040-doctor-gates.mdc
+    source_system: cursor
+    source_module: rules
+    summary: Cursor rule for doctor validation gates.
+    tags: [rule, doctor]
+  - id: cursor.hook.sdlc_gate
+    kind: hook
+    name: SDLC gate hook
+    path: .cursor/hooks/sdlc_gate_hook.py
+    source_system: cursor
+    source_module: hooks
+    summary: Hook for SDLC gate enforcement.
+    tags: [hook, gate]
+  - id: cursor.hook.pre_gateway
+    kind: hook
+    name: SDLC pre gateway
+    path: .cursor/hooks/sdlc_pre_gateway.py
+    source_system: cursor
+    source_module: hooks
+    summary: Hook for pre-gateway checks.
+    tags: [hook, gateway]
+  - id: cursor.hook.post_gateway
+    kind: hook
+    name: SDLC post gateway
+    path: .cursor/hooks/sdlc_post_gateway.py
+    source_system: cursor
+    source_module: hooks
+    summary: Hook for post-gateway checks.
+    tags: [hook, gateway]
+  - id: cursor.hook.post_tool_validator
+    kind: hook
+    name: Post-tool validator
+    path: .cursor/hooks/post-tool-validator.py
+    source_system: cursor
+    source_module: hooks
+    summary: Hook for post-tool validation.
+    tags: [hook, validation]
+  - id: cursor.hook.sdlc_obs_session
+    kind: hook
+    name: SDLC observation session
+    path: .cursor/hooks/sdlc_obs_session.py
+    source_system: cursor
+    source_module: hooks
+    summary: Hook for SDLC observation context.
+    tags: [hook, observability]

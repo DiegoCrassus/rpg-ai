@@ -1,0 +1,68 @@
+schema_id: studio.registry_relationship
+schema_version: "0.1.0"
+description: Descriptive, non-executable schema for one referential Studio registry relationship.
+type: object
+required:
+  - relationship
+x_invariants:
+  - Registry relationships point between existing registry entity IDs from .sdlc/registry artifact files.
+  - Relationship IDs stay in the rel.* namespace and identify directed registry edges.
+  - Direction is semantic: from -> relation -> to; inverse or bidirectional meaning requires a separate relationship.
+  - Relationship types are limited to indexes, uses, governs, validates, references, supports, or documents.
+  - source_refs point to real .sdlc/ or .cursor/ repository paths and ground the edge without copying source bodies.
+  - Summaries are short referential descriptions, not copied source content or delivery evidence.
+  - Relationship records must not include content-bearing fields such as body, prompt, template, policy, command, hook_logic, evidence, output, or generated.
+properties:
+  relationship:
+    type: object
+    required:
+      - id
+      - from
+      - to
+      - relation
+      - source_refs
+      - summary
+    properties:
+      id:
+        type: string
+        description: Stable relationship identifier in the rel.* namespace.
+        pattern: ^rel\.[a-z0-9][a-z0-9_.-]*$
+        maxLength: 120
+      from:
+        type: string
+        description: Existing registry entity ID where the directed relationship starts.
+        pattern: ^(sdlc|cursor)\.[a-z0-9][a-z0-9_.-]*$
+        maxLength: 96
+      to:
+        type: string
+        description: Existing registry entity ID where the directed relationship ends.
+        pattern: ^(sdlc|cursor)\.[a-z0-9][a-z0-9_.-]*$
+        maxLength: 96
+      relation:
+        type: string
+        description: Allowed descriptive relationship verb.
+        enum:
+          - indexes
+          - uses
+          - governs
+          - validates
+          - references
+          - supports
+          - documents
+      source_refs:
+        type: array
+        description: Real repository paths under .sdlc/ or .cursor/ that ground the relationship.
+        minItems: 1
+        uniqueItems: true
+        maxItems: 8
+        items:
+          type: string
+          pattern: ^\.(sdlc|cursor)/[A-Za-z0-9._/-]+$
+          maxLength: 180
+      summary:
+        type: string
+        description: Short referential summary without copied source content, generated output, or delivery evidence.
+        minLength: 1
+        maxLength: 160
+    additionalProperties: false
+additionalProperties: false
