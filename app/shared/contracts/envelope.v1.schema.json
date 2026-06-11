@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpg-ai.local/contracts/envelope.v1.schema.json",
+  "title": "RPG Platform JSON Envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "meta", "payload"],
+  "properties": {
+    "contract": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "contract_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "meta": {
+      "$ref": "#/$defs/meta"
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "$defs": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mesa_id",
+        "resource_id",
+        "entity_version",
+        "created_at",
+        "updated_at"
+      ],
+      "properties": {
+        "mesa_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "resource_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "entity_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}

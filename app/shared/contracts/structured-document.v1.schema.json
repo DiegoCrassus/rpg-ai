@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpg-ai.local/contracts/structured-document.v1.schema.json",
+  "title": "rpg.structured-document v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "meta", "payload"],
+  "properties": {
+    "contract": { "const": "rpg.structured-document" },
+    "contract_version": { "const": "1.0.0" },
+    "meta": { "$ref": "envelope.v1.schema.json#/$defs/meta" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "content"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{0,63}$"
+        },
+        "content": { "type": "string" },
+        "character_sheet_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "sections"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "sections": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/section" },
+          "minItems": 1,
+          "maxItems": 100
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpg-ai.local/contracts/sheet-template.v1.schema.json",
+  "title": "rpg.sheet-template v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "meta", "payload"],
+  "properties": {
+    "contract": { "const": "rpg.sheet-template" },
+    "contract_version": { "const": "1.0.0" },
+    "meta": { "$ref": "envelope.v1.schema.json#/$defs/meta" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "fieldType": {
+      "type": "string",
+      "enum": [
+        "text",
+        "textarea",
+        "number",
+        "checkbox",
+        "select",
+        "multiselect",
+        "group",
+        "repeater",
+        "image",
+        "file"
+      ]
+    },
+    "fieldKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,63}$"
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "max_length": { "type": "integer", "minimum": 1 },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "integer": { "type": "boolean" },
+        "max_items": { "type": "integer", "minimum": 0 },
+        "options": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "allowed_extensions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      }
+    },
+    "field": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "type", "label"],
+      "properties": {
+        "key": { "$ref": "#/$defs/fieldKey" },
+        "type": { "$ref": "#/$defs/fieldType" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "required": { "type": "boolean" },
+        "order": { "type": "integer", "minimum": 0 },
+        "item_label": { "type": "string", "maxLength": 120 },
+        "constraints": { "$ref": "#/$defs/constraints" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/field" },
+          "maxItems": 200
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "enum": ["group", "repeater"] } },
+            "required": ["type"]
+          },
+          "then": { "required": ["children"] }
+        },
+        {
+          "if": {
+            "properties": { "type": { "enum": ["select", "multiselect"] } },
+            "required": ["type"]
+          },
+          "then": {
+            "properties": {
+              "constraints": {
+                "required": ["options"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "slug", "fields"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,79}$"
+        },
+        "is_seed": { "type": "boolean" },
+        "seed_key": { "type": "string", "maxLength": 40 },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/field" },
+          "maxItems": 200
+        }
+      }
+    }
+  }
+}

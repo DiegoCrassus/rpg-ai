@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpg-ai.local/contracts/document-meta.v1.schema.json",
+  "title": "rpg.document-meta v1.0.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "contract_version", "meta", "payload"],
+  "properties": {
+    "contract": { "const": "rpg.document-meta" },
+    "contract_version": { "const": "1.0.0" },
+    "meta": { "$ref": "envelope.v1.schema.json#/$defs/meta" },
+    "payload": { "$ref": "#/$defs/payload" }
+  },
+  "$defs": {
+    "documentType": {
+      "type": "string",
+      "enum": [
+        "rule",
+        "campaign_story",
+        "lore",
+        "npc",
+        "location",
+        "item",
+        "monster",
+        "organization",
+        "session",
+        "summary",
+        "freeform",
+        "character_story",
+        "attachment",
+        "external_link"
+      ]
+    },
+    "documentVisibility": {
+      "type": "string",
+      "enum": [
+        "master_only",
+        "all_players",
+        "specific_players",
+        "specific_character",
+        "owner_private"
+      ]
+    },
+    "contentFormat": {
+      "type": "string",
+      "enum": ["markdown", "structured_json"]
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "type",
+        "tags",
+        "visibility",
+        "visibility_targets",
+        "content_format",
+        "created_by"
+      ],
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "type": { "$ref": "#/$defs/documentType" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 64 },
+          "maxItems": 50
+        },
+        "visibility": { "$ref": "#/$defs/documentVisibility" },
+        "visibility_targets": {
+          "type": "array",
+          "items": { "type": "string", "format": "uuid" }
+        },
+        "character_sheet_id": {
+          "type": ["string", "null"],
+          "format": "uuid"
+        },
+        "content_format": { "$ref": "#/$defs/contentFormat" },
+        "created_by": { "type": "string", "format": "uuid" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "type": { "const": "character_story" } },
+            "required": ["type"]
+          },
+          "then": {
+            "properties": {
+              "character_sheet_id": { "type": "string", "format": "uuid" }
+            },
+            "required": ["character_sheet_id"]
+          }
+        },
+        {
+          "if": {
+            "properties": { "visibility": { "const": "specific_players" } },
+            "required": ["visibility"]
+          },
+          "then": {
+            "properties": {
+              "visibility_targets": { "minItems": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": { "visibility": { "const": "specific_character" } },
+            "required": ["visibility"]
+          },
+          "then": {
+            "properties": {
+              "visibility_targets": { "minItems": 1, "maxItems": 1 }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "visibility": {
+                "enum": ["master_only", "all_players", "owner_private"]
+              }
+            },
+            "required": ["visibility"]
+          },
+          "then": {
+            "properties": {
+              "visibility_targets": { "maxItems": 0 }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
