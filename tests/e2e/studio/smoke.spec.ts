@@ -11,7 +11,7 @@ test.describe("Studio Service critical routes", () => {
 
   test("workflows canvas route renders", async ({ page }) => {
     await page.goto("/workflows");
-    await expect(page.getByRole("heading", { name: "Workflows", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Workflow", level: 1 })).toBeVisible();
   });
 
   test("observability timeline route renders", async ({ page }) => {

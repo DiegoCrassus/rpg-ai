@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import { StudioLayout } from "./components/shell/StudioLayout";
 import { AssistancePage } from "./pages/AssistancePage";
@@ -11,6 +11,7 @@ import { SimulationPage } from "./pages/SimulationPage";
 import { EvidencePage } from "./pages/EvidencePage";
 import { StubPage } from "./pages/StubPage";
 import { ValidationPage } from "./pages/ValidationPage";
+import { WorkflowBuilderPage } from "./pages/WorkflowBuilderPage";
 import { WorkflowsPage } from "./pages/WorkflowsPage";
 
 const stubs: { path: string; title: string; phase: string }[] = [
@@ -23,7 +24,7 @@ export default function App() {
       <Route element={<StudioLayout />}>
         <Route path="/" element={<DashboardPage />} />
         <Route path="workflows" element={<WorkflowsPage />} />
-        <Route path="builder" element={<Navigate to="/workflows" replace />} />
+        <Route path="builder" element={<WorkflowBuilderPage />} />
         <Route
           path="agents"
           element={
