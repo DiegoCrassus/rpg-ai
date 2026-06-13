@@ -16,7 +16,7 @@
 ## Loading order (mandatory)
 
 1. [`AGENTS.md`](../AGENTS.md) — L0 decision tree (alwaysApply rules)
-2. [`process/master-workflow.md`](process/master-workflow.md) + [`process/change-lifecycle.md`](process/change-lifecycle.md) — process authority
+2. [`process/master-workflow.md`](process/master-workflow.md) (L1 pipeline index) + [`process/change-lifecycle.md`](process/change-lifecycle.md) — process authority
 3. **[`sdlc.yaml`](sdlc.yaml)** — `core` (vendors, env, paths) + `contract.modules` (module map)
 4. **Module README** for the area you will touch (table below)
 5. **Module data YAML** referenced by that README
@@ -40,7 +40,7 @@ Each folder is a **vendor-free module**. README = human/agent index; YAML = mach
 | **Memory** | [`memory/README.md`](memory/README.md) | `memory/*` (runtime) | Session state, handoff, ADR summary |
 | **Scripts** | [`scripts/README.md`](scripts/README.md) | `scripts/*` | Deterministic SDLC automation |
 | **Templates** | [`templates/README.md`](templates/README.md) | [`templates/plane/`](templates/plane/README.md), [`templates/planner/`](templates/planner/README.md) | Plane evidence examples and planner output templates |
-| **Process** | [`process/README.md`](process/README.md) | [`process/master-workflow.md`](process/master-workflow.md), [`process/change-lifecycle.md`](process/change-lifecycle.md) | Minimal workflow and change authority |
+| **Process** | [`process/README.md`](process/README.md) | [`process/master-workflow.md`](process/master-workflow.md), [`process/change-lifecycle.md`](process/change-lifecycle.md) | L1 pipeline index + gitflow/Plane authority |
 
 ## Viability Matrix
 
