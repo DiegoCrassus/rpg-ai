@@ -14,7 +14,7 @@ Convert ideas, tickets, and requests into structured, SDLC-aligned plans using t
 ## Primary Skills
 
 - `.cursor/skills/task-creation.md` — plan format. No exceptions.
-- `.cursor/skills/plane-sdlc/SKILL.md` — create/update work items via Plane MCP only.
+- `.cursor/skills/board-sdlc/SKILL.md` — create/update work items via Plane MCP only.
 
 ## Responsibilities
 

@@ -1,34 +1,30 @@
-# Orchestrator handoff
+# Orchestrator Handoff (latest)
 
 ## Routing
 
 | Field | Value |
 |-------|-------|
-| **Next agent** | `orchestrator` |
-| **Stage complete** | `yes` |
-| **Previous agent** | `devops` |
+| **Next agent** | devops |
+| **Stage complete** | yes |
+| **Previous agent** | orchestrator |
 
 ## Session
 
 | Field | Value |
 |-------|-------|
-| **Card** | `(none)` |
-| **Epic** | `RPG-1` (Done) |
-| **Branch** | `(none)` |
-| **Stage** | `idle` |
-| **Intent** | `(none)` |
+| **Card** | RPG-7 |
+| **Epic** | RPG-7 |
+| **Branch** | develop |
+| **Stage** | sdlc_meta |
+| **Intent** | SDLC_META |
 
 ## Delta
 
-- Gate closed after RPG-5 merge (PR #6 @ 88d54d2)
-- Epic RPG-1 closed: children RPG-2/3/4/5 all Done
-- develop @ 88d54d2: bootstrap + backend + frontend + app/Makefile + README
-
-## Open items
-
-- Manual MVP journeys 1-3: run with `make -C app supabase-start` + `make -C app dev`
-- Local git: 5 stashes with historical WIP (review before drop)
+- harness-v6-plan: learning loop + Plane epic RPG-7 (children 8–12)
+- .sdlc/learning/* implemented + hooks + learning_loop.py CLI
+- gates enforcement strict
+- cleanup: plane stubs, rpg-evidence JSON, doc drift, doctor board-formatting
 
 ## Next
 
-await new user intent; spawn intent-analyst on next FEATURE/BUGFIX request
+PR merge RPG-7 epic work → mark children Done on Plane

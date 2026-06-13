@@ -139,7 +139,7 @@ core:
     # strict — protected paths require open gate + matching stage (default).
     # 'off' — skip all write-gate checks (structural repo work, greenfield pivot).
     #         Must be quoted — bare `off` is parsed as YAML false. Re-enable strict when done.
-    enforcement: off
+    enforcement: strict
   tokens:
     enforce: strict
     session_budget: 500000
@@ -150,6 +150,15 @@ core:
     estimate_chars_per_token: 4
     block_task_on_exceed: true
     block_prompt_on_exceed: true
+  optimization:
+    mode: observe
+    min_runs_before_propose: 5
+    ledger_max_lines: 500
+    learning_events_max_lines: 2000
+    procedures: .sdlc/optimization/procedures.yaml
+    policy_memory: .sdlc/learning/policy_memory.yaml
   governance_refs:
     - .sdlc/process/master-workflow.md
     - .sdlc/process/change-lifecycle.md
+    - .sdlc/process/harness-v6-plan.md
+    - .sdlc/process/communication-policy.md

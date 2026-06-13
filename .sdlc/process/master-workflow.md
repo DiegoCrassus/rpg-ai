@@ -147,7 +147,7 @@ Validation: `plane_card.py validate-all --card RPG-N`
 
 ### Plan creation gate
 
-**Skill:** `.cursor/skills/plane-task-creation/SKILL.md`
+**Skill:** `.cursor/skills/board-task-creation/SKILL.md`
 **Script:** `python .sdlc/scripts/plane_card.py validate-plan --card RPG-N`
 
 Incomplete plan **blocks** Ticket → Requirements transition:
@@ -156,7 +156,7 @@ Incomplete plan **blocks** Ticket → Requirements transition:
 - [ ] Non-goals (≥2)
 - [ ] Risks + mitigation (≥2)
 - [ ] Explicit scope (impacted areas)
-- [ ] TipTap HTML format (`plane-formatting` skill)
+- [ ] TipTap HTML format (`board-formatting` skill)
 
 ---
 
@@ -268,7 +268,7 @@ Each stage transition → **structured HTML comment** on Plane card:
 
 When Orchestrator or Doctor detects:
 
-- Missing referenced skill (e.g. `plane-task-creation`)
+- Missing referenced skill (e.g. `board-task-creation`)
 - Missing referenced script (e.g. `sdlc_gate.py`)
 - Missing referenced rule (e.g. `orchestrator.mdc`)
 - Unregistered hook
@@ -296,7 +296,7 @@ MESSAGE RECEIVED
          └─ PRODUCT/META → Plane card
                 │
                 ├─ validate-plan OK?
-                │   └─ NO → Task(Planner) + plane-task-creation
+                │   └─ NO → Task(Planner) + board-task-creation
                 │
                 ├─ arch gate OK? (product)
                 │   └─ NO → Task(Architect)
@@ -321,7 +321,7 @@ BLOCKER → AutoFixer → report → human if exhausted
 
 ### P0 — Done (2026-05-27)
 
-Gate, hook, CLI, anti-bypass rules, intent analyst, plane-task-creation, validate-plan.
+Gate, hook, CLI, anti-bypass rules, intent analyst, board-task-creation, validate-plan.
 
 ### P1 — Done (2026-05-27)
 

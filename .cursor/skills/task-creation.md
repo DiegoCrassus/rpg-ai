@@ -41,7 +41,7 @@ Every task name produced by this skill must follow this format:
 | `[SHARED]` | Primary change is in `app/shared/` |
 | `[SDLC]` | Change affects `.sdlc/`, `.cursor/`, `Makefile`, or project governance |
 | `[DOCS]` | Change is documentation-only (`docs/`) |
-| `[FULLSTACK]` | **Deprecated for greenfield/FEATURE** — split into BACKEND + FRONTEND child cards (see `plane-task-creation/SKILL.md`) |
+| `[FULLSTACK]` | **Deprecated for greenfield/FEATURE** — split into BACKEND + FRONTEND child cards (see `board-task-creation/SKILL.md`) |
 
 ### Title rules
 
@@ -150,7 +150,7 @@ Single paragraph addressed to the Architect (or the next agent in the lifecycle)
 
 ## Delivery
 
-Persist the plan on the **Plane work item** via `.cursor/skills/plane-sdlc/SKILL.md`. Do not write `specs/` or local ticket files.
+Persist the plan on the **Plane work item** via `.cursor/skills/board-sdlc/SKILL.md`. Do not write `specs/` or local ticket files.
 
 ## Outputs
 

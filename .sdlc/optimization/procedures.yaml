@@ -1,0 +1,20 @@
+version: "1.0"
+description: Procedure registry for optimization loop (Harness v6 Layer 3).
+
+procedures:
+  - id: qa-full
+    script: .sdlc/scripts/meta-tools/qa-to-review.sh
+    stages: [validation]
+    card_tags: [BACKEND, FRONTEND, INFRA, SHARED, SDLC]
+    weight: 1.0
+    avg_reward: null
+    runs: 0
+    notes: "Default QA sequence — tests, doctor, qa-evidence JSON"
+
+defaults:
+  validation: qa-full
+
+optimization:
+  mode: observe
+  min_runs_before_propose: 5
+  epsilon: 0.1

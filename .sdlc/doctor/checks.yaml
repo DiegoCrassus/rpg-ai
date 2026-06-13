@@ -165,7 +165,7 @@ checks:
     - .cursor/skills/repository-sdlc/SKILL.md
     - .cursor/skills/board-sdlc/SKILL.md
     - .cursor/skills/subagent-delegation/SKILL.md
-    - .cursor/skills/plane-formatting/SKILL.md
+    - .cursor/skills/board-formatting/SKILL.md
     - .cursor/skills/qa-minimum-checklist/SKILL.md
     agents:
     - .cursor/agents/intent-analyst.md

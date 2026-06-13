@@ -355,6 +355,25 @@ def cmd_review(args: argparse.Namespace) -> int:
     return 0
 
 
+def _ledger_snapshot(card: str) -> None:
+    if not card:
+        return
+    script = ROOT / ".sdlc" / "scripts" / "execution_ledger.py"
+    if script.is_file():
+        subprocess.run(
+            [sys.executable, str(script), "snapshot", "--card", card],
+            cwd=ROOT,
+            capture_output=True,
+        )
+    policy = ROOT / ".sdlc" / "scripts" / "learning_loop.py"
+    if policy.is_file():
+        subprocess.run(
+            [sys.executable, str(policy), "policy-update", "--card", card],
+            cwd=ROOT,
+            capture_output=True,
+        )
+
+
 def cmd_finish(args: argparse.Namespace) -> int:
     card = args.card or load_session_gate().card
     if args.pr and card:
@@ -363,8 +382,11 @@ def cmd_finish(args: argparse.Namespace) -> int:
             [sys.executable, str(merge), "--pr", str(args.pr), "--card", card, "--plane-comment"],
             cwd=ROOT,
         )
+        _ledger_snapshot(card)
         close_gate()
         return proc.returncode
+    if card:
+        _ledger_snapshot(card)
     close_gate()
     print("OK: gate closed" + (" — merge skipped (no --pr)" if not args.pr else ""))
     return 0

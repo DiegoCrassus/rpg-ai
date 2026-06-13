@@ -24,6 +24,12 @@ reading_order:
   note: Agent/skill catalog data
 - file: .sdlc/memory/operational-context.md
   note: Current operational state
+- file: .sdlc/manifest/executions.jsonl
+  note: Execution ledger tail — last events only at session start
+- file: .sdlc/learning/README.md
+  note: Learning loop modules and CLI
+- file: .sdlc/process/communication-policy.md
+  note: Caveman vs human communication law
 - note: Load cursor agent or skill for the active stage
 agents:
   pipeline:
@@ -186,6 +192,7 @@ conventions:
   after_structural_change: make sdlc-doctor
 prohibitions:
 - Never create specs/ folder or local tickets/evidence
+- Never skip execution ledger on subagentStop when gate open (Harness v6)
 - Orchestrator never implements, commits, lints, or runs tests directly
 - No single [AI][FULLSTACK] card for GREENFIELD or FEATURE intents
 - Never skip stages without an explicit documented reason

@@ -32,7 +32,7 @@ Describes **external service roles** (IDE, VCS, workboard, LLM) in a vendor-neut
 
 ## Skills using integrations
 
-- `.cursor/skills/plane-sdlc/SKILL.md` — Plane MCP procedures
+- `.cursor/skills/board-sdlc/SKILL.md` — Plane MCP procedures
 - `.cursor/skills/finish-change/SKILL.md` — GitHub merge + Plane Done
 
 ## Do not

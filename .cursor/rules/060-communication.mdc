@@ -1,0 +1,31 @@
+---
+description: Caveman communication law — inter-agent minimal prose; human channel for plans and user chat.
+alwaysApply: true
+---
+
+# Communication (L0)
+
+**Law:** `.sdlc/process/communication-policy.md`
+
+## Caveman (mandatory)
+
+Who: Orchestrator, all subagents, handoffs, Task prompts, internal status.
+
+| Do | Don't |
+|----|-------|
+| `next: QA. card RPG-7.` | multi-paragraph recap |
+| `FAIL: evidence missing validation` | polite filler |
+| bullets, IDs, paths | repeat AGENTS.md |
+
+Handoff: template only. ≤ 45 lines.
+
+## Human (allowed verbosity)
+
+- User chat — Portuguese, clear
+- `.sdlc/process/*.md` plans — English, structured
+- Plane cards — full AC per board-task-creation
+- `execution-RPG-N.json` — readable summary fields
+
+## Orchestrator duty
+
+Rewrite verbose subagent handoff to caveman before next Task spawn.

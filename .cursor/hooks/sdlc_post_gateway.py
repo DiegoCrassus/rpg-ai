@@ -36,9 +36,37 @@ def blockers_are_clear(blockers: str) -> bool:
     )
 
 
+def _ledger_append(
+    event_type: str,
+    *,
+    reason: str = "",
+    details: list[str] | None = None,
+    evidence_verified: bool | None = None,
+) -> None:
+    try:
+        import sys
+        from pathlib import Path
+
+        repo = Path(__file__).resolve().parents[2]
+        scripts = repo / ".sdlc" / "scripts"
+        if str(scripts) not in sys.path:
+            sys.path.insert(0, str(scripts))
+        from execution_ledger import append_from_gateway  # noqa: PLC0415
+
+        append_from_gateway(
+            event_type,
+            reason=reason,
+            details=details,
+            evidence_verified=evidence_verified,
+        )
+    except Exception:
+        return
+
+
 def followup(agent: str, reason: str, details: list[str]) -> None:
     route = normalize_agent(agent) or "planner"
     detail_text = "\n".join(f"- {item}" for item in details) if details else "- unspecified"
+    _ledger_append("gateway_block", reason=reason, details=details)
     emit_studio_event(
         "gateway.handoff_blocked",
         "sdlc_post_gateway",
@@ -123,6 +151,7 @@ def _run_main() -> None:
             [line for line in blockers.splitlines() if line.strip()],
         )
 
+    evidence_verified: bool | None = None
     if stage_complete == "yes" and (policy.get("post_gateway") or {}).get(
         "verify_handoff_evidence", True
     ):
@@ -146,9 +175,17 @@ def _run_main() -> None:
                         "handoff evidence verification failed",
                         detail.splitlines()[:8],
                     )
+                else:
+                    evidence_verified = True
         except Exception as exc:
             followup(previous, "handoff evidence verifier error", [str(exc)])
 
+    if stage_complete == "yes":
+        _ledger_append(
+            "stage_complete",
+            reason="stage marked complete",
+            evidence_verified=evidence_verified,
+        )
     allow()
 
 
