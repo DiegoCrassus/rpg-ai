@@ -13,12 +13,13 @@ REPO_ROOT = SDLC_ROOT.parent
 if str(SDLC_ROOT) not in sys.path:
     sys.path.insert(0, str(SDLC_ROOT))
 
-from dsl import loader  # noqa: E402
 from scripts.sdlc_sync_model import (  # noqa: E402
     PIPELINE_AGENTS_DESCRIPTION,
     PIPELINE_AGENTS_VERSION,
     build_pipeline_agents_shim,
 )
+
+from dsl import loader  # noqa: E402
 
 CATALOG_PATH = REPO_ROOT / ".sdlc" / "manifest" / "catalog.yaml"
 PIPELINE_PATH = REPO_ROOT / ".sdlc" / "pipeline" / "agents.yaml"
