@@ -2,7 +2,7 @@
 
 > **Authority:** reconciles Analysis A + B + [analysis-v7-comparison.md](analysis-v7-comparison.md)
 > **Epic label:** `[AI][EPIC] Harness v7 — Manifest observability + structure slim`
-> **Status:** APPLIED (2026-06-13) — P0+P1+P2 complete; P3 deferred
+> **Status:** APPLIED (2026-06-13) — P0+P1+P2+P3 complete
 
 ---
 
@@ -68,7 +68,7 @@ studio/                                ← reads manifest + lifecycle-model
 ### Phase P3 — Deferred
 
 - [x] Merge `gates/README` into `gateways/README`
-- [ ] Support agents → skills-only invocation
+- [x] Support agents → skills-only invocation
 
 ---
 

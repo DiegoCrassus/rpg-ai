@@ -1,4 +1,4 @@
-# Orchestrator Handoff (latest)
+# Orchestrator Handoff
 
 ## Routing
 
@@ -12,21 +12,27 @@
 
 | Field | Value |
 |-------|-------|
-| **Card** | RPG-21 |
-| **Epic** | RPG-17 |
-| **Branch** | feature/RPG-21-slim-master-workflow |
+| **Card** | RPG-24 |
+| **Epic** | RPG-22 |
+| **Branch** | feature/RPG-24-support-agents-skills |
 | **Stage** | sdlc_meta |
 | **Intent** | SDLC_META |
 
 ## Delta
 
-- master-workflow.md 338→112 lines; L1 index only
-- points to lifecycle-model operational_map, catalog stage_bindings, .cursor/agents
-- test_master_workflow_slim.py: line count + required sections
-- harness-v7-change-plan P2 complete (RPG-21 [x])
-- README Process row updated
-- commits: [`3a1eab5`]
+- catalog.yaml: agents.support invocation skill-only + doctor skill/command refs
+- policy.yaml: support_agents + support_spawn bypass_handoff_route
+- sdlc_pre_gateway.py: support agents skip handoff route match
+- roster_sync.py: warn support overlap in pipeline_agents
+- AGENTS.md + subagent-delegation: pipeline vs support table
+- manifest README: support invocation mapping table
+- harness-v7-change-plan.md: P3 complete
+- test_support_agents.py added
+
+## Blockers
+
+none
 
 ## Next
 
-- Task(QA): pytest test_master_workflow_slim.py; make sdlc-doctor; verify AC
+spawn QA. run pytest .sdlc/dsl/test_support_agents.py + make sdlc-doctor.

@@ -91,48 +91,58 @@ agents:
     model: fast
     readonly: true
     is_background: false
+    invocation: skill-only
+    skill_id: structural-validation
+    command_id: sdlc-doctor
     role: Structural validation
   - id: observer
     path: .cursor/agents/observer.md
     model: fast
     readonly: false
     is_background: true
+    invocation: skill-only
     role: Observability metrics (background)
   - id: issue-analyst
     path: .cursor/agents/issue-analyst.md
     model: fast
     readonly: false
     is_background: false
+    invocation: skill-only
     role: GitHub Issues triage
   - id: sdlc-auditor
     path: .cursor/agents/sdlc-auditor.md
     model: inherit
     readonly: false
     is_background: false
+    invocation: skill-only
     role: Autonomous SDLC audit
   - id: security-scanner
     path: .cursor/agents/security-scanner.md
     model: inherit
     readonly: true
     is_background: false
+    invocation: skill-only
     role: SAST/secrets scanning
   - id: migration-runner
     path: .cursor/agents/migration-runner.md
     model: inherit
     readonly: false
     is_background: false
+    invocation: skill-only
     role: Database migrations
   - id: contract-validator
     path: .cursor/agents/contract-validator.md
     model: fast
     readonly: true
     is_background: false
+    invocation: skill-only
     role: OpenAPI ↔ TypeScript validation
   - id: rollback-agent
     path: .cursor/agents/rollback-agent.md
     model: inherit
     readonly: false
     is_background: false
+    invocation: skill-only
     role: Rollback procedures
 stage_bindings:
 - id: planner

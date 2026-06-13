@@ -95,6 +95,12 @@ def enforce_next_subagent(payload: dict, policy: dict) -> None:
     if requested in generic_agents:
         return
 
+    support_agents = {
+        normalize_agent(str(a)) for a in (policy.get("support_agents") or [])
+    }
+    if requested in support_agents:
+        return
+
     if requested == expected:
         mark_subagent_start(payload, policy)
         return
