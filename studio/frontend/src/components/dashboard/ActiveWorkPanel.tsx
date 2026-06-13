@@ -6,7 +6,7 @@ import { studioApi } from "../../api/client";
 import type { DashboardSummary } from "../../types/studio";
 import { planeStateGroupClass } from "./planeStateStyle";
 
-const CARD_PATTERN = /^INVES-\d+$/i;
+import { PLANE_CARD_PATTERN } from "../../constants/plane";
 
 type ActiveWorkPanelProps = {
   session?: DashboardSummary["session"];
@@ -15,7 +15,7 @@ type ActiveWorkPanelProps = {
 
 export function ActiveWorkPanel({ session, handoffPresent }: ActiveWorkPanelProps) {
   const card = session?.card?.trim().toUpperCase() ?? "";
-  const cardValid = CARD_PATTERN.test(card);
+  const cardValid = PLANE_CARD_PATTERN.test(card);
 
   const planeQuery = useQuery({
     queryKey: ["studio", "integrations", "plane", card],

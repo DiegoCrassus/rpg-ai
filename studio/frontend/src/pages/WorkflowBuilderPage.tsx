@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import type { XYPosition } from "@xyflow/react";
 
 import { studioApi } from "../api/client";
+import { DEFAULT_PLANE_CARD } from "../constants/plane";
 import { PageHeader } from "../components/common/PageHeader";
 import { AssetPalette } from "../components/builder/AssetPalette";
 import { BuilderInspector, type BuilderSelection } from "../components/builder/BuilderInspector";
@@ -38,7 +39,7 @@ export function WorkflowBuilderPage() {
   const [selection, setSelection] = useState<BuilderSelection>({ kind: "none" });
   const [showAnnotations, setShowAnnotations] = useState(true);
   const [proposalTitle, setProposalTitle] = useState("Workflow transition update");
-  const [simulatedCard, setSimulatedCard] = useState("INVES-N");
+  const [simulatedCard, setSimulatedCard] = useState(DEFAULT_PLANE_CARD);
   const [proposal, setProposal] = useState<ProposalResponse | null>(null);
   const [initialized, setInitialized] = useState(false);
   const [focusNodeId, setFocusNodeId] = useState<string | null>(urlNodeId);

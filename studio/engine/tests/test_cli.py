@@ -230,11 +230,11 @@ def test_list_skeleton_cli_smoke_and_deterministic_json() -> None:
         first_json = run_cli("list-skeleton", "--format", "json")
     assert text.returncode == 0 and "non_executing_traceability_plan" in text.stdout
     assert "execution_claimed: False" in text.stdout
-    assert "INVES-53" in text.stdout
+    assert "RPG-53" in text.stdout
     assert first_json.returncode == 0 and first_json.stdout == run_cli("list-skeleton", "--format", "json").stdout
     payload = json.loads(first_json.stdout)
     assert set(payload) == {"skeleton", "summary", "entries", "validation_types"}
-    assert payload["skeleton"]["card"] == "INVES-75"
+    assert payload["skeleton"]["card"] == "RPG-75"
     assert payload["summary"]["execution_claimed"] is False
     assert payload["summary"]["phase_count"] == 10
 
@@ -265,13 +265,13 @@ def test_publish_evidence_cli_smoke_and_card_filter() -> None:
             "--format",
             "json",
             "--card",
-            "INVES-72",
+            "RPG-72",
             "--branch",
-            "feature/INVES-72-publish-evidence-workflow",
+            "feature/RPG-72-publish-evidence-workflow",
         ).stdout
     )
-    assert filtered["projection"]["filters"]["card"] == "INVES-72"
-    assert filtered["evidence_fields"]["artifacts"]["branch"] == "feature/INVES-72-publish-evidence-workflow"
+    assert filtered["projection"]["filters"]["card"] == "RPG-72"
+    assert filtered["evidence_fields"]["artifacts"]["branch"] == "feature/RPG-72-publish-evidence-workflow"
     bogus = run_cli("publish-evidence", "--card", "bogus")
     assert bogus.returncode == 1 and bogus.stderr == "error: invalid card: bogus\n"
 

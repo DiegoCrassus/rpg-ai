@@ -122,6 +122,9 @@ orchestrator_delegation:
     - data/
   orchestrator_allowlist:
     - .sdlc/memory/operational-context.md
+  orchestrator_shell_deny_patterns:
+    - "python(3)?\\s+.*orchestrator-handoff\\.md"
+    - ">\\s*\\.sdlc/memory/orchestrator-handoff\\.md"
   orchestrator_shell_allow_patterns:
     - "^git\\s+(status|log|diff|branch|show)\\b"
     - "python(3)?\\s+\\.sdlc/dsl/cli\\.py\\s+workflow\\b"

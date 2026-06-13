@@ -31,12 +31,12 @@ describe("buildConfigProposalRequest", () => {
       path: ".cursor/commands/demo.md",
       content: "# Demo\n",
       title: "Add demo command",
-      card: "INVES-87",
+      card: "RPG-87",
       mode: "create",
       exists: false,
     });
     expect(request.ops[0]?.op).toBe("create_file");
-    expect(request.simulated_gate).toEqual({ stage: "sdlc_meta", card: "INVES-87" });
+    expect(request.simulated_gate).toEqual({ stage: "sdlc_meta", card: "RPG-87" });
   });
 
   it("uses replace_block when editing existing file", () => {
@@ -45,7 +45,7 @@ describe("buildConfigProposalRequest", () => {
       path: ".cursor/agents/qa.md",
       content: "# QA\n",
       title: "Update QA agent",
-      card: "INVES-87",
+      card: "RPG-87",
       mode: "edit",
       exists: true,
     });

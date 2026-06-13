@@ -51,14 +51,14 @@ const EVENT_TYPE_HELP: Record<string, string> = {
 export const FILTER_FIELD_HELP = {
   category:
     "Filter the timeline to one event family. Use the info icons in the dropdown area or row badges for per-category detail.",
-  card: "Show events correlated with a Plane card (INVES-N). Matches correlation.card or correlation_id.",
+  card: "Show events correlated with a Plane card (RPG-N). Matches correlation.card or correlation_id.",
   run_id: "Filter by observer run id — matches correlation.run_id or correlation_id substring.",
   event_type: "Substring filter on event_type (e.g. gateway.shell_denied).",
 } as const;
 
 export const CORRELATION_FIELD_HELP: Record<string, string> = {
   correlation_id: "Stable key linking gateway, handoff, gate, and obs events for one workflow moment.",
-  card: "Active Plane work item (INVES-N) when the event was recorded.",
+  card: "Active Plane work item (RPG-N) when the event was recorded.",
   run_id: "Observer pipeline run identifier for token/cost metrics.",
   branch: "Git feature branch tied to the open SDLC gate, when present.",
   session_id: "Cursor session identifier when emitted by hooks or observer.",

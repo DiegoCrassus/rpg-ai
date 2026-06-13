@@ -35,9 +35,9 @@ def test_skeleton_references_plane_child_cards() -> None:
     model = build_mvp_test_skeleton()
     cards = set(model["summary"]["cards_referenced"])
 
-    assert "INVES-54" in cards
-    assert "INVES-75" in cards
-    assert all(card.startswith("INVES-") for card in cards)
+    assert "RPG-54" in cards
+    assert "RPG-75" in cards
+    assert all(card.startswith("RPG-") for card in cards)
     for entry in model["entries"]:
         assert entry["cards"]
         assert entry["ac_ref"]

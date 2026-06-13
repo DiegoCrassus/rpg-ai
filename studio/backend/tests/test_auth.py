@@ -1,4 +1,4 @@
-"""Studio optional Bearer auth (INVES-92 AC-1)."""
+"""Studio optional Bearer auth (RPG-92 AC-1)."""
 
 from __future__ import annotations
 

@@ -30,6 +30,10 @@ POLICY = {
         "delegated_prefixes": [".sdlc/", ".cursor/", "app/"],
         "orchestrator_allowlist": [".sdlc/memory/operational-context.md"],
         "orchestrator_shell_allow_patterns": [r"^git\s+status\b"],
+        "orchestrator_shell_deny_patterns": [
+            r"python(3)?\s+.*orchestrator-handoff\.md",
+            r">\s*\.sdlc/memory/orchestrator-handoff\.md",
+        ],
         "shell_agent_patterns": {
             "implementer": [r"\bgit\s+commit\b"],
             "devops": [r"\bgh\s+pr\s+create\b"],
@@ -126,6 +130,18 @@ def test_orchestrator_shell_git_commit_blocked(gateway_env, capsys) -> None:
     assert exc_info.value.code == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["permission"] == "deny"
+
+
+def test_orchestrator_python_handoff_write_blocked(gateway_env, capsys) -> None:
+    cmd = (
+        'python -c "open(\'.sdlc/memory/orchestrator-handoff.md\',\'w\').write(\'# x\')"'
+    )
+    with pytest.raises(SystemExit) as exc_info:
+        gateway.enforce_orchestrator_delegation_shell(cmd, POLICY)
+    assert exc_info.value.code == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["permission"] == "deny"
+    assert "handoff" in payload["agent_message"].lower()
 
 
 def test_active_devops_may_run_gh_pr_create(gateway_env) -> None:

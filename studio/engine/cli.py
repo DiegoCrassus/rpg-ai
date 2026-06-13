@@ -161,7 +161,7 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Repository root to inspect. Defaults to the current directory.",
     )
-    evidence_parser.add_argument("--card", default=None, help="Plane card id for evidence_fields.card (INVES-N).")
+    evidence_parser.add_argument("--card", default=None, help="Plane card id for evidence_fields.card (RPG-N).")
     evidence_parser.add_argument("--title", default=None, help="Override evidence_fields.title.")
     evidence_parser.add_argument("--branch", default=None, help="Override evidence_fields.artifacts.branch.")
     readiness_parser = subparsers.add_parser("check-readiness")

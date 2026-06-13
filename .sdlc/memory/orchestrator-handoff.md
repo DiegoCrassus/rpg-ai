@@ -1,4 +1,4 @@
-# Orchestrator Handoff
+# Orchestrator Handoff (latest)
 
 ## Routing
 
@@ -12,27 +12,24 @@
 
 | Field | Value |
 |-------|-------|
-| **Card** | RPG-24 |
-| **Epic** | RPG-22 |
-| **Branch** | feature/RPG-24-support-agents-skills |
+| **Card** | RPG-25 |
+| **Epic** | (none) |
+| **Branch** | feature/RPG-25-studio-rpg-polish |
 | **Stage** | sdlc_meta |
 | **Intent** | SDLC_META |
 
 ## Delta
 
-- catalog.yaml: agents.support invocation skill-only + doctor skill/command refs
-- policy.yaml: support_agents + support_spawn bypass_handoff_route
-- sdlc_pre_gateway.py: support agents skip handoff route match
-- roster_sync.py: warn support overlap in pipeline_agents
-- AGENTS.md + subagent-delegation: pipeline vs support table
-- manifest README: support invocation mapping table
-- harness-v7-change-plan.md: P3 complete
-- test_support_agents.py added
+- harness-v7 P3 section renamed Epic RPG-22 (complete)
+- reviewer.md: readonly false; writes handoff on APPROVE/REQUEST CHANGES
+- policy orchestrator_shell_deny_patterns blocks python/shell handoff bypass
+- Studio INVES→RPG: constants, frontend/backend/engine/tests, integrations rpg workspace
+- run-studio-e2e.sh: Git Bash note + netstat port fallback
 
 ## Blockers
 
-none
+- none
 
 ## Next
 
-spawn QA. run pytest .sdlc/dsl/test_support_agents.py + make sdlc-doctor.
+Spawn Task(qa). Validate gateway tests + studio backend/frontend/engine.

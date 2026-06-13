@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Start Studio API + UI preview, run Playwright smoke + builder E2E, then tear down.
+# Windows: run from Git Bash (bundled with Git for Windows), not PowerShell or CMD.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -11,7 +12,17 @@ UI_PID=""
 pick_free_port() {
   local port
   for port in "$@"; do
-    if ! ss -tln 2>/dev/null | grep -q ":${port} "; then
+    if command -v ss >/dev/null 2>&1; then
+      if ! ss -tln 2>/dev/null | grep -q ":${port} "; then
+        echo "$port"
+        return
+      fi
+    elif command -v netstat >/dev/null 2>&1; then
+      if ! netstat -an 2>/dev/null | grep -qE "[.:]${port}[[:space:]]"; then
+        echo "$port"
+        return
+      fi
+    else
       echo "$port"
       return
     fi

@@ -4,7 +4,7 @@ import { formatEvidenceHtml, formatEvidenceMarkdown } from "./formatEvidenceComm
 import type { EvidenceFields } from "../../types/evidence";
 
 const sampleFields: EvidenceFields = {
-  card: "INVES-91",
+  card: "RPG-91",
   title: "[AI][FRONTEND] Evidence UI",
   summary: "Delivery screen wired to draft API.",
   problems_solved: ["Reduced tool switching for operators"],
@@ -20,7 +20,7 @@ const sampleFields: EvidenceFields = {
   },
   artifacts: {
     pr: "n/a",
-    branch: "feature/INVES-91-studio-ui-evidence-delivery-s7",
+    branch: "feature/RPG-91-studio-ui-evidence-delivery-s7",
     commit: "n/a",
     docs: [".sdlc/templates/plane/evidence-template.json"],
   },
@@ -31,7 +31,7 @@ describe("formatEvidenceMarkdown", () => {
   it("includes card, sections, and disclaimer", () => {
     const md = formatEvidenceMarkdown(sampleFields);
     expect(md).toContain("## [AI][FRONTEND] Evidence UI");
-    expect(md).toContain("**Card:** INVES-91");
+    expect(md).toContain("**Card:** RPG-91");
     expect(md).toContain("### Validation");
     expect(md).toContain("- **tests:** npm run build");
     expect(md).toContain("Derived Studio projection");

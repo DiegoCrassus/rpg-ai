@@ -11,8 +11,8 @@ function denyEvent(command: string): StudioEvent {
     category: "gateway",
     timestamp: "2026-06-04T12:00:00Z",
     source: "sdlc_pre_gateway",
-    correlation_id: "card:INVES-92",
-    correlation: { card: "INVES-92" },
+    correlation_id: "card:RPG-92",
+    correlation: { card: "RPG-92" },
     payload: { command },
   };
 }

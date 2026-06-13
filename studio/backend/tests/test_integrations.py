@@ -45,7 +45,7 @@ def no_github_token(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_plane_card_missing_api_key(client, no_plane_key) -> None:
-    response = client.get("/studio/integrations/plane/cards/INVES-90")
+    response = client.get("/studio/integrations/plane/cards/RPG-90")
     assert response.status_code == 503
     body = response.json()
     assert body["error"]["code"] == "PLANE_NOT_CONFIGURED"
@@ -53,7 +53,7 @@ def test_plane_card_missing_api_key(client, no_plane_key) -> None:
 
 
 def test_plane_epic_children_missing_api_key(client, no_plane_key) -> None:
-    response = client.get("/studio/integrations/plane/epics/INVES-76/children")
+    response = client.get("/studio/integrations/plane/epics/RPG-76/children")
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "PLANE_NOT_CONFIGURED"
 
@@ -85,7 +85,7 @@ def test_github_checks_requires_ref(client, monkeypatch: pytest.MonkeyPatch) -> 
 
 def test_plane_card_detail_success(client, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("PLANE_API_KEY", "plane_test")
-    monkeypatch.setenv("PLANE_WORKSPACE_SLUG", "investments-sdlc")
+    monkeypatch.setenv("PLANE_WORKSPACE_SLUG", "rpg")
     monkeypatch.setenv("PLANE_PROJECT_ID", "proj-uuid")
 
     list_response = _mock_response(
@@ -115,15 +115,15 @@ def test_plane_card_detail_success(client, monkeypatch: pytest.MonkeyPatch) -> N
 
     with patch("studio_service.services.integrations.plane_client.httpx.Client") as client_cls:
         client_cls.return_value.__enter__.return_value = mock_http
-        response = client.get("/studio/integrations/plane/cards/INVES-90")
+        response = client.get("/studio/integrations/plane/cards/RPG-90")
 
     assert response.status_code == 200
     body = response.json()
-    assert body["card"] == "INVES-90"
+    assert body["card"] == "RPG-90"
     assert body["name"] == "Integration API"
     assert body["state"]["name"] == "In Progress"
     assert body["description_present"] is True
-    assert "investments-sdlc/browse/INVES-90" in body["plane_url"]
+    assert "rpg/browse/RPG-90" in body["plane_url"]
 
 
 def test_plane_epic_children_grouped(client, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -169,14 +169,14 @@ def test_plane_epic_children_grouped(client, monkeypatch: pytest.MonkeyPatch) ->
 
     with patch("studio_service.services.integrations.plane_client.httpx.Client") as client_cls:
         client_cls.return_value.__enter__.return_value = mock_http
-        response = client.get("/studio/integrations/plane/epics/INVES-76/children")
+        response = client.get("/studio/integrations/plane/epics/RPG-76/children")
 
     assert response.status_code == 200
     body = response.json()
-    assert body["epic"] == "INVES-76"
+    assert body["epic"] == "RPG-76"
     assert body["total"] == 2
     assert len(body["children_by_state"]["Todo"]) == 1
-    assert body["children_by_state"]["Todo"][0]["card"] == "INVES-78"
+    assert body["children_by_state"]["Todo"][0]["card"] == "RPG-78"
     assert len(body["children_by_state"]["In Progress"]) == 1
 
 
@@ -217,9 +217,9 @@ def test_plane_work_feed_sorted(client, monkeypatch: pytest.MonkeyPatch) -> None
     assert response.status_code == 200
     body = response.json()
     assert body["count"] == 2
-    assert body["items"][0]["card"] == "INVES-11"
+    assert body["items"][0]["card"] == "RPG-11"
     assert body["items"][0]["state"]["name"] == "In Progress"
-    assert "investments-sdlc/browse/INVES-11" in body["items"][0]["plane_url"]
+    assert "rpg/browse/RPG-11" in body["items"][0]["plane_url"]
 
 
 def test_plane_work_feed_missing_api_key(client, no_plane_key) -> None:
@@ -299,7 +299,7 @@ def test_github_checks_success(client, monkeypatch: pytest.MonkeyPatch) -> None:
         client_cls.return_value.__enter__.return_value = mock_http
         response = client.get(
             "/studio/integrations/github/checks",
-            params={"ref": "feature/INVES-90-plane-github-integration-api"},
+            params={"ref": "feature/RPG-90-plane-github-integration-api"},
         )
 
     assert response.status_code == 200

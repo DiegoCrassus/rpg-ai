@@ -65,7 +65,7 @@ studio/                                ← reads manifest + lifecycle-model
 - [x] Warm learning loop (QA → qa-evidence → reward) — **RPG-18**
 - [x] Slim `master-workflow.md` — **RPG-21**
 
-### Phase P3 — Deferred
+### Phase P3 — Epic RPG-22 (complete)
 
 - [x] Merge `gates/README` into `gateways/README`
 - [x] Support agents → skills-only invocation

@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from pydantic import Field
 
+from studio_service.constants import DEFAULT_PLANE_CARD
 from studio_service.schemas.common import OptionalRootBody
 
 
 class EvidenceDraftBody(OptionalRootBody):
-    card: str | None = Field(default=None, description="Plane card id (INVES-N)")
+    card: str | None = Field(default=None, description=f"Plane card id ({DEFAULT_PLANE_CARD})")
     title: str | None = Field(default=None, description="Evidence title override")
     branch: str | None = Field(default=None, description="Feature branch for artifacts.branch")

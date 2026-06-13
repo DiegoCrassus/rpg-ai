@@ -2,7 +2,7 @@
 name: reviewer
 description: "Review PR diff for correctness, security, maintainability, and SDLC alignment against acceptance criteria. Returns APPROVE, REQUEST CHANGES, or ESCALATE. Use after QA passes. Never writes code — requests changes from implementer."
 model: inherit
-readonly: true
+readonly: false
 ---
 
 # Subagent: Reviewer
@@ -19,6 +19,7 @@ Review code changes for correctness, security, maintainability, and SDLC alignme
 - Ensure docs were updated
 - Confirm Doctor passed
 - Record review decision with reasoning
+- Write `.sdlc/memory/orchestrator-handoff.md` on APPROVE or REQUEST CHANGES with **Next agent**, **Stage complete**, **Previous agent** = `reviewer`
 
 ## Inputs
 

@@ -14,16 +14,16 @@ def _clear_proposals() -> None:
 def _proposal_payload() -> dict:
     return {
         "kind": "command",
-        "title": "INVES-86 test command",
+        "title": "RPG-86 test command",
         "target_paths": [".cursor/commands/test-inves86-proposal.md"],
         "ops": [
             {
                 "op": "create_file",
                 "path": ".cursor/commands/test-inves86-proposal.md",
-                "content": "# INVES-86 proposal test\n",
+                "content": "# RPG-86 proposal test\n",
             }
         ],
-        "simulated_gate": {"stage": "sdlc_meta", "card": "INVES-86"},
+        "simulated_gate": {"stage": "sdlc_meta", "card": "RPG-86"},
     }
 
 

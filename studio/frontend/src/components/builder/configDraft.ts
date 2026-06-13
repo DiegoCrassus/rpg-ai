@@ -1,5 +1,6 @@
 import type { ConfigKind } from "../../types/config";
 import type { ProposalCreateRequest, ProposalKind } from "../../types/proposals";
+import { DEFAULT_PLANE_CARD } from "../../constants/plane";
 
 const SLUG_RE = /^[a-z][a-z0-9-]*$/;
 
@@ -169,7 +170,7 @@ export function buildConfigProposalRequest(options: {
     ],
     simulated_gate: {
       stage: meta.gateStage,
-      card: options.card.trim() || "INVES-N",
+      card: options.card.trim() || DEFAULT_PLANE_CARD,
     },
   };
 }

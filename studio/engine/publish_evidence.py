@@ -35,7 +35,7 @@ EVIDENCE_FIELD_KEYS = (
     "artifacts",
     "context_for_future",
 )
-CARD_PATTERN = re.compile(r"^INVES-\d+$")
+CARD_PATTERN = re.compile(r"^RPG-\d+$")
 EVIDENCE_NON_GOALS = (
     "Does not post comments, update Plane cards, or mutate GitHub state.",
     "Does not run pytest, make sdlc-doctor, CI, or shell workflows.",
@@ -296,8 +296,8 @@ def _collect_paths(compiled: CompilerResult) -> set[str]:
 
 
 def _resolved_card(card: str | None) -> str:
-    resolved = card or "INVES-N"
-    if resolved == "INVES-N":
+    resolved = card or "RPG-N"
+    if resolved == "RPG-N":
         return resolved
     if not CARD_PATTERN.match(resolved):
         raise PublishEvidenceInputError(f"invalid card: {resolved}")
