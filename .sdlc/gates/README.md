@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Mechanical **write permissions** by SDLC stage. The pre-write hook (`sdlc_gate_hook.py`) denies edits **only** on `protected_prefixes` when the session gate is **closed** or the stage does not allow the path. Unprotected paths (e.g. `docs/`) are always allowed. Malformed Cursor hook payloads are treated as allow when the path is unknown.
+Mechanical **write permissions** by SDLC stage. Canonical policy: [`../process/lifecycle-model.yaml`](../process/lifecycle-model.yaml) → `write_policy`. Generated view: [`paths.yaml`](paths.yaml) (run `python .sdlc/scripts/sdlc_sync_model.py --write`).
 
 ## When to read
 

@@ -20,6 +20,7 @@ checks:
     - .sdlc/memory
     - .sdlc/pipeline
     - .sdlc/process
+    - .sdlc/runtime
     - .sdlc/rules
     - .sdlc/scripts
     - .sdlc/stages
@@ -32,6 +33,7 @@ checks:
     - app/backend
     - app/frontend
     - app/infra
+    - app/infra/sdlc_obs
     - app/shared
     - studio
     - studio/backend
@@ -96,6 +98,9 @@ checks:
     - .sdlc/scripts/discovery_hook.py
     - .sdlc/process/master-workflow.md
     - .sdlc/process/change-lifecycle.md
+    - .sdlc/process/lifecycle-model.yaml
+    - .sdlc/runtime/manifest.yaml
+    - .sdlc/runtime/README.md
     - .cursor/hooks.json
     - Makefile
     - README.md

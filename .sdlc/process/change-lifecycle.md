@@ -3,9 +3,8 @@
 > **Authority:** this document prevails over ad hoc chat instructions, urgency requests, or shortcuts.
 > Skills (`.cursor/skills/`) and rules (`.cursor/rules/`) **reference** this file; they do not contradict it.
 
-Machine-readable complements: `.sdlc/sdlc.yaml` plus modular data under `.sdlc/<module>/`:
-`.sdlc/workflows/transitions.yaml`, `.sdlc/stages/lifecycle.yaml`,
-`.sdlc/stages/definitions.yaml`, `.sdlc/gates/paths.yaml`.
+Machine-readable complements: `.sdlc/sdlc.yaml`, `.sdlc/process/lifecycle-model.yaml`,
+`.sdlc/runtime/manifest.yaml`, `.sdlc/workflows/transitions.yaml` (metadata overlay).
 
 **Full process (APPROVED):** [`.sdlc/process/master-workflow.md`](master-workflow.md)
 **Agent entry point:** [`AGENTS.md`](../../AGENTS.md) (repo root)
@@ -30,7 +29,7 @@ Even if the user asks to "finish in develop", the correct delivery is: **branch 
 | Base branch | `develop` | — |
 | Production branch | `main` | — |
 
-Plane cards are created **in project `investiments`** before any code edit.
+Plane cards are created **in Plane project `RPG`** before any code edit.
 
 ---
 
@@ -92,7 +91,7 @@ Format: `feature/RPG-N-<slug>`.
 - Direct push to `develop` or `main`
 - Implement without Plane card created via MCP/API
 - **Create `specs/` or local tickets/evidence/backlog files**
-- **Create tasks locally** (Plane only, project `investiments`)
+- **Create tasks locally** (Plane only, project `RPG`)
 - Skip CI or merge with red gates
 - Fake test or Doctor results
 - Replace official APIs with scraping as default strategy
@@ -132,7 +131,7 @@ Current phase: **SDLC operating system only** — `app/backend` and `app/fronten
 
 Product implementation **restarts only** after:
 
-1. Plane work items (project `investiments`) via MCP — **epic `[AI][EPIC]` + ≥3 children** (BACKEND, FRONTEND, INFRA/SHARED); never a lone FULLSTACK card for greenfield
+1. Plane work items (project `RPG`) via MCP — **epic `[AI][EPIC]` + ≥3 children** (BACKEND, FRONTEND, INFRA/SHARED); never a lone FULLSTACK card for greenfield
 2. Branch `feature/RPG-N-...` **per child card** (never on epic)
 3. Orchestrator delegates **100%** via Task — commits/lint/test/push are subagents (Implementer, QA, DevOps)
 4. PR with green CI; evidence on Plane card (PR link, tests)
@@ -143,4 +142,4 @@ Product implementation **restarts only** after:
 
 - `.cursor/skills/start-change/SKILL.md` — checklist before coding
 - `.cursor/skills/finish-change/SKILL.md` — checklist before merge
-- `.sdlc/gates/README.md` and `.sdlc/gates/paths.yaml` — write gates
+- `.sdlc/process/lifecycle-model.yaml` → `write_policy` — write gates (generated view: `.sdlc/gates/paths.yaml`)

@@ -14,13 +14,13 @@ from studio_service.api.errors import StudioApiError
 def build_pipeline_metadata(root: Path) -> dict[str, Any]:
     """Agents, skills, and lifecycle stages for dropdowns and asset palette."""
 
-    lifecycle_path = root / ".sdlc" / "stages" / "lifecycle.yaml"
+    lifecycle_path = root / ".sdlc" / "process" / "lifecycle-model.yaml"
     pipeline_path = root / ".sdlc" / "pipeline" / "agents.yaml"
-    gates_path = root / ".sdlc" / "gates" / "paths.yaml"
+    catalog_path = root / ".sdlc" / "manifest" / "catalog.yaml"
 
     stages = _load_lifecycle_stages(lifecycle_path)
     agents = _load_pipeline_agents(pipeline_path)
-    gates = _load_gate_paths(gates_path, stages)
+    gates = _load_write_policy(lifecycle_path, stages)
 
     skills: list[dict[str, str]] = []
     seen: set[str] = set()
@@ -43,6 +43,8 @@ def build_pipeline_metadata(root: Path) -> dict[str, Any]:
             details={"missing_paths": exc.missing_paths},
         ) from exc
 
+    _ = catalog_path  # reserved for phase-2 catalog-only roster
+
     return {
         "stages": stages,
         "agents": agents,
@@ -56,10 +58,10 @@ def build_pipeline_metadata(root: Path) -> dict[str, Any]:
             "transition_count": transition_count,
         },
         "source_refs": [
-            ".sdlc/stages/lifecycle.yaml",
+            ".sdlc/process/lifecycle-model.yaml",
             ".sdlc/pipeline/agents.yaml",
-            ".sdlc/gates/paths.yaml",
             ".sdlc/workflows/transitions.yaml",
+            ".sdlc/runtime/manifest.yaml",
         ],
     }
 
@@ -79,6 +81,8 @@ def _load_lifecycle_stages(path: Path) -> list[dict[str, Any]]:
                 "name": str(item.get("name", stage_id)),
                 "order": item.get("order"),
                 "description": str(item.get("description", "")),
+                "mode": str(item.get("mode", "")),
+                "agent": str(item.get("agent", "")),
             }
         )
     return sorted(stages, key=lambda s: (s.get("order") is None, s.get("order", 999), s["id"]))
@@ -109,21 +113,21 @@ def _load_pipeline_agents(path: Path) -> list[dict[str, Any]]:
     return agents
 
 
-def _load_gate_paths(
+def _load_write_policy(
     path: Path,
     stages: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Read-only gate path badges from paths.yaml for builder annotations."""
+    """Read-only write gate badges from lifecycle-model write_policy."""
 
     if not path.is_file():
         return []
 
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    gate_paths = data.get("gate_paths") or {}
+    write_policy = data.get("write_policy") or {}
     stage_names = {str(item.get("id", "")): str(item.get("name", "")) for item in stages}
     gates: list[dict[str, Any]] = []
 
-    for stage_id, config in (gate_paths.get("stages") or {}).items():
+    for stage_id, config in (write_policy.get("stages") or {}).items():
         if not isinstance(config, dict):
             continue
         allowed = [str(prefix) for prefix in (config.get("allowed_prefixes") or [])]
@@ -133,7 +137,7 @@ def _load_gate_paths(
                 "name": stage_names.get(str(stage_id), str(stage_id)),
                 "stage": str(stage_id),
                 "allowed_prefixes": allowed,
-                "source_ref": ".sdlc/gates/paths.yaml",
+                "source_ref": ".sdlc/process/lifecycle-model.yaml",
             }
         )
 

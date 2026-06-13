@@ -162,7 +162,14 @@ def _assert_forbidden_body_keys_absent(value: Any) -> None:
 
 
 def _write_minimal_required_inputs(root: Path) -> None:
-    yaml_payloads = {".sdlc/registry/sdlc-artifacts.yaml": {"artifacts": []}, ".sdlc/registry/cursor-artifacts.yaml": {"artifacts": []}, ".sdlc/registry/relationships.yaml": {"relationships": []}, ".sdlc/stages/lifecycle.yaml": {"stages": []}, ".sdlc/workflows/transitions.yaml": {"workflows": []}}
+    yaml_payloads = {
+        ".sdlc/registry/sdlc-artifacts.yaml": {"artifacts": []},
+        ".sdlc/registry/cursor-artifacts.yaml": {"artifacts": []},
+        ".sdlc/registry/relationships.yaml": {"relationships": []},
+        ".sdlc/process/lifecycle-model.yaml": {"stages": [], "transitions": []},
+        ".sdlc/workflows/transitions.yaml": {"workflows": []},
+        ".sdlc/runtime/manifest.yaml": {"version": "1.0"},
+    }
     for source_path in compiler_core.REQUIRED_SOURCE_PATHS:
         path = root / source_path
         path.parent.mkdir(parents=True, exist_ok=True)
