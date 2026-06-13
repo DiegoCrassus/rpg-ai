@@ -22,6 +22,7 @@ QA subagent decides scope but **must** run this minimum checklist before APPROVE
 | 5 | Frontend build | `npm run build` in `app/frontend/` if frontend changed |
 | 6 | Plan validation | `validate-all --card RPG-N` if Plane desc changed |
 | 7 | AC mapping | Each AC from child card verified individually |
+| 8 | QA evidence file | `python .sdlc/scripts/qa_evidence.py write --card RPG-N` → `.sdlc/memory/qa-evidence-RPG-N.json` |
 
 ## Handoff Markdown
 

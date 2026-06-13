@@ -18,6 +18,7 @@ Executable SDLC automation for Plane, GitHub, gates, discovery, evidence, and me
 | Discovery before planning | `discovery_hook.py` |
 | Memory compaction | `compact_memory.py` |
 | Execution ledger | `execution_ledger.py` |
+| QA evidence | `qa_evidence.py` |
 | Learning loop | `learning_loop.py` |
 | Optimization observe | `learning_loop.py analyze` |
 | Plane evidence formatting | `plane_html.py`, `plane_evidence.py` |

@@ -347,3 +347,195 @@ def fallback_for(agent: str, policy: dict[str, Any]) -> str:
     order = policy.get("agent_order") or {}
     entry = order.get(normalize_agent(agent)) or {}
     return normalize_agent(entry.get("fallback", "")) or "planner"
+
+
+def load_session_gate_dict() -> dict[str, Any]:
+    if not SESSION_GATE_PATH.is_file():
+        return {}
+    try:
+        data = json.loads(SESSION_GATE_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def save_session_gate_dict(gate: dict[str, Any]) -> None:
+    SESSION_GATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    SESSION_GATE_PATH.write_text(json.dumps(gate, indent=2) + "\n", encoding="utf-8")
+
+
+def get_active_subagent() -> str:
+    meta = load_session_gate_dict().get("meta") or {}
+    if not isinstance(meta, dict):
+        return ""
+    return normalize_agent(str(meta.get("active_subagent", "")))
+
+
+def set_active_subagent(agent: str) -> None:
+    gate = load_session_gate_dict()
+    meta = dict(gate.get("meta") or {})
+    normalized = normalize_agent(agent)
+    if normalized:
+        meta["active_subagent"] = normalized
+    else:
+        meta.pop("active_subagent", None)
+    gate["meta"] = meta
+    save_session_gate_dict(gate)
+
+
+def clear_active_subagent() -> None:
+    set_active_subagent("")
+
+
+def _gate_enforcement_off() -> bool:
+    try:
+        dsl = REPO / ".sdlc" / "dsl"
+        if str(dsl) not in sys.path:
+            sys.path.insert(0, str(dsl))
+        import gate as gate_mod  # noqa: PLC0415
+
+        return gate_mod.is_gate_enforcement_off(REPO)
+    except Exception:
+        return False
+
+
+def delegation_config(policy: dict[str, Any]) -> dict[str, Any]:
+    cfg = policy.get("orchestrator_delegation") or {}
+    return cfg if isinstance(cfg, dict) else {}
+
+
+def pipeline_agents(policy: dict[str, Any]) -> set[str]:
+    raw = delegation_config(policy).get("pipeline_agents") or []
+    return {normalize_agent(str(item)) for item in raw if str(item).strip()}
+
+
+def _normalize_rel_path(rel_path: str) -> str:
+    rel = rel_path.replace("\\", "/")
+    while rel.startswith("./"):
+        rel = rel[2:]
+    return rel
+
+
+def _matches_any_prefix(rel_path: str, prefixes: list[str]) -> bool:
+    rel = _normalize_rel_path(rel_path)
+    for prefix in prefixes:
+        p = _normalize_rel_path(str(prefix))
+        if p.endswith("/"):
+            if rel.startswith(p) or rel == p.rstrip("/"):
+                return True
+        elif rel == p or rel.startswith(p + "/"):
+            return True
+    return False
+
+
+def is_orchestrator_allowlisted(rel_path: str, policy: dict[str, Any]) -> bool:
+    allowlist = delegation_config(policy).get("orchestrator_allowlist") or []
+    return _matches_any_prefix(rel_path, [str(p) for p in allowlist])
+
+
+def is_delegated_path(rel_path: str, policy: dict[str, Any]) -> bool:
+    prefixes = delegation_config(policy).get("delegated_prefixes") or []
+    return _matches_any_prefix(rel_path, [str(p) for p in prefixes])
+
+
+def gate_is_open() -> bool:
+    return load_session_gate_dict().get("gate_status") == "open"
+
+
+def shell_allowed_for_orchestrator(command: str, policy: dict[str, Any]) -> bool:
+    for pattern in delegation_config(policy).get("orchestrator_shell_allow_patterns") or []:
+        if re.search(str(pattern), command, re.IGNORECASE):
+            return True
+    return False
+
+
+def shell_required_agent(command: str, policy: dict[str, Any]) -> str:
+    routes = delegation_config(policy).get("shell_agent_patterns") or {}
+    if not isinstance(routes, dict):
+        return ""
+    for agent, patterns in routes.items():
+        for pattern in patterns or []:
+            if re.search(str(pattern), command, re.IGNORECASE):
+                return normalize_agent(str(agent))
+    return ""
+
+
+def enforce_orchestrator_delegation_write(rel_path: str, policy: dict[str, Any]) -> None:
+    """Block parent-agent writes that bypass Task(next_agent) when gate is open."""
+    if _gate_enforcement_off() or not gate_is_open():
+        return
+
+    rel = _normalize_rel_path(rel_path)
+    if is_orchestrator_allowlisted(rel, policy):
+        return
+    if not is_delegated_path(rel, policy):
+        return
+
+    route = routing(policy)
+    next_agent = normalize_agent(route.get("next_agent", ""))
+    if not next_agent or next_agent == "none":
+        return
+    if next_agent not in pipeline_agents(policy):
+        return
+
+    active = get_active_subagent()
+    if active == next_agent:
+        return
+
+    if active and active != next_agent:
+        deny(
+            "SDLC gateway: wrong subagent for this write.",
+            (
+                f"Handoff routes to '{next_agent}', active subagent is '{active}'. "
+                f"Only Task({next_agent}) may write '{rel}'."
+            ),
+            event_type="gateway.orchestrator_write_denied",
+            event_payload={"path": rel, "next_agent": next_agent, "active_subagent": active},
+        )
+
+    deny(
+        "SDLC gateway: orchestrator cannot write — spawn the routed subagent.",
+        (
+            f"Gate open; handoff expects Task({next_agent}). "
+            f"Blocked write to '{rel}'. "
+            f"Spawn Task({next_agent}) and let that subagent implement."
+        ),
+        event_type="gateway.orchestrator_write_denied",
+        event_payload={"path": rel, "next_agent": next_agent, "active_subagent": ""},
+    )
+
+
+def enforce_orchestrator_delegation_shell(command: str, policy: dict[str, Any]) -> None:
+    """Block parent-agent shell that belongs to implementer/qa/devops."""
+    if not command or _gate_enforcement_off() or not gate_is_open():
+        return
+    if shell_allowed_for_orchestrator(command, policy):
+        return
+
+    required = shell_required_agent(command, policy)
+    if not required:
+        return
+
+    route = routing(policy)
+    next_agent = normalize_agent(route.get("next_agent", ""))
+    active = get_active_subagent()
+
+    if active == required:
+        return
+    if active == next_agent and required == next_agent:
+        return
+
+    deny(
+        "SDLC gateway: orchestrator cannot run delegated shell — spawn subagent.",
+        (
+            f"Command requires '{required}' (handoff next: '{next_agent or 'unset'}'). "
+            f"Spawn Task({required or next_agent}) instead of running inline."
+        ),
+        event_type="gateway.orchestrator_shell_denied",
+        event_payload={
+            "command": command[:240],
+            "required_agent": required,
+            "next_agent": next_agent,
+            "active_subagent": active,
+        },
+    )

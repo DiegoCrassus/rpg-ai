@@ -8,6 +8,7 @@ import sys
 
 from sdlc_gateway_lib import (
     allow,
+    clear_active_subagent,
     emit_studio_event,
     fallback_for,
     handoff_value,
@@ -34,6 +35,25 @@ def blockers_are_clear(blockers: str) -> bool:
         or line.startswith("no blocker")
         for line in meaningful
     )
+
+
+def _mark_gateway_block() -> None:
+    try:
+        from pathlib import Path
+
+        repo = Path(__file__).resolve().parents[2]
+        gate_path = repo / ".sdlc" / "memory" / "session-gate.json"
+        if not gate_path.is_file():
+            return
+        gate = json.loads(gate_path.read_text(encoding="utf-8"))
+        if not isinstance(gate, dict):
+            return
+        meta = dict(gate.get("meta") or {})
+        meta["last_gateway_block"] = True
+        gate["meta"] = meta
+        gate_path.write_text(json.dumps(gate, indent=2) + "\n", encoding="utf-8")
+    except Exception:
+        return
 
 
 def _ledger_append(
@@ -66,6 +86,7 @@ def _ledger_append(
 def followup(agent: str, reason: str, details: list[str]) -> None:
     route = normalize_agent(agent) or "planner"
     detail_text = "\n".join(f"- {item}" for item in details) if details else "- unspecified"
+    _mark_gateway_block()
     _ledger_append("gateway_block", reason=reason, details=details)
     emit_studio_event(
         "gateway.handoff_blocked",
@@ -92,6 +113,7 @@ Required action:
 - Write a complete Markdown handoff before advancing again.
 """
     print(json.dumps({"followup_message": message}))
+    clear_active_subagent()
     sys.exit(0)
 
 
@@ -186,6 +208,7 @@ def _run_main() -> None:
             reason="stage marked complete",
             evidence_verified=evidence_verified,
         )
+    clear_active_subagent()
     allow()
 
 

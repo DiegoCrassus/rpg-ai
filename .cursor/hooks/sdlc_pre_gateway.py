@@ -10,11 +10,14 @@ from pathlib import Path
 from sdlc_gateway_lib import (
     allow,
     deny,
+    enforce_orchestrator_delegation_shell,
     extract_command,
     extract_subagent,
+    normalize_agent,
     read_payload,
     require_policy,
     routing,
+    set_active_subagent,
 )
 
 REPO = Path(__file__).resolve().parents[2]
@@ -56,6 +59,23 @@ def deny_unsafe_shell(command: str, policy: dict) -> None:
             )
 
 
+def mark_subagent_start(payload: dict, policy: dict) -> None:
+    """Track active pipeline subagent for orchestrator-delegation enforcement."""
+    requested = extract_subagent(payload)
+    if not requested:
+        return
+    generic_agents = {"explore", "generalpurpose", "general-purpose", "shell"}
+    if requested in generic_agents:
+        return
+    valid = {normalize_agent(str(a)) for a in (policy.get("valid_agents") or [])}
+    pipeline = {
+        normalize_agent(str(a))
+        for a in ((policy.get("orchestrator_delegation") or {}).get("pipeline_agents") or [])
+    }
+    if requested in valid and requested in pipeline:
+        set_active_subagent(requested)
+
+
 def enforce_next_subagent(payload: dict, policy: dict) -> None:
     requested = extract_subagent(payload)
     if not requested:
@@ -76,6 +96,7 @@ def enforce_next_subagent(payload: dict, policy: dict) -> None:
         return
 
     if requested == expected:
+        mark_subagent_start(payload, policy)
         return
 
     deny(
@@ -98,12 +119,14 @@ def main() -> None:
     try:
         payload = read_payload()
         policy = require_policy()
+        command = extract_command(payload)
 
-        deny_unsafe_shell(extract_command(payload), policy)
+        deny_unsafe_shell(command, policy)
 
         # Pipeline routing applies only when gate enforcement is strict.
         if not gate_enforcement_off():
             enforce_next_subagent(payload, policy)
+            enforce_orchestrator_delegation_shell(command, policy)
 
         allow()
     except SystemExit:

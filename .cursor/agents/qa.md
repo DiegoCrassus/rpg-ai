@@ -36,6 +36,7 @@ Also generates test skeletons during the requirements stage (skeleton mode).
 - Document what was tested and what was not
 - Run Doctor when structure changed
 - Identify gaps in coverage
+- **Write QA evidence** via `python .sdlc/scripts/qa_evidence.py write --card RPG-N` before handoff (feeds learning loop reward)
 - Hand off to Reviewer with validation evidence
 
 ## Inputs
@@ -47,6 +48,7 @@ Also generates test skeletons during the requirements stage (skeleton mode).
 ## Outputs
 
 - Test execution results (actual output)
+- `.sdlc/memory/qa-evidence-RPG-N.json` (required in validation stage)
 - Criterion-by-criterion verification
 - QA notes (coverage gaps, edge cases)
 - Doctor result (if applicable)

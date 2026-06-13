@@ -58,12 +58,12 @@ studio/                                ← reads manifest + lifecycle-model
 - [x] `gateways/README.md` + `gates/README.md` → point to lifecycle-model
 - [x] Registry: add `sdlc.process.lifecycle_model` + `sdlc.runtime.manifest`
 
-### Phase P2 — Deferred (next epic)
+### Phase P2 — Epic RPG-17 (open on Plane)
 
-- [ ] Merge `pipeline/agents.yaml` into `catalog.yaml`
-- [ ] Orchestrator `learning_loop hints` before Task spawn
-- [ ] Warm learning loop (QA → qa-evidence → reward)
-- [ ] Slim `master-workflow.md`
+- [ ] Merge `pipeline/agents.yaml` into `catalog.yaml` — **RPG-20**
+- [ ] Orchestrator `learning_loop hints` before Task spawn — **RPG-19**
+- [x] Warm learning loop (QA → qa-evidence → reward) — **RPG-18**
+- [ ] Slim `master-workflow.md` — **RPG-21**
 
 ### Phase P3 — Deferred
 

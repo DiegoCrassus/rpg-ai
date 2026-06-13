@@ -120,7 +120,16 @@ def update_from_events(events: list[SDLCRunEvent], root: Path | None = None) -> 
 
 
 def update_for_card(card: str, root: Path | None = None) -> dict[str, Any]:
+    ensure_seed(root)
     return update_from_events(events_for_card(card, root=root) or read_events(), root=root)
+
+
+def ensure_seed(root: Path | None = None) -> Path:
+    """Create policy_memory.yaml with seed rules when missing."""
+    path = policy_path(root)
+    if path.is_file():
+        return path
+    return save({"version": "1.0", "rules": [], "hints": {"seed": "harness-v7-p2"}}, root)
 
 
 def hints_for_spawn(*, task_type: str, stage: str, agent: str, root: Path | None = None) -> dict[str, Any]:

@@ -41,6 +41,12 @@ def test_gate_hook_allows_unprotected_path_when_gate_closed(capsys, monkeypatch)
     monkeypatch.setattr(gate_hook._gate, "is_gate_enforcement_off", lambda root: False)
     monkeypatch.setattr(gate_hook._gate, "load_gate_config", lambda root: {"protected_prefixes": ["app/backend/"]})
     monkeypatch.setattr(gate_hook._gate, "is_protected", lambda rel, cfg: rel.startswith("app/"))
+    monkeypatch.setattr(gate_hook, "require_policy", lambda: {"orchestrator_delegation": {}})
+    monkeypatch.setattr(
+        gate_hook,
+        "enforce_orchestrator_delegation_write",
+        lambda rel, policy: None,
+    )
 
     payload = json.dumps({"tool_input": {"path": "docs/product/README.md"}})
     sys.stdin = io.StringIO(payload)
@@ -55,6 +61,12 @@ def test_gate_hook_denies_protected_path_when_gate_closed(capsys, monkeypatch) -
     monkeypatch.setattr(gate_hook._gate, "is_gate_enforcement_off", lambda root: False)
     monkeypatch.setattr(gate_hook._gate, "load_gate_config", lambda root: {"protected_prefixes": ["app/backend/"]})
     monkeypatch.setattr(gate_hook._gate, "is_protected", lambda rel, cfg: rel.startswith("app/"))
+    monkeypatch.setattr(gate_hook, "require_policy", lambda: {"orchestrator_delegation": {}})
+    monkeypatch.setattr(
+        gate_hook,
+        "enforce_orchestrator_delegation_write",
+        lambda rel, policy: None,
+    )
     monkeypatch.setattr(
         gate_hook._gate,
         "check_write",
