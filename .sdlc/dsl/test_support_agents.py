@@ -83,7 +83,6 @@ def test_support_agents_not_in_pipeline_delegation() -> None:
 
 def test_roster_sync_warns_on_support_pipeline_overlap(tmp_path: Path) -> None:
     catalog_src = CATALOG_PATH.read_text(encoding="utf-8")
-    policy_src = POLICY_PATH.read_text(encoding="utf-8")
 
     (tmp_path / ".sdlc" / "manifest").mkdir(parents=True)
     (tmp_path / ".sdlc" / "gateways").mkdir(parents=True)
