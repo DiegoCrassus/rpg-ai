@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     supabase_url: str = "http://127.0.0.1:54321"
     supabase_service_role_key: str = "test-service-role-key"
     supabase_jwt_secret: str = "test-jwt-secret-for-local-dev-only"
-    cors_origins: str = "http://localhost:5173"
+    cors_origins: str = "http://127.0.0.1:5173,http://localhost:5173"
     agent_model: str = "openai:gpt-4.1-mini"
     openai_api_key: str = ""
     import_job_timeout_seconds: int = 120
