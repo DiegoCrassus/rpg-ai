@@ -41,6 +41,29 @@ export function useCreateMesa() {
   });
 }
 
+export function useCreateMesaWithSeed() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: { name: string; rpg_system: string; description?: string }) => {
+      const mesa = await apiFetch<Mesa>("/api/v1/mesas", {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+      await apiFetch<{ template_id: string; mesa_status: string }>(
+        `/api/v1/mesas/${mesa.id}/import/seed`,
+        { method: "POST" },
+      );
+      return mesa;
+    },
+    onSuccess: (mesa) => {
+      qc.invalidateQueries({ queryKey: ["mesas"] });
+      qc.invalidateQueries({ queryKey: ["mesa", mesa.id] });
+      qc.invalidateQueries({ queryKey: ["import", mesa.id] });
+      qc.invalidateQueries({ queryKey: ["templates", mesa.id] });
+    },
+  });
+}
+
 export function useImportJob(mesaId: string, poll = false) {
   return useQuery({
     queryKey: ["import", mesaId],

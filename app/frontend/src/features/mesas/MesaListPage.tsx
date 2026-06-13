@@ -21,7 +21,19 @@ export function MesaListPage() {
       </div>
 
       {mesas?.length === 0 ? (
-        <p className="text-slate-400">Você ainda não participa de nenhuma mesa.</p>
+        <div className="flex justify-center py-12">
+          <div className="max-w-md rounded-lg border border-slate-800 bg-slate-900/50 p-8 text-center">
+            <h2 className="mb-2 text-xl font-semibold">Nenhuma mesa ainda</h2>
+            <p className="mb-6 text-sm text-slate-400">
+              Crie sua primeira mesa para começar uma campanha. Se preferir experimentar antes,
+              use a mesa demo após rodar <code className="text-slate-300">migrate</code> e{" "}
+              <code className="text-slate-300">seed-demo</code>.
+            </p>
+            <Link to="/mesas/new">
+              <Button>Criar primeira mesa</Button>
+            </Link>
+          </div>
+        </div>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">
           {mesas?.map((mesa) => (
