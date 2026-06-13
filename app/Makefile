@@ -20,7 +20,7 @@ PYTHON ?= $(shell if [ -x $(ROOT)/.venv/bin/python ]; then echo $(ROOT)/.venv/bi
 VENV_PY := $(ROOT)/.venv/bin/python
 VENV_PIP := $(ROOT)/.venv/bin/pip
 
-.PHONY: help install migrate infra start stop test build contracts e2e \
+.PHONY: help install migrate seed-demo infra start stop test build contracts e2e \
         _ensure-supabase-cli _ensure-docker _env-check _port-busy
 
 help:
@@ -28,6 +28,7 @@ help:
 	@echo ""
 	@echo "  make install   Python venv + backend deps + frontend npm"
 	@echo "  make migrate   Apply SQL migrations (supabase db reset, local)"
+	@echo "  make seed-demo Seed demo D&D 5e mesa (after migrate)"
 	@echo "  make infra     Supabase local stack (installs CLI if missing)"
 	@echo "  make start     infra + API :$(API_PORT) + UI :$(UI_PORT) (background)"
 	@echo "  make stop      Stop API, UI, Supabase; verify ports released"
@@ -62,8 +63,14 @@ migrate: _ensure-docker _ensure-supabase-cli
 	@SUPABASE_BIN=$$(command -v supabase 2>/dev/null || echo "$$HOME/.local/bin/supabase"); \
 	  cd $(SUPABASE_DIR) && $$SUPABASE_BIN db reset --yes
 	@$(PYTHON) $(ROOT)/app/scripts/sync_env_from_supabase.py
+	@$(MAKE) seed-demo
 	@echo "OK: migrations applied"
 	@echo "    Admin: admin@rpg.local / RpgAdmin!local"
+	@echo "    Demo mesa seeded (make seed-demo to re-run)"
+
+seed-demo: _env-check
+	@test -x $(VENV_PY) || (echo "ERROR: run make install first" && exit 1)
+	@cd $(ROOT) && PYTHONPATH=$(BACKEND_SRC) $(VENV_PY) app/scripts/seed_demo_mesa.py
 
 # ---------------------------------------------------------------------------
 # infra — Supabase (+ prerequisites)
