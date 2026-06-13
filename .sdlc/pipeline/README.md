@@ -1,11 +1,16 @@
 # Pipeline module
 
-> **Canonical roster:** [`../manifest/catalog.yaml`](../manifest/catalog.yaml) (Doctor syncs with `gateways/policy.yaml`)  
-> **Runtime bindings:** [`agents.yaml`](agents.yaml) · **Stages:** [`../process/lifecycle-model.yaml`](../process/lifecycle-model.yaml)
+> **Source of truth:** [`../manifest/catalog.yaml`](../manifest/catalog.yaml) → `stage_bindings`  
+> **Generated view:** [`agents.yaml`](agents.yaml) (AUTO-GENERATED — do not edit)  
+> **Stages:** [`../process/lifecycle-model.yaml`](../process/lifecycle-model.yaml)
 
 ## Purpose
 
-Maps each **lifecycle stage** to the **agent** and **skill** that should run. This is the runtime pipeline graph; manifest is the static catalog of available agents.
+`agents.yaml` is a **generated** view of `catalog.yaml` `stage_bindings`. It maps each **lifecycle stage** to the **agent** and **skill** that should run. Edit bindings in catalog; regenerate with:
+
+```bash
+python .sdlc/scripts/sdlc_sync_model.py --write
+```
 
 ## When to read
 
@@ -26,7 +31,7 @@ Intent Analyst → Planner → Architect
   → [per child] workflow start → Implementer → QA → AutoFixer? → Reviewer → DevOps → workflow finish
 ```
 
-## Entry structure in `agents.yaml`
+## Entry structure in `agents.yaml` (generated from `stage_bindings`)
 
 Each `pipeline[]` item contains:
 
@@ -49,5 +54,6 @@ After every subagent Task: read [`orchestrator-handoff.md`](../memory/orchestrat
 
 ## Do not
 
+- Edit `agents.yaml` by hand — update `catalog.yaml` `stage_bindings` and run sync
 - Collapse multiple pipeline roles in one Orchestrator turn
 - Skip QA or Reviewer before DevOps merge

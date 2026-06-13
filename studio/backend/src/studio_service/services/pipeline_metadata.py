@@ -15,11 +15,11 @@ def build_pipeline_metadata(root: Path) -> dict[str, Any]:
     """Agents, skills, and lifecycle stages for dropdowns and asset palette."""
 
     lifecycle_path = root / ".sdlc" / "process" / "lifecycle-model.yaml"
-    pipeline_path = root / ".sdlc" / "pipeline" / "agents.yaml"
     catalog_path = root / ".sdlc" / "manifest" / "catalog.yaml"
+    pipeline_path = root / ".sdlc" / "pipeline" / "agents.yaml"
 
     stages = _load_lifecycle_stages(lifecycle_path)
-    agents = _load_pipeline_agents(pipeline_path)
+    agents = _load_stage_bindings(catalog_path, pipeline_path)
     gates = _load_write_policy(lifecycle_path, stages)
 
     skills: list[dict[str, str]] = []
@@ -43,7 +43,7 @@ def build_pipeline_metadata(root: Path) -> dict[str, Any]:
             details={"missing_paths": exc.missing_paths},
         ) from exc
 
-    _ = catalog_path  # reserved for phase-2 catalog-only roster
+    _ = catalog_path  # primary SoT for stage_bindings
 
     return {
         "stages": stages,
@@ -59,6 +59,7 @@ def build_pipeline_metadata(root: Path) -> dict[str, Any]:
         },
         "source_refs": [
             ".sdlc/process/lifecycle-model.yaml",
+            ".sdlc/manifest/catalog.yaml",
             ".sdlc/pipeline/agents.yaml",
             ".sdlc/workflows/transitions.yaml",
             ".sdlc/runtime/manifest.yaml",
@@ -88,12 +89,21 @@ def _load_lifecycle_stages(path: Path) -> list[dict[str, Any]]:
     return sorted(stages, key=lambda s: (s.get("order") is None, s.get("order", 999), s["id"]))
 
 
-def _load_pipeline_agents(path: Path) -> list[dict[str, Any]]:
-    if not path.is_file():
-        return []
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+def _load_stage_bindings(
+    catalog_path: Path,
+    pipeline_path: Path,
+) -> list[dict[str, Any]]:
+    if catalog_path.is_file():
+        data = yaml.safe_load(catalog_path.read_text(encoding="utf-8")) or {}
+        bindings = data.get("stage_bindings")
+        if bindings:
+            return _normalize_pipeline_agents(bindings)
+    return _load_pipeline_agents(pipeline_path)
+
+
+def _normalize_pipeline_agents(items: list[Any]) -> list[dict[str, Any]]:
     agents = []
-    for item in data.get("pipeline") or []:
+    for item in items:
         if not isinstance(item, dict):
             continue
         agent_id = str(item.get("id", ""))
@@ -111,6 +121,13 @@ def _load_pipeline_agents(path: Path) -> list[dict[str, Any]]:
             }
         )
     return agents
+
+
+def _load_pipeline_agents(path: Path) -> list[dict[str, Any]]:
+    if not path.is_file():
+        return []
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return _normalize_pipeline_agents(list(data.get("pipeline") or []))
 
 
 def _load_write_policy(

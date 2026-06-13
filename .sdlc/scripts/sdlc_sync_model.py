@@ -60,7 +60,35 @@ def build_paths_shim(model: dict[str, Any]) -> dict[str, Any]:
     return {"gate_paths": policy}
 
 
-def write_shims(root: Path) -> tuple[Path, Path]:
+PIPELINE_AGENTS_VERSION = "2.0"
+PIPELINE_AGENTS_DESCRIPTION = (
+    "Agent-skill pipeline — maps SDLC stages to agents and their skill definitions."
+)
+
+
+def _load_catalog_stage_bindings(root: Path) -> list[dict[str, Any]]:
+    import yaml  # noqa: PLC0415
+
+    catalog_path = root / ".sdlc" / "manifest" / "catalog.yaml"
+    if not catalog_path.is_file():
+        return []
+    data = yaml.safe_load(catalog_path.read_text(encoding="utf-8")) or {}
+    bindings = data.get("stage_bindings") or []
+    return [item for item in bindings if isinstance(item, dict)]
+
+
+def build_pipeline_agents_shim(root: Path) -> dict[str, Any]:
+    bindings = _load_catalog_stage_bindings(root)
+    if not bindings:
+        raise RuntimeError("catalog.yaml stage_bindings missing or empty")
+    return {
+        "version": PIPELINE_AGENTS_VERSION,
+        "description": PIPELINE_AGENTS_DESCRIPTION,
+        "pipeline": bindings,
+    }
+
+
+def write_shims(root: Path) -> tuple[Path, Path, Path]:
     sys.path.insert(0, str(root / ".sdlc" / "dsl"))
     from lifecycle_model import load_model  # noqa: E402
 
@@ -84,7 +112,15 @@ def write_shims(root: Path) -> tuple[Path, Path]:
 
     lifecycle_path.write_text(lifecycle_text, encoding="utf-8")
     paths_path.write_text(paths_text, encoding="utf-8")
-    return lifecycle_path, paths_path
+
+    pipeline_path = root / ".sdlc" / "pipeline" / "agents.yaml"
+    pipeline_payload = build_pipeline_agents_shim(root)
+    pipeline_text = (
+        "# AUTO-GENERATED from .sdlc/manifest/catalog.yaml stage_bindings — do not edit\n"
+        + _yaml_dump(pipeline_payload)
+    )
+    pipeline_path.write_text(pipeline_text, encoding="utf-8")
+    return lifecycle_path, paths_path, pipeline_path
 
 
 def check_shims(root: Path) -> int:
@@ -124,6 +160,22 @@ def check_shims(root: Path) -> int:
         print("WARN: stages/lifecycle.yaml missing", file=sys.stderr)
         ok = False
 
+    pipeline_path = root / ".sdlc" / "pipeline" / "agents.yaml"
+    try:
+        expected_pipeline = build_pipeline_agents_shim(root)
+    except RuntimeError as exc:
+        print(f"WARN: {exc}", file=sys.stderr)
+        ok = False
+    else:
+        if pipeline_path.is_file():
+            data = yaml.safe_load(pipeline_path.read_text(encoding="utf-8")) or {}
+            if data.get("pipeline") != expected_pipeline.get("pipeline"):
+                print("WARN: pipeline/agents.yaml drift from catalog stage_bindings", file=sys.stderr)
+                ok = False
+        else:
+            print("WARN: pipeline/agents.yaml missing", file=sys.stderr)
+            ok = False
+
     if ok:
         print(f"OK: shims aligned with {model_path(root)}")
         return 0
@@ -134,17 +186,22 @@ def check_shims(root: Path) -> int:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Sync lifecycle shims from lifecycle-model.yaml")
-    parser.add_argument("--write", action="store_true", help="Regenerate gates/paths.yaml and stages/lifecycle.yaml")
+    parser.add_argument(
+        "--write",
+        action="store_true",
+        help="Regenerate gates/paths.yaml, stages/lifecycle.yaml, and pipeline/agents.yaml",
+    )
     args = parser.parse_args()
 
     if args.write:
         try:
-            lifecycle_path, paths_path = write_shims(ROOT)
+            lifecycle_path, paths_path, pipeline_path = write_shims(ROOT)
         except RuntimeError as exc:
             print(f"FAIL: {exc}", file=sys.stderr)
             return 1
         print(f"Wrote {lifecycle_path.relative_to(ROOT)}")
         print(f"Wrote {paths_path.relative_to(ROOT)}")
+        print(f"Wrote {pipeline_path.relative_to(ROOT)}")
         return 0
 
     return check_shims(ROOT)
