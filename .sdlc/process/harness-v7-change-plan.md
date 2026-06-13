@@ -61,7 +61,7 @@ studio/                                ← reads manifest + lifecycle-model
 ### Phase P2 — Epic RPG-17 (open on Plane)
 
 - [ ] Merge `pipeline/agents.yaml` into `catalog.yaml` — **RPG-20**
-- [ ] Orchestrator `learning_loop hints` before Task spawn — **RPG-19**
+- [x] Orchestrator `learning_loop hints` before Task spawn — **RPG-19**
 - [x] Warm learning loop (QA → qa-evidence → reward) — **RPG-18**
 - [ ] Slim `master-workflow.md` — **RPG-21**
 
@@ -105,7 +105,7 @@ Do not collapse into one YAML.
 make sdlc-doctor
 make sdlc-sync-model
 python -m pytest studio/engine/tests/test_compiler_core.py studio/backend/tests/test_obs.py -q
-python -m pytest .sdlc/dsl/test_learning_loop.py .sdlc/dsl/test_execution_ledger.py -q
+python -m pytest .sdlc/dsl/test_learning_loop.py .sdlc/dsl/test_learning_hints.py .sdlc/dsl/test_execution_ledger.py -q
 make obs-init
 ```
 

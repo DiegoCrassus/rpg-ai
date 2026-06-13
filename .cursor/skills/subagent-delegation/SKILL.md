@@ -95,10 +95,17 @@ Human only when: AutoFixer exhausted, ESCALATE, or external blocker (Plane/API d
 
 ## Task prompt skeleton
 
+Before spawning, run policy hints (mandatory):
+
+```bash
+python .sdlc/scripts/learning_loop.py hints --json --agent <next_agent> --stage <gate_stage> --task-type <intent>
+```
+
 ```text
 Read .cursor/agents/<agent>.md and the relevant skills.
 Card: RPG-N (child card, not epic unless this is planning/architecture).
 Branch: feature/RPG-N-<slug>
+hints: <JSON stdout from learning_loop hints --json>
 Return Markdown handoff to .sdlc/memory/orchestrator-handoff.md.
 Do not ask the human to commit, push, or merge.
 ```

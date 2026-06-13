@@ -33,11 +33,18 @@
 
 **Subagent spawn template**
 
+Before every `Task()` spawn, run policy hints and inject output:
+
+```bash
+python .sdlc/scripts/learning_loop.py hints --json --agent <next_agent> --stage <gate_stage> --task-type <intent>
+```
+
 ```text
 card: RPG-N | branch: feature/RPG-N-slug | stage: implementation
 do: <imperative one line>
 out: <artifact paths or exit code>
 block: <single blocker or none>
+hints: <JSON from learning_loop hints --json>
 ```
 
 ## Token budget (L0 — hooks enforce)
@@ -77,17 +84,20 @@ Skill: `.cursor/skills/subagent-delegation/SKILL.md`
 ```
 MESSAGE
 │
-├─ gate open + active child card? → continue; spawn next Task from handoff
+├─ gate open + active child card? → continue
+│   1. read handoff → next_agent, gate_stage, intent
+│   2. python .sdlc/scripts/learning_loop.py hints --json --agent <next_agent> --stage <gate_stage> --task-type <intent>
+│   3. Task(<next_agent>) with hints: line in prompt
 │
-└─ NO → Task(Intent Analyst)
-         → Task(Planner): [AI][EPIC] + ≥3 children (BACKEND, FRONTEND, INFRA…)
+└─ NO → hints --json --agent intent-analyst … → Task(Intent Analyst)
+         → hints → Task(Planner): [AI][EPIC] + ≥3 children (BACKEND, FRONTEND, INFRA…)
          → workflow discover
-         → Task(Architect) on epic
+         → hints → Task(Architect) on epic
          → FOR EACH child RPG-M:
               workflow start --card RPG-M   # never on epic
-              → Task(Implementer) → autonomous commits
-              → Task(QA) → Task(AutoFixer)×2 if fail
-              → Task(Reviewer) → Task(DevOps) → workflow finish
+              → hints → Task(Implementer) → autonomous commits
+              → hints → Task(QA) → Task(AutoFixer)×2 if fail
+              → hints → Task(Reviewer) → hints → Task(DevOps) → workflow finish
          → epic Done when all children Done
 ```
 

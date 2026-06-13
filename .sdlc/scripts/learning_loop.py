@@ -25,6 +25,7 @@ from event_store import (  # noqa: E402
 )
 from policy_memory import ensure_seed, hints_for_spawn, update_for_card  # noqa: E402
 from policy_optimizer import analyze  # noqa: E402
+from schemas import TaskType, intent_to_task_type  # noqa: E402
 
 GATE_PATH = ROOT / ".sdlc" / "memory" / "session-gate.json"
 HANDOFF_PATH = ROOT / ".sdlc" / "memory" / "orchestrator-handoff.md"
@@ -211,14 +212,36 @@ def cmd_policy_update(args: argparse.Namespace) -> int:
     return 0
 
 
+def _normalize_task_type(value: str) -> str:
+    tt = intent_to_task_type(value)
+    if tt != TaskType.UNKNOWN:
+        return tt.value
+    return (value or "feature").lower()
+
+
+def _resolve_hints_args(args: argparse.Namespace) -> tuple[str, str, str]:
+    gate = _load_gate()
+    stage = args.stage if args.stage is not None else (gate.get("stage") or "implementation")
+    if args.task_type is not None:
+        task_type = _normalize_task_type(args.task_type)
+    else:
+        task_type = _normalize_task_type(gate.get("intent") or "FEATURE")
+    agent = args.agent if args.agent is not None else (gate.get("last_agent") or "implementer")
+    return task_type, stage, agent
+
+
 def cmd_hints(args: argparse.Namespace) -> int:
+    task_type, stage, agent = _resolve_hints_args(args)
     hints = hints_for_spawn(
-        task_type=args.task_type,
-        stage=args.stage,
-        agent=args.agent,
+        task_type=task_type,
+        stage=stage,
+        agent=agent,
         root=ROOT,
     )
-    print(json.dumps(hints, indent=2, ensure_ascii=False))
+    if args.json:
+        print(json.dumps(hints, ensure_ascii=False, separators=(",", ":")))
+    else:
+        print(json.dumps(hints, indent=2, ensure_ascii=False))
     return 0
 
 
@@ -243,9 +266,22 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("policy-update")
     p.add_argument("--card", default="")
     h = sub.add_parser("hints")
-    h.add_argument("--task-type", default="feature")
-    h.add_argument("--stage", default="implementation")
-    h.add_argument("--agent", default="implementer")
+    h.add_argument(
+        "--task-type",
+        default=None,
+        help="Task type or gate intent (default: session-gate intent)",
+    )
+    h.add_argument(
+        "--stage",
+        default=None,
+        help="Gate stage (default: session-gate stage)",
+    )
+    h.add_argument(
+        "--agent",
+        default=None,
+        help="Target subagent (default: session-gate last_agent or implementer)",
+    )
+    h.add_argument("--json", action="store_true", help="Compact single-line JSON output")
 
     args = parser.parse_args(argv)
     handlers = {

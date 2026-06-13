@@ -26,6 +26,14 @@
 - `<one line change or finding>`
 - `<max 5 bullets>`
 
+## Policy hints (optional)
+
+When orchestrator ran `learning_loop hints --json`, paste compact JSON here for audit:
+
+```json
+{"seed":"harness-v7-p2"}
+```
+
 ## Next
 
 `<one imperative line for orchestrator>`
