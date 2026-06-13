@@ -14,8 +14,8 @@ SCRIPTS = ROOT / ".sdlc" / "scripts"
 sys.path.insert(0, str(LEARNING))
 sys.path.insert(0, str(SCRIPTS))
 
-import qa_evidence  # noqa: E402
 import event_store as es  # noqa: E402
+import qa_evidence  # noqa: E402
 import reward_engine as re  # noqa: E402
 
 
