@@ -31,6 +31,12 @@ def policy_valid_agents(root: Path) -> set[str]:
     return {str(a) for a in (policy.get("valid_agents") or []) if a}
 
 
+def policy_pipeline_agents(root: Path) -> set[str]:
+    policy = _load_yaml(root / ".sdlc" / "gateways" / "policy.yaml")
+    delegation = policy.get("orchestrator_delegation") or {}
+    return {str(a) for a in (delegation.get("pipeline_agents") or []) if a}
+
+
 def check_roster_sync(root: Path) -> list[tuple[str, str]]:
     """Return list of (level, message) findings."""
     findings: list[tuple[str, str]] = []
@@ -54,6 +60,16 @@ def check_roster_sync(root: Path) -> list[tuple[str, str]]:
     for agent in sorted(extras_in_policy):
         findings.append(
             ("WARN", f"policy.valid_agents '{agent}' not in catalog pipeline/support"),
+        )
+
+    pipeline_delegation = policy_pipeline_agents(root)
+    overlap = support & pipeline_delegation
+    for agent in sorted(overlap):
+        findings.append(
+            (
+                "WARN",
+                f"support agent '{agent}' must not be in orchestrator_delegation.pipeline_agents",
+            ),
         )
 
     if not findings:

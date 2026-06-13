@@ -79,6 +79,26 @@ Handoff template: `.sdlc/templates/orchestrator/handoff-template.md` (≤ `hando
 
 Skill: `.cursor/skills/subagent-delegation/SKILL.md`
 
+## Pipeline vs support agents
+
+| Kind | Routing | Spawn |
+|------|---------|-------|
+| **Pipeline** | Handoff **Next agent** → `Task(next_agent)` | Mandatory hints before spawn |
+| **Support** | On-demand only — **never** handoff Next agent | `Task(subagent)` after reading agent `.md` |
+
+Support agents bypass `pre_gateway` handoff route matching (`policy.yaml` → `support_agents` + `support_spawn`).
+
+| Support agent | Invocation path |
+|---------------|-----------------|
+| `doctor` | `.cursor/commands/sdlc-doctor.md` or `make sdlc-doctor` (skill: `structural-validation`) |
+| `observer` | `.cursor/agents/observer.md` (background metrics) |
+| `issue-analyst` | `.cursor/agents/issue-analyst.md` |
+| `sdlc-auditor` | `.cursor/agents/sdlc-auditor.md` |
+| `security-scanner` | `.cursor/agents/security-scanner.md` |
+| `migration-runner` | `.cursor/agents/migration-runner.md` |
+| `contract-validator` | `.cursor/agents/contract-validator.md` |
+| `rollback-agent` | `.cursor/agents/rollback-agent.md` |
+
 ## Decision tree
 
 ```

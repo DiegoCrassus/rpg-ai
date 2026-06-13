@@ -11,7 +11,32 @@ valid_agents:
   - reviewer
   - devops
   - doctor
+  - observer
+  - issue-analyst
+  - sdlc-auditor
+  - security-scanner
+  - migration-runner
+  - contract-validator
+  - rollback-agent
   - none
+
+# On-demand support agents — never handoff Next agent; bypass pre_gateway route match.
+support_agents:
+  - doctor
+  - observer
+  - issue-analyst
+  - sdlc-auditor
+  - security-scanner
+  - migration-runner
+  - contract-validator
+  - rollback-agent
+
+support_spawn:
+  bypass_handoff_route: true
+  description: >
+    Support agents are invoked on-demand via Task(subagent) after reading the agent
+    definition — not from handoff Next agent routing. pre_gateway allows explicit
+    support spawns even when they do not match the current handoff route.
 
 agent_order:
   intent-analyst:

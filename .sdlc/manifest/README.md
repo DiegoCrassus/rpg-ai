@@ -23,11 +23,28 @@ Catalog of every **agent**, **skill**, **MCP server**, **command**, and **readin
 |---------|---------|
 | `reading_order` | Files every agent should load before work |
 | `agents.pipeline` | Intent Analyst → Planner → … → DevOps |
-| `agents.support` | Doctor, Observer, etc. |
+| `agents.support` | Doctor, Observer, etc. — `invocation: skill-only`; see support invocation table below |
 | `stage_bindings` | **SoT** — lifecycle stage → agent + skill (generates `pipeline/agents.yaml`) |
 | `skills` | Skill id, path, stage binding |
 | `mcps` | Plane, GitHub server names |
 | `commands` | Cursor slash commands under `.cursor/commands/` |
+
+## Support agent invocation (`invocation: skill-only`)
+
+Support agents are **not** pipeline handoff routes. Spawn on-demand via `Task(subagent)`; never set as handoff **Next agent**.
+
+| Agent | `skill_id` | Primary invocation |
+|-------|------------|-------------------|
+| `doctor` | `structural-validation` | `.cursor/commands/sdlc-doctor.md` (`make sdlc-doctor`) |
+| `observer` | — | `.cursor/agents/observer.md` |
+| `issue-analyst` | — | `.cursor/agents/issue-analyst.md` |
+| `sdlc-auditor` | — | `.cursor/agents/sdlc-auditor.md` |
+| `security-scanner` | — | `.cursor/agents/security-scanner.md` |
+| `migration-runner` | — | `.cursor/agents/migration-runner.md` |
+| `contract-validator` | — | `.cursor/agents/contract-validator.md` |
+| `rollback-agent` | — | `.cursor/agents/rollback-agent.md` |
+
+Policy: `.sdlc/gateways/policy.yaml` → `support_agents`, `support_spawn`.
 
 ## Related modules
 

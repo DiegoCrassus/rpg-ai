@@ -10,6 +10,26 @@ The Orchestrator **only coordinates**. Every action that mutates code, git, CI, 
 
 > If the Orchestrator would run `Write`, `git commit`, `pytest`, `ruff`, or `gh pr` — **stop** and spawn the subagent from the matrix below.
 
+## Pipeline vs support agents
+
+| Kind | Handoff Next agent? | Spawn |
+|------|---------------------|-------|
+| **Pipeline** (Intent Analyst → DevOps) | **Yes** — read handoff → `Task(next_agent)` | Hints mandatory |
+| **Support** (Doctor, Observer, …) | **Never** — on-demand only | `Task(subagent)` via agent path or command |
+
+Support agents are listed in `policy.yaml` → `support_agents`. They bypass `pre_gateway` route enforcement when explicitly requested.
+
+| Support agent | Skill / invocation path |
+|---------------|-------------------------|
+| `doctor` | `.cursor/commands/sdlc-doctor.md` · skill `structural-validation` |
+| `observer` | `.cursor/agents/observer.md` |
+| `issue-analyst` | `.cursor/agents/issue-analyst.md` |
+| `sdlc-auditor` | `.cursor/agents/sdlc-auditor.md` |
+| `security-scanner` | `.cursor/agents/security-scanner.md` |
+| `migration-runner` | `.cursor/agents/migration-runner.md` |
+| `contract-validator` | `.cursor/agents/contract-validator.md` |
+| `rollback-agent` | `.cursor/agents/rollback-agent.md` |
+
 ## Delegation matrix
 
 | Action | Subagent | Orchestrator |
