@@ -20,11 +20,12 @@
 
 ## Delta
 
-- master-workflow.md 338→113 lines; L1 index only
+- master-workflow.md 338→112 lines; L1 index only
 - points to lifecycle-model operational_map, catalog stage_bindings, .cursor/agents
 - test_master_workflow_slim.py: line count + required sections
 - harness-v7-change-plan P2 complete (RPG-21 [x])
 - README Process row updated
+- commits: [`3a1eab5`]
 
 ## Next
 
