@@ -60,7 +60,7 @@ studio/                                ← reads manifest + lifecycle-model
 
 ### Phase P2 — Epic RPG-17 (open on Plane)
 
-- [ ] Merge `pipeline/agents.yaml` into `catalog.yaml` — **RPG-20**
+- [x] Merge `pipeline/agents.yaml` into `catalog.yaml` — **RPG-20**
 - [x] Orchestrator `learning_loop hints` before Task spawn — **RPG-19**
 - [x] Warm learning loop (QA → qa-evidence → reward) — **RPG-18**
 - [ ] Slim `master-workflow.md` — **RPG-21**

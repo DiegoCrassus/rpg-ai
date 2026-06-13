@@ -162,10 +162,20 @@ def load_workflows(root: str) -> list[Workflow]:
     return workflows
 
 
+def _load_stage_bindings(root: str) -> list[dict[str, Any]]:
+    catalog_path = os.path.join(root, ".sdlc", "manifest", "catalog.yaml")
+    if os.path.isfile(catalog_path):
+        catalog = _load_yaml(catalog_path)
+        bindings = catalog.get("stage_bindings")
+        if bindings:
+            return bindings
+    pipeline = _load_yaml(os.path.join(root, ".sdlc", "pipeline", "agents.yaml"))
+    return pipeline.get("pipeline", [])
+
+
 def load_agents(root: str) -> list[Agent]:
-    data = _load_yaml(os.path.join(root, ".sdlc", "pipeline", "agents.yaml"))
     agents = []
-    for a in data.get("pipeline", []):
+    for a in _load_stage_bindings(root):
         skill = a.get("skill") or {}
         agents.append(
             Agent(
@@ -181,8 +191,7 @@ def load_agents(root: str) -> list[Agent]:
 
 def load_skills(root: str) -> list[Skill]:
     skills: list[Skill] = []
-    pipeline = _load_yaml(os.path.join(root, ".sdlc", "pipeline", "agents.yaml"))
-    for a in pipeline.get("pipeline", []):
+    for a in _load_stage_bindings(root):
         sk = a.get("skill")
         if not sk:
             continue

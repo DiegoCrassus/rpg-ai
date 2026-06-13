@@ -1,3 +1,4 @@
+# AUTO-GENERATED from .sdlc/manifest/catalog.yaml stage_bindings — do not edit
 version: '2.0'
 description: Agent-skill pipeline — maps SDLC stages to agents and their skill definitions.
 pipeline:
