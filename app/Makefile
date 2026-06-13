@@ -43,6 +43,8 @@ help:
 	@echo "Setup: cp $(ROOT)/.env.example $(ROOT)/.env"
 	@echo "       cp $(FRONTEND)/.env.example $(FRONTEND)/.env"
 	@echo "After infra: copy Supabase keys from CLI output into .env files"
+	@echo "CORS: if UI at http://127.0.0.1:5173, add it to CORS_ORIGINS in .env"
+	@echo "      (sync_env_from_supabase does not update CORS — see .env.example)"
 
 # ---------------------------------------------------------------------------
 # install
