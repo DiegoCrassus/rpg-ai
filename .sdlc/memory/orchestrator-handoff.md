@@ -12,25 +12,21 @@
 
 | Field | Value |
 |-------|-------|
-| **Card** | RPG-20 |
+| **Card** | RPG-21 |
 | **Epic** | RPG-17 |
-| **Branch** | feature/RPG-20-catalog-pipeline-merge |
+| **Branch** | feature/RPG-21-slim-master-workflow |
 | **Stage** | sdlc_meta |
 | **Intent** | SDLC_META |
 
 ## Delta
 
-- `catalog.yaml` + `stage_bindings` SoT (7 agents)
-- `sdlc_sync_model.py --write` regenerates `pipeline/agents.yaml`
-- `loader.py` + `pipeline_metadata.py` read catalog first, fallback pipeline file
-- READMEs updated — catalog SoT, pipeline generated
-- `test_catalog_pipeline.py` — 3 tests pass
-- harness-v7-change-plan RPG-20 [x]
-
-## Commits
-
-- e13fc22
+- master-workflow.md 338→112 lines; L1 index only
+- points to lifecycle-model operational_map, catalog stage_bindings, .cursor/agents
+- test_master_workflow_slim.py: line count + required sections
+- harness-v7-change-plan P2 complete (RPG-21 [x])
+- README Process row updated
+- commits: [`3a1eab5`]
 
 ## Next
 
-spawn QA. run `pytest .sdlc/dsl/test_catalog_pipeline.py` + loader drift. verify sync check.
+- Task(QA): pytest test_master_workflow_slim.py; make sdlc-doctor; verify AC

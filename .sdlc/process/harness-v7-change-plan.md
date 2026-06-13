@@ -2,7 +2,7 @@
 
 > **Authority:** reconciles Analysis A + B + [analysis-v7-comparison.md](analysis-v7-comparison.md)
 > **Epic label:** `[AI][EPIC] Harness v7 — Manifest observability + structure slim`
-> **Status:** APPLIED (2026-06-13) — P0+P1 complete; P2/P3 deferred
+> **Status:** APPLIED (2026-06-13) — P0+P1+P2 complete; P3 deferred
 
 ---
 
@@ -58,12 +58,12 @@ studio/                                ← reads manifest + lifecycle-model
 - [x] `gateways/README.md` + `gates/README.md` → point to lifecycle-model
 - [x] Registry: add `sdlc.process.lifecycle_model` + `sdlc.runtime.manifest`
 
-### Phase P2 — Epic RPG-17 (open on Plane)
+### Phase P2 — Epic RPG-17 (complete)
 
 - [x] Merge `pipeline/agents.yaml` into `catalog.yaml` — **RPG-20**
 - [x] Orchestrator `learning_loop hints` before Task spawn — **RPG-19**
 - [x] Warm learning loop (QA → qa-evidence → reward) — **RPG-18**
-- [ ] Slim `master-workflow.md` — **RPG-21**
+- [x] Slim `master-workflow.md` — **RPG-21**
 
 ### Phase P3 — Deferred
 
