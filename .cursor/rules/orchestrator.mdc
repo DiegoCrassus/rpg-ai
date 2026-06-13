@@ -20,7 +20,22 @@ User urgency, chat instructions, or convenience never override L1 authority.
 - Inter-agent prose: **caveman mode** (`AGENTS.md`).
 - **Hooks** track tokens (`.cursor/hooks/sdlc_token_budget_hook.py`); `subagentStart` + `beforeSubmitPrompt` fail-closed on exceed.
 - Handoffs: `.sdlc/templates/orchestrator/handoff-template.md` only; no essays.
-- Subagent spawn: card + branch + one-line `do` / `out` / `block`.
+- Subagent spawn: card + branch + one-line `do` / `out` / `block` + `hints:` from learning loop.
+
+## Policy hints (mandatory before Task)
+
+Before every `Task(subagent)` spawn:
+
+1. Read handoff **Next agent**, session **Stage**, session **Intent**.
+2. Run:
+
+   ```bash
+   python .sdlc/scripts/learning_loop.py hints --json --agent <next_agent> --stage <gate_stage> --task-type <intent>
+   ```
+
+3. Inject stdout JSON into the Task prompt under a `hints:` line (see `AGENTS.md` spawn template).
+
+Orchestrator may run this command directly — it is an allowed meta action alongside `workflow status`.
 
 ## Non-Negotiables
 
