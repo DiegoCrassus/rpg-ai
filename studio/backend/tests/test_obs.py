@@ -38,7 +38,7 @@ def test_timeline_returns_ordered_categories(obs_client) -> None:
         source="handoff_watcher",
         category="handoff",
         timestamp="2026-06-03T10:00:00Z",
-        correlation={"card": "INVES-82"},
+        correlation={"card": "RPG-82"},
         payload={"next_agent": "qa"},
     )
     store.append_event(
@@ -46,7 +46,7 @@ def test_timeline_returns_ordered_categories(obs_client) -> None:
         source="sdlc_pre_gateway",
         category="gateway",
         timestamp="2026-06-03T10:00:01Z",
-        correlation={"card": "INVES-82", "run_id": "abc"},
+        correlation={"card": "RPG-82", "run_id": "abc"},
         payload={"command": "bad"},
     )
     reset_event_bus()
@@ -63,7 +63,7 @@ def test_timeline_returns_ordered_categories(obs_client) -> None:
         assert event["schema_version"] == "1.0"
     gateway_events = [e for e in body["events"] if e["category"] == "gateway"]
     assert gateway_events
-    assert "card:INVES-82" in gateway_events[0]["correlation_id"]
+    assert "card:RPG-82" in gateway_events[0]["correlation_id"]
 
 
 def test_timeline_invalid_category(obs_client) -> None:
@@ -133,8 +133,8 @@ def test_sse_replay_payload_format() -> None:
         "category": "gateway",
         "timestamp": "2026-06-03T11:00:00Z",
         "source": "sdlc_pre_gateway",
-        "correlation_id": "card:INVES-82",
-        "correlation": {"card": "INVES-82"},
+        "correlation_id": "card:RPG-82",
+        "correlation": {"card": "RPG-82"},
         "payload": {"command": "test-sse"},
     }
     payload = json.dumps(event, separators=(",", ":"))

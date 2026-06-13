@@ -442,6 +442,13 @@ def gate_is_open() -> bool:
     return load_session_gate_dict().get("gate_status") == "open"
 
 
+def shell_denied_for_orchestrator(command: str, policy: dict[str, Any]) -> bool:
+    for pattern in delegation_config(policy).get("orchestrator_shell_deny_patterns") or []:
+        if re.search(str(pattern), command, re.IGNORECASE):
+            return True
+    return False
+
+
 def shell_allowed_for_orchestrator(command: str, policy: dict[str, Any]) -> bool:
     for pattern in delegation_config(policy).get("orchestrator_shell_allow_patterns") or []:
         if re.search(str(pattern), command, re.IGNORECASE):
@@ -509,6 +516,16 @@ def enforce_orchestrator_delegation_shell(command: str, policy: dict[str, Any]) 
     """Block parent-agent shell that belongs to implementer/qa/devops."""
     if not command or _gate_enforcement_off() or not gate_is_open():
         return
+    if shell_denied_for_orchestrator(command, policy):
+        deny(
+            "SDLC gateway: orchestrator cannot mutate handoff via shell.",
+            (
+                "Writing orchestrator-handoff.md must go through the routed subagent "
+                "(Task(next_agent)), not inline python or shell redirect."
+            ),
+            event_type="gateway.orchestrator_shell_denied",
+            event_payload={"command": command[:240], "reason": "handoff_bypass"},
+        )
     if shell_allowed_for_orchestrator(command, policy):
         return
 

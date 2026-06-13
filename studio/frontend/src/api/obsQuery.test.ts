@@ -15,16 +15,16 @@ const baseEvent: StudioEvent = {
   category: "handoff",
   timestamp: "2026-06-03T10:00:00Z",
   source: "handoff_watcher",
-  correlation_id: "card:INVES-82|run:abc",
-  correlation: { card: "INVES-82", run_id: "abc" },
+  correlation_id: "card:RPG-82|run:abc",
+  correlation: { card: "RPG-82", run_id: "abc" },
   payload: { next_agent: "qa" },
 };
 
 describe("obsQueryString", () => {
   it("builds category and card query params", () => {
     expect(
-      obsQueryString({ category: "gateway", card: "INVES-82", limit: 50 }),
-    ).toBe("?category=gateway&card=INVES-82&limit=50");
+      obsQueryString({ category: "gateway", card: "RPG-82", limit: 50 }),
+    ).toBe("?category=gateway&card=RPG-82&limit=50");
   });
 
   it("returns empty string when no filters", () => {
@@ -47,8 +47,8 @@ describe("studioObsEventsUrl", () => {
 
 describe("matchesObsFilters", () => {
   it("matches card via correlation block", () => {
-    expect(matchesObsFilters(baseEvent, { card: "INVES-82" })).toBe(true);
-    expect(matchesObsFilters(baseEvent, { card: "INVES-99" })).toBe(false);
+    expect(matchesObsFilters(baseEvent, { card: "RPG-82" })).toBe(true);
+    expect(matchesObsFilters(baseEvent, { card: "RPG-99" })).toBe(false);
   });
 
   it("matches category and event_type substring", () => {

@@ -12,26 +12,26 @@ def test_evidence_draft_smoke(client) -> None:
     assert body["projection"]["id"] == "evidence.sdlc_studio.projection"
     assert body["projection"]["execution_mode"] == "non_executing_projection"
     assert set(body["evidence_fields"]) == set(EVIDENCE_FIELD_KEYS)
-    assert body["evidence_fields"]["card"] == "INVES-N"
+    assert body["evidence_fields"]["card"] == "RPG-N"
 
 
 def test_evidence_draft_card_filter(client) -> None:
     response = client.post(
         "/studio/evidence/draft",
         json={
-            "card": "INVES-90",
+            "card": "RPG-90",
             "title": "[AI][BACKEND] Plane/GitHub integration API",
-            "branch": "feature/INVES-90-plane-github-integration-api",
+            "branch": "feature/RPG-90-plane-github-integration-api",
         },
     )
 
     assert response.status_code == 200
     body = response.json()
-    assert body["evidence_fields"]["card"] == "INVES-90"
+    assert body["evidence_fields"]["card"] == "RPG-90"
     assert body["evidence_fields"]["artifacts"]["branch"] == (
-        "feature/INVES-90-plane-github-integration-api"
+        "feature/RPG-90-plane-github-integration-api"
     )
-    assert body["projection"]["filters"]["card"] == "INVES-90"
+    assert body["projection"]["filters"]["card"] == "RPG-90"
 
 
 def test_evidence_draft_invalid_card(client) -> None:

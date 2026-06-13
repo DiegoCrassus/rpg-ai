@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import StreamingResponse
 
 from studio_service.api.errors import StudioApiError
+from studio_service.constants import PLANE_CARD_PREFIX
 from studio_service.config import Settings, get_settings
 from studio_service.deps import RepoRoot
 from studio_service.schemas.events import ObsMetricsResponse, ObsRunsResponse, TimelineResponse
@@ -39,7 +40,7 @@ def obs_timeline(
     limit: int = Query(default=100, ge=1, le=500),
     since: str | None = Query(default=None, description="ISO-8601 lower bound"),
     category: str | None = Query(default=None, description="gateway | obs | handoff | gate"),
-    card: str | None = Query(default=None, description="Filter by INVES card"),
+    card: str | None = Query(default=None, description=f"Filter by {PLANE_CARD_PREFIX} card"),
     run_id: str | None = Query(default=None),
     event_type: str | None = Query(default=None),
 ) -> dict[str, Any]:

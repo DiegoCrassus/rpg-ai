@@ -8,10 +8,10 @@ import type { EvidenceFields } from "../types/evidence";
 import type { GitHubPull } from "../types/integrations";
 import { copyToClipboard } from "./evidence/copyToClipboard";
 import { formatEvidenceHtml, formatEvidenceMarkdown } from "./evidence/formatEvidenceComment";
+import { DEFAULT_PLANE_CARD, PLANE_CARD_PATTERN } from "../constants/plane";
 
 const FINISH_CHANGE_DOC = ".cursor/skills/finish-change/SKILL.md";
 const EVIDENCE_TEMPLATE_REF = ".sdlc/templates/plane/evidence-template.json";
-const CARD_PATTERN = /^INVES-\d+$/;
 
 function finishChangeUrl(owner: string | undefined, repository: string | undefined): string {
   if (owner && repository) {
@@ -65,7 +65,7 @@ function PullRow({
 }
 
 export function EvidencePage() {
-  const [card, setCard] = useState("INVES-N");
+  const [card, setCard] = useState(DEFAULT_PLANE_CARD);
   const [title, setTitle] = useState("");
   const [branch, setBranch] = useState("");
   const [fields, setFields] = useState<EvidenceFields | null>(null);
@@ -92,7 +92,7 @@ export function EvidencePage() {
   const draftMutation = useMutation({
     mutationFn: () =>
       studioApi.evidenceDraft({
-        card: CARD_PATTERN.test(card) ? card : undefined,
+        card: PLANE_CARD_PATTERN.test(card) ? card : undefined,
         title: title.trim() || undefined,
         branch: branch.trim() || undefined,
       }),
@@ -107,7 +107,7 @@ export function EvidencePage() {
   const planeQuery = useQuery({
     queryKey: ["studio", "integrations", "plane", card],
     queryFn: () => studioApi.planeCard(card),
-    enabled: CARD_PATTERN.test(card),
+    enabled: PLANE_CARD_PATTERN.test(card),
     retry: false,
   });
 
@@ -133,13 +133,13 @@ export function EvidencePage() {
   );
 
   const loadDraft = useCallback(() => {
-    if (CARD_PATTERN.test(card)) {
+    if (PLANE_CARD_PATTERN.test(card)) {
       draftMutation.mutate();
     }
   }, [card, draftMutation.mutate]);
 
   useEffect(() => {
-    if (CARD_PATTERN.test(card) && sessionQuery.isSuccess) {
+    if (PLANE_CARD_PATTERN.test(card) && sessionQuery.isSuccess) {
       draftMutation.mutate();
     }
   }, [card, sessionQuery.isSuccess, draftMutation.mutate]);
@@ -196,7 +196,7 @@ export function EvidencePage() {
             <button
               type="button"
               onClick={loadDraft}
-              disabled={!CARD_PATTERN.test(card) || draftMutation.isPending}
+              disabled={!PLANE_CARD_PATTERN.test(card) || draftMutation.isPending}
               className="rounded-md border border-studio-accent/50 bg-studio-accent/10 px-4 py-2 text-sm font-medium text-studio-accent hover:bg-studio-accent/20 disabled:opacity-50"
             >
               {draftMutation.isPending ? "Loading draft…" : "Refresh draft"}
@@ -246,7 +246,7 @@ export function EvidencePage() {
                 value={card}
                 onChange={(e) => setCard(e.target.value.toUpperCase())}
                 className="mt-1 w-full rounded border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-sm text-slate-100"
-                placeholder="INVES-91"
+                placeholder="RPG-91"
               />
             </label>
             <label className="block text-sm text-slate-400">
@@ -258,7 +258,7 @@ export function EvidencePage() {
                   setChecksRef(e.target.value);
                 }}
                 className="mt-1 w-full rounded border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-sm text-slate-100"
-                placeholder="feature/INVES-91-…"
+                placeholder="feature/RPG-91-…"
               />
             </label>
           </div>

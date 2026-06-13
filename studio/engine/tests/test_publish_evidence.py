@@ -33,7 +33,7 @@ def test_publish_evidence_is_deterministic_and_template_shaped() -> None:
     assert first["projection"]["template_ref"] == ".sdlc/templates/plane/evidence-template.json"
     assert set(first["evidence_fields"]) == set(EVIDENCE_FIELD_KEYS)
     assert first["summary"]["validation_fail"] == 0
-    assert first["evidence_fields"]["card"] == "INVES-N"
+    assert first["evidence_fields"]["card"] == "RPG-N"
     assert first["evidence_fields"]["technical"]["modules"]
     assert first["evidence_fields"]["validation"]["doctor"].startswith("not run from Studio")
     assert first["projection"]["source_refs"]
@@ -43,17 +43,17 @@ def test_publish_evidence_is_deterministic_and_template_shaped() -> None:
 def test_card_title_branch_filters_and_failure_projection() -> None:
     filtered = build_publish_evidence_from_sources(
         REPO_ROOT,
-        card="INVES-72",
+        card="RPG-72",
         title="[AI][SDLC] Publish evidence workflow",
-        branch="feature/INVES-72-publish-evidence-workflow",
+        branch="feature/RPG-72-publish-evidence-workflow",
     )
     assert filtered["projection"]["filters"] == {
-        "card": "INVES-72",
+        "card": "RPG-72",
         "title": "[AI][SDLC] Publish evidence workflow",
-        "branch": "feature/INVES-72-publish-evidence-workflow",
+        "branch": "feature/RPG-72-publish-evidence-workflow",
     }
-    assert filtered["evidence_fields"]["card"] == "INVES-72"
-    assert filtered["evidence_fields"]["artifacts"]["branch"] == "feature/INVES-72-publish-evidence-workflow"
+    assert filtered["evidence_fields"]["card"] == "RPG-72"
+    assert filtered["evidence_fields"]["artifacts"]["branch"] == "feature/RPG-72-publish-evidence-workflow"
 
     with pytest.raises(PublishEvidenceInputError, match="invalid card: bogus"):
         build_publish_evidence_from_sources(REPO_ROOT, card="bogus")
@@ -68,7 +68,7 @@ def test_card_title_branch_filters_and_failure_projection() -> None:
     )
     canvas = build_canvas_view_model(compiled, validation)
     inspection = build_validation_inspection_model(compiled, validation, canvas)
-    model = build_publish_evidence_model(compiled, validation, canvas, inspection, card="INVES-72")
+    model = build_publish_evidence_model(compiled, validation, canvas, inspection, card="RPG-72")
 
     assert model["summary"]["validation_fail"] == 1
     assert any("fail validation" in item for item in model["evidence_fields"]["problems_solved"])

@@ -10,8 +10,8 @@ def test_enrich_session_uses_open_gate() -> None:
         repo_root=__import__("pathlib").Path("."),
         gate={
             "gate_status": "open",
-            "card": "INVES-1",
-            "branch": "feature/INVES-1-x",
+            "card": "RPG-1",
+            "branch": "feature/RPG-1-x",
             "stage": "implementation",
         },
         handoff_sections={"Routing": {"Next agent": "implementer", "Stage complete": "no"}},
@@ -45,7 +45,7 @@ def test_enrich_session_advances_stage_when_handoff_stage_complete(tmp_path: Pat
         gate={"gate_status": "closed"},
         handoff_sections={
             "Routing": {"Next agent": "implementer", "Stage complete": "yes"},
-            "Session": {"Card": "INVES-116", "Branch": "feature/INVES-117-x", "Stage": "architecture"},
+            "Session": {"Card": "RPG-116", "Branch": "feature/RPG-117-x", "Stage": "architecture"},
         },
         recent_events=[],
     )
@@ -63,14 +63,14 @@ def test_enrich_session_uses_observability_correlation(tmp_path: Path) -> None:
             {
                 "timestamp": "2099-06-03T12:00:00Z",
                 "correlation": {
-                    "card": "INVES-83",
-                    "branch": "feature/INVES-83-studio",
+                    "card": "RPG-83",
+                    "branch": "feature/RPG-83-studio",
                 },
             }
         ],
     )
     assert session["execution_active"] is True
-    assert session["card"] == "INVES-83"
-    assert session["branch"] == "feature/INVES-83-studio"
+    assert session["card"] == "RPG-83"
+    assert session["branch"] == "feature/RPG-83-studio"
     assert session["stage"] == "validation"
     assert session["live_source"] == "observability"

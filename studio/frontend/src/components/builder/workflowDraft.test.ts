@@ -152,13 +152,13 @@ describe("buildWorkflowProposalRequest", () => {
         },
       ],
       "Adjust workflow",
-      "INVES-85",
+      "RPG-85",
     );
 
     expect(request.kind).toBe("workflow");
     expect(request.target_paths).toEqual([WORKFLOW_TARGET_PATH]);
     expect(request.ops[0].op).toBe("replace_block");
-    expect(request.simulated_gate).toEqual({ stage: "architecture", card: "INVES-85" });
+    expect(request.simulated_gate).toEqual({ stage: "architecture", card: "RPG-85" });
   });
 });
 

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { studioApi } from "../api/client";
+import { DEFAULT_PLANE_CARD } from "../constants/plane";
 import { PageHeader } from "../components/common/PageHeader";
 import type { PageHelpId } from "../components/common/pageHelp";
 import { ConfigFileEditor } from "../components/builder/ConfigFileEditor";
@@ -43,7 +44,7 @@ export function ConfigBuilderPage({ kind, title, subtitle, pageId }: ConfigBuild
   const [newDescription, setNewDescription] = useState("");
   const [editorContent, setEditorContent] = useState("");
   const [proposalTitle, setProposalTitle] = useState(meta.defaultTitle);
-  const [simulatedCard, setSimulatedCard] = useState("INVES-N");
+  const [simulatedCard, setSimulatedCard] = useState(DEFAULT_PLANE_CARD);
   const [proposal, setProposal] = useState<ProposalResponse | null>(null);
 
   const filesQuery = useQuery({

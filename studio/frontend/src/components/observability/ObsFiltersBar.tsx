@@ -67,7 +67,7 @@ export function ObsFiltersBar({ filters, onChange, onReset }: ObsFiltersBarProps
         </span>
         <input
           type="text"
-          placeholder="INVES-83"
+          placeholder="RPG-83"
           className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1.5 font-mono text-sm text-white placeholder:text-slate-600"
           value={filters.card ?? ""}
           onChange={(e) => onChange({ ...filters, card: e.target.value || undefined })}

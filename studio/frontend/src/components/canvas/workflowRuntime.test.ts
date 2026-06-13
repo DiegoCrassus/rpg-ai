@@ -57,7 +57,7 @@ describe("workflowRuntime", () => {
     const runtime = resolveWorkflowRuntime(
       {
         gate_open: true,
-        card: "INVES-1",
+        card: "RPG-1",
         stage: "requirements",
         next_agent: "planner",
         stage_complete: "no",
