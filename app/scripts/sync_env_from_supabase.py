@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 ENV_PATH = ROOT / ".env"
 SUPABASE_DIR = ROOT / "app" / "infra" / "supabase"
+LOCAL_VITE_ORIGIN = "http://127.0.0.1:5173"
 
 # supabase status -o env keys -> .env keys
 KEY_MAP = {
@@ -98,6 +99,26 @@ def _merge_env(updates: dict[str, str]) -> list[str]:
     return lines
 
 
+def _ensure_cors_origins(lines: list[str]) -> list[str]:
+    """Append LOCAL_VITE_ORIGIN to CORS_ORIGINS when missing (idempotent)."""
+    key = "CORS_ORIGINS"
+    for i, line in enumerate(lines):
+        if not line or line.lstrip().startswith("#") or "=" not in line:
+            continue
+        line_key, _, val = line.partition("=")
+        if line_key.strip() != key:
+            continue
+        origins = [o.strip() for o in val.split(",") if o.strip()]
+        if LOCAL_VITE_ORIGIN in origins:
+            return lines
+        origins.append(LOCAL_VITE_ORIGIN)
+        lines[i] = f"{key}={','.join(origins)}"
+        return lines
+
+    lines.append(f"{key}={LOCAL_VITE_ORIGIN},http://localhost:5173")
+    return lines
+
+
 def main() -> int:
     status = _parse_status_env()
     updates: dict[str, str] = {}
@@ -112,13 +133,13 @@ def main() -> int:
         sys.exit("ERROR: DB_URL missing from supabase status")
 
     if not ENV_PATH.is_file():
-        lines = [f"{k}={v}" for k, v in updates.items()]
+        lines = _ensure_cors_origins([f"{k}={v}" for k, v in updates.items()])
         ENV_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
         print(f"OK: created {ENV_PATH} with Supabase local vars")
         return 0
 
     before = ENV_PATH.read_text(encoding="utf-8")
-    lines = _merge_env(updates)
+    lines = _ensure_cors_origins(_merge_env(updates))
     after = "\n".join(lines) + "\n"
     ENV_PATH.write_text(after, encoding="utf-8")
 

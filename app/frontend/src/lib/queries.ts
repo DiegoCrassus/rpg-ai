@@ -17,10 +17,11 @@ import type {
   User,
 } from "../types/api";
 
-export function useMesas() {
+export function useMesas(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["mesas"],
     queryFn: () => apiFetch<Mesa[]>("/api/v1/mesas"),
+    enabled: options?.enabled ?? true,
   });
 }
 
