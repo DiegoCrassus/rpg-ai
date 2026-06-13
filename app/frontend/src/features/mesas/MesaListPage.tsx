@@ -1,23 +1,26 @@
 import { Link } from "react-router-dom";
 import { MESA_STATUS_LABELS } from "../../lib/labels";
 import { useMesas } from "../../lib/queries";
+import { useAuth } from "../../lib/auth";
 import { LoadingSpinner } from "../../components/common/LoadingSpinner";
 import { ErrorAlert } from "../../components/common/ErrorAlert";
 import { Button } from "../../components/common/Button";
 
 export function MesaListPage() {
-  const { data: mesas, isLoading, error } = useMesas();
+  const { session, user, loading: authLoading } = useAuth();
+  const { data: mesas, isLoading, isError } = useMesas({
+    enabled: Boolean(session && user),
+  });
 
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorAlert message="Não foi possível carregar as mesas." />;
+  if (authLoading || isLoading) return <LoadingSpinner />;
+  if (isError && !isLoading) {
+    return <ErrorAlert message="Não foi possível carregar as mesas." />;
+  }
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold">Minhas Mesas</h1>
-        <Link to="/mesas/new">
-          <Button>Nova Mesa</Button>
-        </Link>
       </div>
 
       {mesas?.length === 0 ? (
@@ -50,6 +53,15 @@ export function MesaListPage() {
               </Link>
             </li>
           ))}
+          <li>
+            <Link
+              to="/mesas/new"
+              className="flex h-full min-h-[120px] flex-col items-center justify-center rounded-lg border border-dashed border-slate-700 bg-slate-900/30 p-4 text-slate-400 transition hover:border-brand-600 hover:text-brand-300"
+            >
+              <span className="text-2xl leading-none">+</span>
+              <span className="mt-2 text-sm font-medium">Nova mesa</span>
+            </Link>
+          </li>
         </ul>
       )}
     </div>

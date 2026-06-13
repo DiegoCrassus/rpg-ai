@@ -39,11 +39,6 @@ export function AppLayout() {
                 Admin
               </NavLink>
             )}
-            <Link to="/mesas/new">
-              <Button variant="secondary" className="py-1.5 px-3 text-xs">
-                Nova Mesa
-              </Button>
-            </Link>
             <span className="text-slate-500">{user?.display_name || user?.email}</span>
             <Button variant="ghost" onClick={() => void signOut()}>
               Sair
