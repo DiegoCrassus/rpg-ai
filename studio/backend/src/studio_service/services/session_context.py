@@ -75,9 +75,9 @@ def enrich_session(
         card = gate_card or handoff_card
         branch = gate_branch or handoff_branch
         stage = gate_stage or ""
-        next_agent = _clean(routing.get("Next agent")) if handoff_matches_gate else None
+        next_agent = _clean(routing.get("Next agent"), repo_root) if handoff_matches_gate else None
         stage_complete = (
-            _clean(routing.get("Stage complete")) if handoff_matches_gate else "no"
+            _clean(routing.get("Stage complete"), repo_root) if handoff_matches_gate else "no"
         )
         return {
             "gate_open": True,

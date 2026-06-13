@@ -16,14 +16,14 @@ def _mock_response(status_code: int, json_body: object) -> httpx.Response:
 def no_plane_key(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("PLANE_API_KEY", raising=False)
     monkeypatch.setattr(integration_env, "load_dotenv", lambda _root: None)
-    monkeypatch.setattr(integration_env, "plane_api_key", lambda: None)
+    monkeypatch.setattr(integration_env, "plane_api_key", lambda _root=None: None)
     monkeypatch.setattr(
         "studio_service.services.integrations.plane_client.load_dotenv",
         lambda _root: None,
     )
     monkeypatch.setattr(
         "studio_service.services.integrations.plane_client.plane_api_key",
-        lambda: None,
+        lambda _root=None: None,
     )
 
 
@@ -33,14 +33,14 @@ def no_github_token(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("GITHUB_PERSONAL_ACCESS_TOKEN", raising=False)
     monkeypatch.delenv("GH_TOKEN", raising=False)
     monkeypatch.setattr(integration_env, "load_dotenv", lambda _root: None)
-    monkeypatch.setattr(integration_env, "github_token", lambda: None)
+    monkeypatch.setattr(integration_env, "github_token", lambda _root=None: None)
     monkeypatch.setattr(
         "studio_service.services.integrations.github_client.load_dotenv",
         lambda _root: None,
     )
     monkeypatch.setattr(
         "studio_service.services.integrations.github_client.github_token",
-        lambda: None,
+        lambda _root=None: None,
     )
 
 
@@ -230,7 +230,7 @@ def test_plane_work_feed_missing_api_key(client, no_plane_key) -> None:
 
 def test_github_pulls_success(client, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("GITHUB_PERSONAL_ACCESS_TOKEN_CLASSIC", "gh_test")
-    monkeypatch.setenv("GITHUB_REPOSITORY", "org/repo")
+    monkeypatch.setenv("REPOSITORY_SLUG", "org/repo")
 
     pull_response = _mock_response(
         200,
@@ -253,7 +253,10 @@ def test_github_pulls_success(client, monkeypatch: pytest.MonkeyPatch) -> None:
     mock_http = MagicMock()
     mock_http.get.return_value = pull_response
 
-    with patch("studio_service.services.integrations.github_client.httpx.Client") as client_cls:
+    with patch("studio_service.services.integrations.github_client.httpx.Client") as client_cls, patch(
+        "studio_service.services.integrations.github_client.github_repository",
+        return_value="org/repo",
+    ):
         client_cls.return_value.__enter__.return_value = mock_http
         response = client.get("/studio/integrations/github/pulls")
 
@@ -267,7 +270,7 @@ def test_github_pulls_success(client, monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_github_checks_success(client, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("GITHUB_PERSONAL_ACCESS_TOKEN_CLASSIC", "gh_test")
-    monkeypatch.setenv("GITHUB_REPOSITORY", "org/repo")
+    monkeypatch.setenv("REPOSITORY_SLUG", "org/repo")
 
     commit_response = _mock_response(200, {"sha": "sha123", "commit": {"message": "test"}})
     status_response = _mock_response(
