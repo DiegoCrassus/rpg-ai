@@ -34,7 +34,7 @@ Defines the **10-stage AI-Native lifecycle**: inputs, outputs, required evidence
 
 - [`../workflows/README.md`](../workflows/README.md) — legal transitions between stages
 - [`../pipeline/README.md`](../pipeline/README.md) — which agent owns which stage
-- [`../gates/README.md`](../gates/README.md) — write permissions per `workflow start --stage`
+- [`../gateways/README.md#write-gate-mechanical-acl`](../gateways/README.md#write-gate-mechanical-acl) — write permissions per `workflow start --stage`
 
 ## Commands
 

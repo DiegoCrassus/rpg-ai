@@ -235,9 +235,13 @@ checks:
       contains:
       - "## Handoff format (Markdown"
       - "Do not"
+    - path: .sdlc/gates/README.md
+      contains:
+      - "../gateways/README.md#write-gate-mechanical-acl"
     - path: .sdlc/gateways/README.md
       contains:
       - "## Purpose"
+      - "## Write gate (mechanical ACL)"
       - "## Gateway flow"
     - path: .sdlc/scripts/README.md
       contains:

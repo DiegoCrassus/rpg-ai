@@ -32,7 +32,7 @@ Each workflow entry:
 
 - [`../stages/README.md`](../stages/README.md) — stage definitions and evidence
 - [`../pipeline/README.md`](../pipeline/README.md) — agent bindings
-- [`../gates/README.md`](../gates/README.md) — gate opens on `workflow start`, closes on `workflow finish`
+- [`../gateways/README.md#write-gate-mechanical-acl`](../gateways/README.md#write-gate-mechanical-acl) — write gate opens on `workflow start`, closes on `workflow finish`
 
 ## CLI mapping
 

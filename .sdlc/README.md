@@ -29,8 +29,8 @@ Each folder is a **vendor-free module**. README = human/agent index; YAML = mach
 |--------|---------------------|--------------|----------------------|
 | **Manifest** | [`manifest/README.md`](manifest/README.md) | [`manifest/catalog.yaml`](manifest/catalog.yaml) | Which agents, skills, MCPs exist? |
 | **Stages** | [`stages/README.md`](stages/README.md) | [`stages/lifecycle.yaml`](stages/lifecycle.yaml), [`stages/definitions.yaml`](stages/definitions.yaml) | What are the 10 lifecycle stages and their evidence? |
-| **Gates** | [`gates/README.md`](gates/README.md) | [`gates/paths.yaml`](gates/paths.yaml) | Which paths are writable per stage? Is `app/` blocked? |
-| **Gateways** | [`gateways/README.md`](gateways/README.md) | [`gateways/policy.yaml`](gateways/policy.yaml) | Should this interaction advance, block, or return to a previous step? |
+| **Gates** | [`gates/README.md`](gates/README.md) (stub → gateways) | [`gates/paths.yaml`](gates/paths.yaml) | Generated write ACL shim; see gateways README for docs |
+| **Gateways** | [`gateways/README.md`](gateways/README.md) | [`gateways/policy.yaml`](gateways/policy.yaml), [`gates/paths.yaml`](gates/paths.yaml) | Write gate ACL + interaction harness: should this write or step advance? |
 | **Workboard** | [`workboard/README.md`](workboard/README.md) | [`workboard/granularity.yaml`](workboard/granularity.yaml) | Epic vs child cards? Min layers for FEATURE? |
 | **Pipeline** | [`pipeline/README.md`](pipeline/README.md) | [`pipeline/agents.yaml`](pipeline/agents.yaml) | Which agent runs at which stage? |
 | **Workflows** | [`workflows/README.md`](workflows/README.md) | [`workflows/transitions.yaml`](workflows/transitions.yaml) | Valid stage transitions and preconditions |

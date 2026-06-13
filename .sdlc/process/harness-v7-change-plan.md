@@ -67,7 +67,7 @@ studio/                                ← reads manifest + lifecycle-model
 
 ### Phase P3 — Deferred
 
-- [ ] Merge `gates/README` into `gateways/README`
+- [x] Merge `gates/README` into `gateways/README`
 - [ ] Support agents → skills-only invocation
 
 ---
