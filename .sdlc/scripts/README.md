@@ -36,7 +36,7 @@ Executable SDLC automation for Plane, GitHub, gates, discovery, evidence, and me
 
 ## Related modules
 
-- [`../gates/README.md`](../gates/README.md) — gate config and runtime state
+- [`../gateways/README.md#write-gate-mechanical-acl`](../gateways/README.md#write-gate-mechanical-acl) — write gate config and runtime state
 - [`../workboard/README.md`](../workboard/README.md) — Plane granularity
 - [`../memory/README.md`](../memory/README.md) — generated state and handoff
 - [`../doctor/README.md`](../doctor/README.md) — structure validation

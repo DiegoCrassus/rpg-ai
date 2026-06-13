@@ -24,7 +24,7 @@ Own the human-readable SDLC process authority. Keep this module small: one workf
 
 ## Related modules
 
-- [`../gates/README.md`](../gates/README.md) — writable path policy
+- [`../gateways/README.md#write-gate-mechanical-acl`](../gateways/README.md#write-gate-mechanical-acl) — writable path policy
 - [`../workflows/README.md`](../workflows/README.md) — declarative transition graph
 - [`../doctor/README.md`](../doctor/README.md) — structure validation
 - [`../stages/README.md`](../stages/README.md) — lifecycle stages and evidence

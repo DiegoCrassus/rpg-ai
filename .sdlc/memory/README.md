@@ -174,4 +174,4 @@ make sdlc-compact-memory
 ## Related modules
 
 - [`../pipeline/README.md`](../pipeline/README.md) — agent order
-- [`../gates/README.md`](../gates/README.md) — gate must match Session **Stage**
+- [`../gateways/README.md#write-gate-mechanical-acl`](../gateways/README.md#write-gate-mechanical-acl) — write gate must match Session **Stage**
