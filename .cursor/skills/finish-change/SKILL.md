@@ -70,7 +70,7 @@ Blocking criteria (human escalation): see `auto-merge-policy.md` — auth, diff 
 
 ### 6. Plane → Done (structured evidence)
 
-Fill evidence JSON (see `.cursor/skills/plane-formatting/SKILL.md`):
+Fill evidence JSON (see `.cursor/skills/board-formatting/SKILL.md`):
 
 ```bash
 python3 .sdlc/scripts/auto_merge_pr.py --pr <N> --card RPG-N --plane-comment \

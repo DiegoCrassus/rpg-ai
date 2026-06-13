@@ -70,6 +70,10 @@
         "command": "python3 .cursor/hooks/sdlc_post_gateway.py",
         "failClosed": true,
         "loop_limit": 2
+      },
+      {
+        "command": "python3 .cursor/hooks/sdlc_learning_hook.py",
+        "failClosed": false
       }
     ],
     "stop": [

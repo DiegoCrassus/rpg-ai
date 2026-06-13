@@ -15,6 +15,8 @@ Persistent **session and context** for agents across turns and IDE restarts. Not
 | **Active handoff** | `orchestrator-handoff.md` | Versionable during SDLC_META; avoid product-session churn | Overwritten by the latest agent handoff |
 | **Operational context** | `operational-context.md`, `architecture.md`, `business-rules.md`, `incidents.md` | Versionable | Keep concise, current, and source-linked |
 | **Optional planning aid** | `test-skeleton.md` | Versionable only when produced as acceptance evidence | Remove or refresh when no longer tied to active card |
+| **Execution ledger** | `../manifest/executions.jsonl` | Versionable (pruned) | Append-only; post-gateway + workflow finish |
+| **Execution snapshot** | `execution-RPG-N.json` | Versionable | Generated on workflow finish; replaces legacy `rpg-N-evidence.json` |
 
 ## Files
 

@@ -24,9 +24,9 @@ Even if the user asks to "finish in develop", the correct delivery is: **branch 
 
 | System | Value | `.env` variable |
 |--------|-------|-----------------|
-| Plane workspace | `investments-sdlc` | `PLANE_WORKSPACE_SLUG` |
-| Plane project | `investiments` | `PLANE_PROJECT_NAME` |
-| GitHub repo | `DiegoCrassus/sdlc-ai` | `GITHUB_REPOSITORY` |
+| Plane workspace | `rpg` | `PLANE_WORKSPACE_SLUG` / `BOARD_WORKSPACE_SLUG` |
+| Plane project | `RPG` | `PLANE_PROJECT_NAME` |
+| GitHub repo | `DiegoCrassus/rpg-ai` | `GITHUB_REPOSITORY` |
 | Base branch | `develop` | — |
 | Production branch | `main` | — |
 

@@ -10,13 +10,13 @@ Start a work unit **before any code edit**, creating Plane traceability + gitflo
 
 - Before implementing any feature, bugfix, or infra change
 - When the user asks for implementation (even with urgency — gitflow is not optional)
-- **Only after** `plane-task-creation` has filled the card with a complete plan
+- **Only after** `board-task-creation` has filled the card with a complete plan
 
 ## Procedure
 
 ### 0. Verify plan on Plane
 
-Confirm card `RPG-N` passed the gate in `.cursor/skills/plane-task-creation/SKILL.md`. If the body only has AC stubs → **stop** and complete the plan.
+Confirm card `RPG-N` passed the gate in `.cursor/skills/board-task-creation/SKILL.md`. If the body only has AC stubs → **stop** and complete the plan.
 
 ### 1. Plane → **In Progress** (required)
 
@@ -29,10 +29,10 @@ python3 .sdlc/scripts/plane_state.py in-progress --card RPG-N \
 
 | Gate | If it fails |
 |------|-----------|
-| Card exists on Plane | Stop — create via `plane-task-creation` |
+| Card exists on Plane | Stop — create via `board-task-creation` |
 | State = In Progress | Stop — do not implement while Todo/Backlog |
 
-If the card does not exist yet, create via MCP (`.cursor/skills/plane-sdlc/SKILL.md`) already in **In Progress**.
+If the card does not exist yet, create via MCP (`.cursor/skills/board-sdlc/SKILL.md`) already in **In Progress**.
 
 ### 2. Record card number
 

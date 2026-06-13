@@ -1,6 +1,7 @@
 # Orchestrator handoff template (caveman — max lines from core.tokens.handoff_max_lines)
 
 > Copy shape only. Write to `.sdlc/memory/orchestrator-handoff.md`. No story. No repeat chat.
+> Human plans: `.sdlc/process/*.md` — not handoff.
 
 ## Routing
 

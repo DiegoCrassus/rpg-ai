@@ -1,4 +1,4 @@
-.PHONY: sdlc-doctor sdlc-validate sdlc-stages sdlc-sync-model docs-check obs-init obs-server obs-seed sdlc-audit board-in-progress plane-in-progress auto-merge-pr issue-triage board-reformat plane-reformat board-evidence plane-evidence workflow-status workflow-start workflow-discover sdlc-compact-memory sdlc-session-status sdlc-meta-start sdlc-meta-commit sdlc-meta-qa token-budget-status token-budget-reset execution-manifest-status execution-manifest-show studio-install studio-dev studio-api studio-smoke studio-e2e supabase-start supabase-stop contracts-validate help
+.PHONY: sdlc-doctor sdlc-validate sdlc-stages sdlc-sync-model docs-check obs-init obs-server obs-seed sdlc-audit board-in-progress plane-in-progress auto-merge-pr issue-triage board-reformat plane-reformat board-evidence plane-evidence workflow-status workflow-start workflow-discover sdlc-compact-memory sdlc-session-status sdlc-meta-start sdlc-meta-commit sdlc-meta-qa token-budget-status token-budget-reset execution-ledger-status execution-ledger-tail execution-analyze learning-loop-status learning-loop-analyze studio-install studio-dev studio-api studio-smoke studio-e2e supabase-start supabase-stop contracts-validate help
 
 SUPABASE_DIR := app/infra/supabase
 
@@ -35,8 +35,10 @@ help:
 	@echo "  token-budget-status  Show token ledger (session/turn limits)"
 	@echo "  token-budget-reset   Reset token session counters"
 	@echo ""
-	@echo "  execution-manifest-status  Show specs/current.json summary"
-	@echo "  execution-manifest-show    Print full execution manifest JSON"
+	@echo "  execution-ledger-status  Show execution ledger summary"
+	@echo "  execution-ledger-tail    Print last N ledger events (N=20 default)"
+	@echo "  learning-loop-status   Show learning event store summary"
+	@echo "  learning-loop-analyze  Analyze rewards and policy patterns"
 	@echo ""
 	@echo "  studio-install    Install Studio Python + frontend deps (run once from WSL)"
 	@echo "  studio-dev        Studio API :8100 + UI :5174 (requires make studio-install)"
@@ -162,11 +164,20 @@ token-budget-status:
 token-budget-reset:
 	@$(PYTHON) .sdlc/scripts/token_budget_status.py reset
 
-execution-manifest-status:
-	@$(PYTHON) .sdlc/scripts/execution_manifest.py status
+execution-ledger-status:
+	@$(PYTHON) .sdlc/scripts/execution_ledger.py status
 
-execution-manifest-show:
-	@$(PYTHON) .sdlc/scripts/execution_manifest.py show
+execution-ledger-tail:
+	@$(PYTHON) .sdlc/scripts/execution_ledger.py tail -n $(or $(N),20)
+
+execution-analyze:
+	@$(PYTHON) .sdlc/scripts/learning_loop.py analyze --last $(or $(N),100)
+
+learning-loop-status:
+	@$(PYTHON) .sdlc/scripts/learning_loop.py status
+
+learning-loop-analyze:
+	@$(PYTHON) .sdlc/scripts/learning_loop.py analyze --last $(or $(N),100)
 
 export-pdf:
 	@echo "Generating simulation PDF..."

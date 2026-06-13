@@ -136,30 +136,30 @@ artifacts:
     source_module: skills
     summary: Skill for classifying SDLC request intent.
     tags: [skill, classification]
-  - id: cursor.skill.plane_task_creation
+  - id: cursor.skill.board_task_creation
     kind: skill
-    name: Plane task creation
-    path: .cursor/skills/plane-task-creation/SKILL.md
+    name: Board task creation
+    path: .cursor/skills/board-task-creation/SKILL.md
     source_system: cursor
     source_module: skills
-    summary: Skill for creating Plane work items.
-    tags: [skill, plane, planning]
-  - id: cursor.skill.plane_sdlc
+    summary: Skill for creating board work items.
+    tags: [skill, board, planning]
+  - id: cursor.skill.board_sdlc
     kind: skill
-    name: Plane SDLC
-    path: .cursor/skills/plane-sdlc/SKILL.md
+    name: Board SDLC
+    path: .cursor/skills/board-sdlc/SKILL.md
     source_system: cursor
     source_module: skills
-    summary: Skill for Plane-backed SDLC operations.
-    tags: [skill, plane]
-  - id: cursor.skill.plane_formatting
+    summary: Skill for board-backed SDLC operations.
+    tags: [skill, board]
+  - id: cursor.skill.board_formatting
     kind: skill
-    name: Plane formatting
-    path: .cursor/skills/plane-formatting/SKILL.md
+    name: Board formatting
+    path: .cursor/skills/board-formatting/SKILL.md
     source_system: cursor
     source_module: skills
-    summary: Skill for Plane content formatting.
-    tags: [skill, plane, formatting]
+    summary: Skill for board content formatting.
+    tags: [skill, board, formatting]
   - id: cursor.skill.start_change
     kind: skill
     name: Start change
@@ -192,14 +192,14 @@ artifacts:
     source_module: skills
     summary: Skill for minimum QA validation.
     tags: [skill, qa, validation]
-  - id: cursor.skill.github_sdlc
+  - id: cursor.skill.repository_sdlc
     kind: skill
-    name: GitHub SDLC
-    path: .cursor/skills/github-sdlc/SKILL.md
+    name: Repository SDLC
+    path: .cursor/skills/repository-sdlc/SKILL.md
     source_system: cursor
     source_module: skills
-    summary: Skill for GitHub-backed SDLC operations.
-    tags: [skill, github]
+    summary: Skill for repository-backed SDLC operations.
+    tags: [skill, github, repository]
   - id: cursor.command.sdlc_doctor
     kind: command
     name: SDLC doctor command
