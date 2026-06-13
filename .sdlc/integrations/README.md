@@ -20,8 +20,8 @@ Describes **external service roles** (IDE, VCS, workboard, LLM) in a vendor-neut
 | Role | Provider | Notes |
 |------|----------|-------|
 | IDE | Cursor | Agents/skills/hooks under `.cursor/` |
-| VCS | GitHub | `DiegoCrassus/sdlc-ai`, default branch `develop` |
-| Workboard | Plane | Project `investiments`, cards `RPG-N` |
+| VCS | GitHub | `DiegoCrassus/rpg-ai`, default branch `develop` |
+| Workboard | Plane | Workspace `rpg`, project `RPG`, cards `RPG-N` |
 | LLM | OpenAI | Optional; Doctor warns if unset |
 
 ## Related modules

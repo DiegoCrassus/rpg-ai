@@ -16,6 +16,22 @@ artifacts:
     source_module: manifest
     summary: Human navigation index for SDLC modules.
     tags: [module, documentation]
+  - id: sdlc.process.lifecycle_model
+    kind: process
+    name: Lifecycle model
+    path: .sdlc/process/lifecycle-model.yaml
+    source_system: sdlc
+    source_module: process
+    summary: Canonical lifecycle graph, write_policy, and operational map.
+    tags: [process, lifecycle, source-of-truth]
+  - id: sdlc.runtime.manifest
+    kind: manifest
+    name: Runtime observability manifest
+    path: .sdlc/runtime/manifest.yaml
+    source_system: sdlc
+    source_module: runtime
+    summary: Path index for Studio observability and session runtime stores.
+    tags: [runtime, observability, manifest]
   - id: sdlc.workflow.transitions
     kind: workflow
     name: Workflow transitions
@@ -30,7 +46,7 @@ artifacts:
     path: .sdlc/stages/lifecycle.yaml
     source_system: sdlc
     source_module: stages
-    summary: Lifecycle stage data for SDLC work.
+    summary: DEPRECATED generated view — canonical stages in lifecycle-model.yaml
     tags: [stage, lifecycle]
   - id: sdlc.stage.definitions
     kind: stage
@@ -46,7 +62,7 @@ artifacts:
     path: .sdlc/gates/paths.yaml
     source_system: sdlc
     source_module: gates
-    summary: Gate path data for workflow validation.
+    summary: DEPRECATED generated view — canonical write_policy in lifecycle-model.yaml
     tags: [gate, paths]
   - id: sdlc.gateway.policy
     kind: gateway_policy

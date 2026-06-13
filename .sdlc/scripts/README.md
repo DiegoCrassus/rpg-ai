@@ -19,7 +19,7 @@ Executable SDLC automation for Plane, GitHub, gates, discovery, evidence, and me
 | Memory compaction | `compact_memory.py` |
 | Execution ledger | `execution_ledger.py` |
 | Learning loop | `learning_loop.py` |
-| Optimization observe | `optimization/analyzer.py` (wraps learning) |
+| Optimization observe | `learning_loop.py analyze` |
 | Plane evidence formatting | `plane_html.py`, `plane_evidence.py` |
 | Legacy migration concern | `migrate_v5_modular.py` (retired guard; exits non-zero) |
 

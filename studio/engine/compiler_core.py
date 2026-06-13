@@ -16,9 +16,9 @@ REQUIRED_SOURCE_PATHS: tuple[str, ...] = (
     "studio/engine/schemas/workflow.schema.yaml", "studio/engine/schemas/validation-result.schema.yaml",
     ".sdlc/registry/index.yaml", ".sdlc/registry/sdlc-artifacts.yaml",
     ".sdlc/registry/cursor-artifacts.yaml", ".sdlc/registry/relationships.yaml",
-    ".sdlc/sdlc.yaml", ".sdlc/stages/lifecycle.yaml", ".sdlc/workflows/transitions.yaml",
-    ".sdlc/gates/paths.yaml", ".sdlc/process/master-workflow.md",
-    ".sdlc/process/change-lifecycle.md",
+    ".sdlc/sdlc.yaml", ".sdlc/process/lifecycle-model.yaml", ".sdlc/workflows/transitions.yaml",
+    ".sdlc/process/master-workflow.md", ".sdlc/process/change-lifecycle.md",
+    ".sdlc/runtime/manifest.yaml",
 )
 
 _NON_GOALS = {
@@ -34,7 +34,14 @@ _KIND_TO_NODE_TYPE = {
     "script": "command", "skill": "skill", "stage": "stage", "template": "template",
     "workflow": "workflow", "workboard_policy": "policy",
 }
-_WORKFLOW_SOURCES = (".sdlc/stages/lifecycle.yaml", ".sdlc/workflows/transitions.yaml", ".sdlc/gates/paths.yaml", ".sdlc/process/master-workflow.md", ".sdlc/process/change-lifecycle.md", "studio/engine/schemas/workflow.schema.yaml")
+_WORKFLOW_SOURCES = (
+    ".sdlc/process/lifecycle-model.yaml",
+    ".sdlc/workflows/transitions.yaml",
+    ".sdlc/runtime/manifest.yaml",
+    ".sdlc/process/master-workflow.md",
+    ".sdlc/process/change-lifecycle.md",
+    "studio/engine/schemas/workflow.schema.yaml",
+)
 
 
 @dataclass(frozen=True)
@@ -85,8 +92,11 @@ def compile_studio_sources(root: Path | str) -> CompilerResult:
     sdlc_artifacts = _items(yaml_inputs, ".sdlc/registry/sdlc-artifacts.yaml", "artifacts")
     cursor_artifacts = _items(yaml_inputs, ".sdlc/registry/cursor-artifacts.yaml", "artifacts")
     relationships = _items(yaml_inputs, ".sdlc/registry/relationships.yaml", "relationships")
-    stages = _items(yaml_inputs, ".sdlc/stages/lifecycle.yaml", "stages")
-    transitions = _items(yaml_inputs, ".sdlc/workflows/transitions.yaml", "workflows")
+    model = yaml_inputs.get(".sdlc/process/lifecycle-model.yaml") or {}
+    stages = model.get("stages") if isinstance(model.get("stages"), list) else []
+    model_transitions = model.get("transitions") if isinstance(model.get("transitions"), list) else []
+    overlay = _items(yaml_inputs, ".sdlc/workflows/transitions.yaml", "workflows")
+    transitions = _merge_transitions(model_transitions, overlay)
     artifacts = [*sdlc_artifacts, *cursor_artifacts]
     return CompilerResult(
         _build_graph_ir(artifacts, relationships),
@@ -174,6 +184,32 @@ def _relationship_to_edge(relationship: dict[str, Any], node_ids: dict[str, str]
     return edge
 
 
+def _merge_transitions(
+    model_transitions: list[dict[str, Any]],
+    overlay_workflows: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Graph from lifecycle-model; metadata from transitions.yaml overlay."""
+
+    overlay_by_id = {
+        str(item.get("id")): item
+        for item in overlay_workflows
+        if isinstance(item, dict) and item.get("id")
+    }
+    merged: list[dict[str, Any]] = []
+    for base in model_transitions:
+        if not isinstance(base, dict) or not base.get("id"):
+            continue
+        tid = str(base["id"])
+        item = dict(base)
+        if overlay := overlay_by_id.get(tid):
+            for key in ("name", "description", "agent", "skill", "preconditions", "outputs"):
+                if overlay.get(key) and not item.get(key):
+                    item[key] = overlay[key]
+            item["_overlay"] = True
+        merged.append(item)
+    return merged
+
+
 def _build_workflow_ir(stages: list[dict[str, Any]], transitions: list[dict[str, Any]]) -> dict[str, Any]:
     stage_records = [_stage_to_record(stage) for stage in sorted(stages, key=_stage_key)]
     transition_records = [_transition_to_record(item) for item in sorted(transitions, key=lambda item: str(item.get("id", "")))]
@@ -182,12 +218,29 @@ def _build_workflow_ir(stages: list[dict[str, Any]], transitions: list[dict[str,
 
 def _stage_to_record(stage: dict[str, Any]) -> dict[str, Any]:
     stage_id = str(stage.get("id", "unknown"))
-    return {"id": f"stage.{stage_id}", "name": _trim(str(stage.get("name", stage_id)), 120), "stage_ref": f"sdlc.stage.lifecycle#{stage_id}", "description": _trim(str(stage.get("description", "")), 240), "order": stage.get("order"), "source_refs": [".sdlc/stages/lifecycle.yaml"]}
+    return {
+        "id": f"stage.{stage_id}",
+        "name": _trim(str(stage.get("name", stage_id)), 120),
+        "stage_ref": f"sdlc.stage.lifecycle#{stage_id}",
+        "description": _trim(str(stage.get("description", "")), 240),
+        "order": stage.get("order"),
+        "source_refs": [".sdlc/process/lifecycle-model.yaml"],
+    }
 
 
 def _transition_to_record(transition: dict[str, Any]) -> dict[str, Any]:
     transition_id = str(transition.get("id", "unknown"))
-    record = {"id": f"transition.{transition_id}", "name": _trim(str(transition.get("name", transition_id)), 120), "from": f"stage.{transition.get('from_stage', '')}", "to": f"stage.{transition.get('to_stage', '')}", "relation": "recovery" if transition_id == "incident_to_autofix" else "next", "source_refs": [".sdlc/workflows/transitions.yaml"]}
+    source_refs = [".sdlc/process/lifecycle-model.yaml"]
+    if transition.get("_overlay"):
+        source_refs.append(".sdlc/workflows/transitions.yaml")
+    record = {
+        "id": f"transition.{transition_id}",
+        "name": _trim(str(transition.get("name", transition_id)), 120),
+        "from": f"stage.{transition.get('from_stage', '')}",
+        "to": f"stage.{transition.get('to_stage', '')}",
+        "relation": "recovery" if transition_id == "incident_to_autofix" else "next",
+        "source_refs": source_refs,
+    }
     agent = transition.get("agent")
     skill = transition.get("skill")
     description = str(transition.get("description", "")).strip()

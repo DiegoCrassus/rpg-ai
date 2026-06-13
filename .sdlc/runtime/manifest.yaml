@@ -1,0 +1,51 @@
+version: "1.0"
+description: Runtime observability manifest — Studio and hooks resolve paths here (authoritative index).
+
+lifecycle:
+  canonical: .sdlc/process/lifecycle-model.yaml
+  transition_overlay: .sdlc/workflows/transitions.yaml
+  stage_definitions: .sdlc/stages/definitions.yaml
+
+obs:
+  sqlite: app/infra/sdlc_obs/data/sdlc_obs.db
+  state_file: .sdlc_obs_state.json
+  legacy_server: app/infra/sdlc_obs/server.py
+  hooks:
+    pre: app/infra/sdlc_obs/hooks/pre_task.py
+    post: app/infra/sdlc_obs/hooks/post_task.py
+  cursor_adapter: .cursor/hooks/sdlc_obs_session.py
+
+ledger:
+  executions_jsonl: .sdlc/manifest/executions.jsonl
+
+learning:
+  events_jsonl: .sdlc/learning/data/events.jsonl
+  policy_memory: .sdlc/learning/policy_memory.yaml
+  procedures: .sdlc/optimization/procedures.yaml
+
+session:
+  gate: .sdlc/memory/session-gate.json
+  handoff: .sdlc/memory/orchestrator-handoff.md
+  operational_context: .sdlc/memory/operational-context.md
+
+gateways:
+  interaction_policy: .sdlc/gateways/policy.yaml
+
+write_gate:
+  policy_source: .sdlc/process/lifecycle-model.yaml
+  generated_view: .sdlc/gates/paths.yaml
+
+catalog:
+  agents: .sdlc/manifest/catalog.yaml
+
+studio:
+  compiler_registry:
+    - .sdlc/registry/index.yaml
+    - .sdlc/registry/sdlc-artifacts.yaml
+    - .sdlc/registry/cursor-artifacts.yaml
+    - .sdlc/registry/relationships.yaml
+  service_root: studio/
+
+schema_refs:
+  studio_event: docs/architecture/studio-service-platform.md
+  execution_ledger: .sdlc/manifest/executions.jsonl

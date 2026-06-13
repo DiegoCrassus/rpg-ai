@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Analyze execution ledger events. Detect recurring gateway blocks. Propose new skills/commands/rules (Phase 6 — not auto-applied).
+Analyze execution ledger + learning events. Detect recurring gateway blocks. Propose new skills/commands/rules (Phase 6 — not auto-applied).
 
 ## Files
 
@@ -12,17 +12,19 @@ Analyze execution ledger events. Detect recurring gateway blocks. Propose new sk
 |------|------|
 | `procedures.yaml` | Meta-tool registry + bandit weights |
 | `proposals/` | Generated proposal YAML (Phase 6) |
-| `../scripts/optimization/analyzer.py` | Observe-mode report |
 
 ## Commands
 
 ```bash
 make execution-analyze
 make execution-analyze N=200
-python3 .sdlc/scripts/optimization/analyzer.py --last 100
+make learning-loop-analyze
+python3 .sdlc/scripts/learning_loop.py analyze --last 100
 ```
 
 ## Related
 
 - [`../process/harness-v6-plan.md`](../process/harness-v6-plan.md)
+- [`../process/harness-v7-change-plan.md`](../process/harness-v7-change-plan.md)
 - [`../scripts/execution_ledger.py`](../scripts/execution_ledger.py)
+- [`../runtime/manifest.yaml`](../runtime/manifest.yaml)

@@ -14,7 +14,7 @@ Catalog of every **agent**, **skill**, **MCP server**, **command**, and **readin
 | Finding a skill | `skills[]` → `path` under `.cursor/skills/` |
 | MCP setup | `mcps[]` + `.cursor/mcp.json` |
 | New session bootstrap | `reading_order[]` — ordered file list |
-| Plane/GitHub defaults | `project.*` (workspace, card prefix `INVES`) |
+| Plane/GitHub defaults | `project.*` (workspace `rpg`, card prefix `RPG`) |
 
 ## Key sections in `catalog.yaml`
 

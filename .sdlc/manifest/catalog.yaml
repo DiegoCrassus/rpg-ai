@@ -4,7 +4,7 @@ description: SDLC agent manifest — catalog of agents, skills, MCPs, commands, 
 project:
   repository: rpg-ai
   repository_slug: DiegoCrassus/rpg-ai
-  board_workspace: RPG-AI
+  board_workspace: rpg
   board_project: RPG
   board_cards_prefix: RPG
   sdlc_version: '5.2'
@@ -24,6 +24,10 @@ reading_order:
   note: Agent/skill catalog data
 - file: .sdlc/memory/operational-context.md
   note: Current operational state
+- file: .sdlc/runtime/manifest.yaml
+  note: Runtime observability path index — Studio + hooks resolve stores here
+- file: .sdlc/process/lifecycle-model.yaml
+  note: Canonical lifecycle graph + write_policy
 - file: .sdlc/manifest/executions.jsonl
   note: Execution ledger tail — last events only at session start
 - file: .sdlc/learning/README.md

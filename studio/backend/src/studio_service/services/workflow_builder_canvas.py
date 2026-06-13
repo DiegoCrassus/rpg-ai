@@ -76,7 +76,7 @@ def build_workflow_builder_canvas(root: Path) -> dict[str, Any]:
             "version": "0.1.0",
             "authority": "derived_non_authoritative",
             "source_refs": [
-                {"ref_type": "path", "ref": ".sdlc/stages/lifecycle.yaml"},
+                {"ref_type": "path", "ref": ".sdlc/process/lifecycle-model.yaml"},
                 {"ref_type": "path", "ref": ".sdlc/workflows/transitions.yaml"},
             ],
             "non_goals": [
@@ -122,7 +122,7 @@ def _stage_to_canvas_node(stage: dict[str, Any]) -> dict[str, Any]:
         "label": str(stage.get("name", slug)),
         "type": "stage",
         "category": "sdlc",
-        "source_refs": [{"ref_type": "path", "ref": ".sdlc/stages/lifecycle.yaml"}],
+        "source_refs": [{"ref_type": "path", "ref": ".sdlc/process/lifecycle-model.yaml"}],
         "annotations": [],
         "validation_overlays": [],
     }

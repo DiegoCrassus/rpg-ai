@@ -40,7 +40,7 @@ post gateway
 ## Boundaries
 
 - This module defines deterministic harness policy only.
-- Write permission is still enforced by `.sdlc/gates/paths.yaml` and `sdlc_gate_hook.py`.
+- Write permission is enforced by `lifecycle-model.yaml` → `write_policy` and `sdlc_gate_hook.py` (generated view: `.sdlc/gates/paths.yaml`).
 - Plane remains the source of truth for work items and evidence.
 - Hooks are **fail-closed** (`failClosed: true` in `.cursor/hooks.json`). If `policy.yaml` or PyYAML is missing, pre/post gateways deny.
 - Emergency bypass: set `SDLC_BREAK_GLASS=1` and document on a Plane **SDLC_META** card before using `workflow start --force`, `--skip-plane`, `--skip-validate`, or `auto_merge_pr.py --skip-ci-wait`.

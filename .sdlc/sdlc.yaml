@@ -83,6 +83,9 @@ contract:
         - process/change-lifecycle.md
         - process/lifecycle-model.yaml
         - process/intent_rules.yaml
+    runtime:
+      readme: runtime/README.md
+      data: runtime/manifest.yaml
 
 core:
   schema: sdlc-core/v1
@@ -129,7 +132,10 @@ core:
     sdlc_readme: .sdlc/README.md
     memory: .sdlc/memory
     sdlc_process: .sdlc/process
+    sdlc_runtime: .sdlc/runtime
+    sdlc_runtime_manifest: .sdlc/runtime/manifest.yaml
     sdlc_gateways: .sdlc/gateways
+    obs_sqlite: app/infra/sdlc_obs/data/sdlc_obs.db
     rules: .cursor/rules
     app: app
   conventions:
@@ -161,4 +167,6 @@ core:
     - .sdlc/process/master-workflow.md
     - .sdlc/process/change-lifecycle.md
     - .sdlc/process/harness-v6-plan.md
+    - .sdlc/process/harness-v7-change-plan.md
     - .sdlc/process/communication-policy.md
+    - .sdlc/runtime/manifest.yaml

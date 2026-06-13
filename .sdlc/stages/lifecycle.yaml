@@ -1,4 +1,4 @@
-# DEPRECATED shim — canonical stages live in .sdlc/process/lifecycle-model.yaml
+# AUTO-GENERATED from .sdlc/process/lifecycle-model.yaml — do not edit
 stages:
 - id: ticket
   name: Ticket / Idea
