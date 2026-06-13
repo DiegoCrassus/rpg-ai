@@ -46,6 +46,7 @@ Validate with `python3 .sdlc/scripts/plane_card.py validate-all --card RPG-N` be
 
 ## Orchestrator forbidden (never do directly)
 
+- `Write` / `StrReplace` on delegated paths when gate open (`.sdlc/`, `.cursor/`, `app/`, handoff) — hooks block; use `Task(next_agent)`
 - `Write` / `StrReplace` under `app/backend`, `app/frontend`, `app/shared`
 - `git add`, `git commit`, `git push` (Implementer/DevOps via Task)
 - `pytest`, `ruff`, `npm run build`, `make` (except `sdlc-doctor` for gate check) — QA via Task

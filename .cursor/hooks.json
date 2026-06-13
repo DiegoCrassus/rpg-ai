@@ -18,7 +18,7 @@
     "preToolUse": [
       {
         "command": "python3 .cursor/hooks/sdlc_gate_hook.py",
-        "matcher": "Write",
+        "matcher": "Write|StrReplace",
         "failClosed": true
       },
       {

@@ -23,7 +23,13 @@ except Exception as _gate_exc:
 else:
     _GATE_LOAD_FAILED = None
 
-from sdlc_gateway_lib import emit_studio_event, extract_write_path, read_payload  # noqa: E402
+from sdlc_gateway_lib import (  # noqa: E402
+    emit_studio_event,
+    enforce_orchestrator_delegation_write,
+    extract_write_path,
+    read_payload,
+    require_policy,
+)
 
 
 def _allow() -> None:
@@ -50,6 +56,9 @@ def main() -> None:
     rel = extract_write_path(payload)
     if not rel:
         _allow()
+
+    policy = require_policy()
+    enforce_orchestrator_delegation_write(rel, policy)
 
     config = _gate.load_gate_config(REPO)
     if not _gate.is_protected(rel, config):

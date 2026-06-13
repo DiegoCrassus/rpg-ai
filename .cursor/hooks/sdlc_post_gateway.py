@@ -8,6 +8,7 @@ import sys
 
 from sdlc_gateway_lib import (
     allow,
+    clear_active_subagent,
     emit_studio_event,
     fallback_for,
     handoff_value,
@@ -112,6 +113,7 @@ Required action:
 - Write a complete Markdown handoff before advancing again.
 """
     print(json.dumps({"followup_message": message}))
+    clear_active_subagent()
     sys.exit(0)
 
 
@@ -206,6 +208,7 @@ def _run_main() -> None:
             reason="stage marked complete",
             evidence_verified=evidence_verified,
         )
+    clear_active_subagent()
     allow()
 
 

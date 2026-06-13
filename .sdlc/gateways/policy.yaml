@@ -74,6 +74,51 @@ pre_gateway:
     - "touch\\s+specs/"
   deny_message: "Deterministic SDLC gateway blocked an unsafe or bypassing shell command."
 
+# Orchestrator must spawn Task(next_agent) — no inline implement/review/deploy.
+orchestrator_delegation:
+  pipeline_agents:
+    - intent-analyst
+    - planner
+    - architect
+    - implementer
+    - qa
+    - auto-fixer
+    - reviewer
+    - devops
+  delegated_prefixes:
+    - app/
+    - .sdlc/
+    - .cursor/
+    - .github/
+    - Makefile
+    - AGENTS.md
+    - docs/
+    - pyproject.toml
+    - data/
+  orchestrator_allowlist:
+    - .sdlc/memory/operational-context.md
+  orchestrator_shell_allow_patterns:
+    - "^git\\s+(status|log|diff|branch|show)\\b"
+    - "python(3)?\\s+\\.sdlc/dsl/cli\\.py\\s+workflow\\b"
+    - "python(3)?\\s+\\.sdlc/scripts/(token_budget_status|plane_state|plane_card|workflow_)\\b"
+    - "make\\s+(token-budget-status|sdlc-doctor)\\b"
+    - "^gh\\s+(auth|pr\\s+view|pr\\s+checks|run\\s+view)\\b"
+  shell_agent_patterns:
+    implementer:
+      - "\\bgit\\s+add\\b"
+      - "\\bgit\\s+commit\\b"
+    devops:
+      - "\\bgit\\s+push\\b"
+      - "\\bgh\\s+pr\\s+(create|merge|close|ready)\\b"
+      - "\\bgh\\s+pr\\s+review\\b"
+    qa:
+      - "\\bpytest\\b"
+      - "\\bruff\\s+check\\b"
+      - "\\bnpm\\s+(test|run\\s+build|run\\s+lint)\\b"
+      - "python(3)?\\s+-m\\s+pytest\\b"
+      - "make\\s+(test|lint|sdlc-doctor)\\b"
+      - "python(3)?\\s+\\.sdlc/scripts/qa_evidence\\.py\\b"
+
 post_gateway:
   reroute_on_missing_handoff: true
   reroute_on_incomplete_stage: true

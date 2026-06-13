@@ -27,6 +27,7 @@ User urgency, chat instructions, or convenience never override L1 authority.
 - Board is workboard source of truth. No local tickets, backlog files, or `specs/`.
 - No product implementation without board card `RPG-N` in progress, feature branch, open gate.
 - Do not write `app/backend/`, `app/frontend/`, or `app/shared/` directly from Orchestrator; delegate to `Task(Implementer)`.
+- Do not write `.sdlc/`, `.cursor/`, or run `git commit` / `pytest` / `gh pr` when gate is open — hooks enforce `Task(next_agent)` from handoff (see `.sdlc/gateways/policy.yaml` → `orchestrator_delegation`).
 - Do not commit, push, merge, run product tests, or run product lint directly from Orchestrator; delegate.
 - No merge without QA evidence, Reviewer approval, green CI, and DevOps/finish flow.
 - Never fake validation results.
@@ -44,7 +45,7 @@ GREENFIELD and FEATURE work require an epic plus scoped child cards. Start workf
 
 - Read files and answer READONLY questions.
 - Run SDLC meta/status commands (`workflow status`, `workflow discover`, `make sdlc-doctor`, `make token-budget-status`).
-- Update `.sdlc/`, `.cursor/`, and SDLC documentation during SDLC_META work when the gate allows it.
+- Update `.sdlc/memory/operational-context.md` only (rolling summary); all other writes require `Task(next_agent)`.
 - Spawn the next Task based on `.sdlc/memory/orchestrator-handoff.md`.
 
 ## Handoff
