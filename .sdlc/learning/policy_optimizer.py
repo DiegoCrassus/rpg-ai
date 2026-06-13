@@ -9,10 +9,10 @@ from typing import Any
 
 try:
     from .event_store import read_events
-    from .policy_memory import load, update_from_events
+    from .policy_memory import update_from_events
 except ImportError:
     from event_store import read_events  # type: ignore[no-redef]
-    from policy_memory import load, update_from_events  # type: ignore[no-redef]
+    from policy_memory import update_from_events  # type: ignore[no-redef]
 
 ROOT = Path(__file__).resolve().parents[2]
 PROCEDURES_PATH = ROOT / ".sdlc" / "optimization" / "procedures.yaml"

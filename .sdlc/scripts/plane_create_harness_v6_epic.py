@@ -13,7 +13,7 @@ if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
 from board_client import board_api, format_card  # noqa: E402
-from plane_html import build_plan_html, bullet_list, document, heading, paragraph_text  # noqa: E402
+from plane_html import build_plan_html  # noqa: E402
 
 EPIC_TITLE = "[AI][EPIC] Harness v6 — SDLC learning loop"
 

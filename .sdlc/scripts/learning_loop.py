@@ -15,7 +15,6 @@ if str(LEARNING) not in sys.path:
 
 from event_store import (  # noqa: E402
     load_qa_metrics,
-    read_events,
     record_task,
     status_text,
     tail,
