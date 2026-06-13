@@ -36,6 +36,25 @@ def blockers_are_clear(blockers: str) -> bool:
     )
 
 
+def _mark_gateway_block() -> None:
+    try:
+        from pathlib import Path
+
+        repo = Path(__file__).resolve().parents[2]
+        gate_path = repo / ".sdlc" / "memory" / "session-gate.json"
+        if not gate_path.is_file():
+            return
+        gate = json.loads(gate_path.read_text(encoding="utf-8"))
+        if not isinstance(gate, dict):
+            return
+        meta = dict(gate.get("meta") or {})
+        meta["last_gateway_block"] = True
+        gate["meta"] = meta
+        gate_path.write_text(json.dumps(gate, indent=2) + "\n", encoding="utf-8")
+    except Exception:
+        return
+
+
 def _ledger_append(
     event_type: str,
     *,
@@ -66,6 +85,7 @@ def _ledger_append(
 def followup(agent: str, reason: str, details: list[str]) -> None:
     route = normalize_agent(agent) or "planner"
     detail_text = "\n".join(f"- {item}" for item in details) if details else "- unspecified"
+    _mark_gateway_block()
     _ledger_append("gateway_block", reason=reason, details=details)
     emit_studio_event(
         "gateway.handoff_blocked",
