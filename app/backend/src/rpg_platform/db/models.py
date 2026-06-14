@@ -22,6 +22,7 @@ from rpg_platform.db.enums import (
     StorageResourceType,
     TemplateStatus,
     UserStatus,
+    pg_enum,
 )
 from sqlalchemy import (
     BigInteger,
@@ -52,7 +53,9 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     display_name: Mapped[str] = mapped_column(String(120), nullable=False)
     avatar_storage_path: Mapped[str | None] = mapped_column(Text, nullable=True)
-    status: Mapped[UserStatus] = mapped_column(default=UserStatus.ACTIVE, nullable=False)
+    status: Mapped[UserStatus] = mapped_column(
+        pg_enum(UserStatus, name="user_status"), default=UserStatus.ACTIVE, nullable=False
+    )
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     master_mesa_count: Mapped[int] = mapped_column(SmallInteger, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -71,7 +74,9 @@ class Mesa(Base):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     rpg_system: Mapped[str] = mapped_column(String(80), nullable=False)
-    status: Mapped[MesaStatus] = mapped_column(default=MesaStatus.IMPORTING, nullable=False)
+    status: Mapped[MesaStatus] = mapped_column(
+        pg_enum(MesaStatus, name="mesa_status"), default=MesaStatus.IMPORTING, nullable=False
+    )
     master_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
     settings: Mapped[dict[str, Any]] = mapped_column(
         JsonType,
@@ -101,9 +106,13 @@ class MesaParticipant(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     mesa_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("mesas.id", ondelete="CASCADE"))
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
-    role: Mapped[ParticipantRole] = mapped_column(nullable=False)
+    role: Mapped[ParticipantRole] = mapped_column(
+        pg_enum(ParticipantRole, name="participant_role"), nullable=False
+    )
     status: Mapped[ParticipantStatus] = mapped_column(
-        default=ParticipantStatus.PENDING, nullable=False
+        pg_enum(ParticipantStatus, name="participant_status"),
+        default=ParticipantStatus.PENDING,
+        nullable=False,
     )
     joined_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -122,7 +131,9 @@ class Invite(Base):
     mesa_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("mesas.id", ondelete="CASCADE"))
     email: Mapped[str] = mapped_column(String(255), nullable=False)
     token_hash: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
-    status: Mapped[InviteStatus] = mapped_column(default=InviteStatus.PENDING, nullable=False)
+    status: Mapped[InviteStatus] = mapped_column(
+        pg_enum(InviteStatus, name="invite_status"), default=InviteStatus.PENDING, nullable=False
+    )
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     accepted_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id"), nullable=True)
@@ -139,7 +150,9 @@ class SheetTemplate(Base):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     slug: Mapped[str] = mapped_column(String(80), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    status: Mapped[TemplateStatus] = mapped_column(default=TemplateStatus.ACTIVE, nullable=False)
+    status: Mapped[TemplateStatus] = mapped_column(
+        pg_enum(TemplateStatus, name="template_status"), default=TemplateStatus.ACTIVE, nullable=False
+    )
     is_seed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     seed_key: Mapped[str | None] = mapped_column(String(40), nullable=True)
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
@@ -160,9 +173,13 @@ class CharacterSheet(Base):
     template_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("sheet_templates.id"))
     owner_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
     character_name: Mapped[str] = mapped_column(String(120), nullable=False)
-    status: Mapped[SheetStatus] = mapped_column(default=SheetStatus.ACTIVE, nullable=False)
+    status: Mapped[SheetStatus] = mapped_column(
+        pg_enum(SheetStatus, name="sheet_status"), default=SheetStatus.ACTIVE, nullable=False
+    )
     visibility: Mapped[SheetVisibility] = mapped_column(
-        default=SheetVisibility.OWNER_ONLY, nullable=False
+        pg_enum(SheetVisibility, name="sheet_visibility"),
+        default=SheetVisibility.OWNER_ONLY,
+        nullable=False,
     )
     template_version: Mapped[int] = mapped_column(Integer, nullable=False)
     schema_outdated: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -183,7 +200,11 @@ class SheetImportJob(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     mesa_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("mesas.id", ondelete="CASCADE"))
     created_by: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
-    status: Mapped[ImportJobStatus] = mapped_column(default=ImportJobStatus.PENDING, nullable=False)
+    status: Mapped[ImportJobStatus] = mapped_column(
+        pg_enum(ImportJobStatus, name="import_job_status"),
+        default=ImportJobStatus.PENDING,
+        nullable=False,
+    )
     source_storage_path: Mapped[str] = mapped_column(Text, nullable=False)
     source_mime: Mapped[str] = mapped_column(String(127), nullable=False)
     detected_system: Mapped[str | None] = mapped_column(String(40), nullable=True)
@@ -236,12 +257,18 @@ class Document(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     mesa_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("mesas.id", ondelete="CASCADE"))
-    type: Mapped[DocumentType] = mapped_column(nullable=False)
+    type: Mapped[DocumentType] = mapped_column(
+        pg_enum(DocumentType, name="document_type"), nullable=False
+    )
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     tags: Mapped[list[str]] = mapped_column(StringArray, default=list, nullable=False)
-    visibility: Mapped[DocumentVisibility] = mapped_column(nullable=False)
+    visibility: Mapped[DocumentVisibility] = mapped_column(
+        pg_enum(DocumentVisibility, name="document_visibility"), nullable=False
+    )
     content_format: Mapped[ContentFormat] = mapped_column(
-        default=ContentFormat.MARKDOWN, nullable=False
+        pg_enum(ContentFormat, name="content_format"),
+        default=ContentFormat.MARKDOWN,
+        nullable=False,
     )
     character_sheet_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("character_sheets.id"), nullable=True
@@ -266,7 +293,9 @@ class DocumentPermission(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     document_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("documents.id", ondelete="CASCADE"))
     mesa_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("mesas.id", ondelete="CASCADE"))
-    grantee_type: Mapped[PermissionGranteeType] = mapped_column(nullable=False)
+    grantee_type: Mapped[PermissionGranteeType] = mapped_column(
+        pg_enum(PermissionGranteeType, name="permission_grantee_type"), nullable=False
+    )
     grantee_id: Mapped[uuid.UUID] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
@@ -306,7 +335,9 @@ class StorageFile(Base):
     mesa_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("mesas.id", ondelete="CASCADE"))
     bucket: Mapped[str] = mapped_column(String(64), default="campaigns", nullable=False)
     relative_path: Mapped[str] = mapped_column(Text, nullable=False)
-    resource_type: Mapped[StorageResourceType] = mapped_column(nullable=False)
+    resource_type: Mapped[StorageResourceType] = mapped_column(
+        pg_enum(StorageResourceType, name="storage_resource_type"), nullable=False
+    )
     resource_id: Mapped[uuid.UUID | None] = mapped_column(nullable=True)
     content_type: Mapped[str] = mapped_column(String(127), nullable=False)
     contract: Mapped[str] = mapped_column(String(64), nullable=False)

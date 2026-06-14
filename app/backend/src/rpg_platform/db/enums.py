@@ -1,6 +1,21 @@
 """Database enum types."""
 
 import enum
+from typing import TypeVar
+
+from sqlalchemy import Enum as SAEnum
+
+E = TypeVar("E", bound=enum.Enum)
+
+
+def pg_enum(enum_cls: type[E], *, name: str) -> SAEnum:
+    """PostgreSQL native enum mapped by value (matches SQL migrations)."""
+    return SAEnum(
+        enum_cls,
+        name=name,
+        native_enum=True,
+        values_callable=lambda members: [member.value for member in members],
+    )
 
 
 class UserStatus(str, enum.Enum):
